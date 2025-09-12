@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #__next { height: 100%; }
+body { @apply bg-ink text-white antialiased; }
+
+/* Glass card + subtle border */
+.card { @apply bg-white/5 backdrop-blur-md rounded-2xl ring-1 ring-white/10 shadow-soft; }
+.btn  { @apply inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-brand-500 hover:bg-brand-400 text-ink font-medium transition; }
+.link { @apply text-brand-300 hover:text-brand-200 underline-offset-4 hover:underline; }
+
+/* Hero gradient */
+.bg-hero {
+  background: radial-gradient(1000px 600px at 10% -10%, rgba(6, 182, 212, 0.25), rgba(6, 182, 212, 0) 60%),
+              radial-gradient(800px 500px at 90% 10%, rgba(100, 116, 139, 0.25), rgba(100,116,139,0) 60%),
+              linear-gradient(180deg, #0B0F1A 0%, #0A0D16 100%);
+}
+
+/* Pretty scrollbar */
+*::-webkit-scrollbar{ width:10px }
+*::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.12); border-radius:999px }
+
+/* Chat widget custom scrollbar */
+.chat-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(6, 182, 212, 0.4);
+  border-radius: 999px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(6, 182, 212, 0.6);
+}
+
+/* Blog content improvements */
+.blog-content {
+  line-height: 1.7;
+  font-size: 1.1rem;
+}
+
+.blog-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.blog-excerpt {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #d1d5db;
+}
