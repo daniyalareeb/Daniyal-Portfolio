@@ -1,6 +1,6 @@
 # 🚂 Railway Environment Variables for DanPortfolio
 
-Exact environment variables to set in Railway for your deployment.
+**⚠️ SECURITY NOTICE: Replace all placeholder values with your actual credentials!**
 
 ## 📋 Environment Variables to Set in Railway
 
@@ -21,16 +21,16 @@ DATABASE_URL=postgresql://postgres:password@host:port/database
 
 ### 🤖 AI Configuration
 ```bash
-OPENROUTER_API_KEY=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
+OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY_HERE
 OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
 OPENROUTER_MODEL=deepseek/deepseek-chat-v3.1:free
 ```
 
 ### 🔒 Security Configuration
 ```bash
-ADMIN_PASSWORD=daniyal-admin-2024
-JWT_SECRET_KEY=daniyal-portfolio-jwt-secret-key-2024-production
-ADMIN_SECRET=daniyal-portfolio-admin-secret-2024
+ADMIN_PASSWORD=YOUR_SECURE_ADMIN_PASSWORD
+JWT_SECRET_KEY=YOUR_32_CHARACTER_JWT_SECRET_KEY
+ADMIN_SECRET=YOUR_ADMIN_SECRET_KEY
 ```
 
 ### 🌐 CORS Configuration
@@ -42,9 +42,9 @@ CORS_ORIGINS=["https://daniyalareeb.com", "https://www.daniyalareeb.com", "https
 ```bash
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
-SMTP_USER=daniyalareeb49@gmail.com
-SMTP_PASSWORD=fpfb esfs axyb obvu
-ADMIN_EMAIL=daniyalareeb49@gmail.com
+SMTP_USER=YOUR_EMAIL@gmail.com
+SMTP_PASSWORD=YOUR_GMAIL_APP_PASSWORD
+ADMIN_EMAIL=YOUR_EMAIL@gmail.com
 GITHUB_USERNAME=daniyalareeb
 ```
 
@@ -54,7 +54,7 @@ GITHUB_USERNAME=daniyalareeb
 1. Go to [railway.app](https://railway.app)
 2. Click **"New Project"**
 3. Select **"Deploy from GitHub repo"**
-4. Choose your repository
+4. Choose your repository: `daniyalareeb/Daniyal-Portfolio`
 5. Select **`backend`** folder as root directory
 
 ### Step 2: Add PostgreSQL Database
@@ -66,7 +66,8 @@ GITHUB_USERNAME=daniyalareeb
 ### Step 3: Set Environment Variables
 1. Go to your service → **Variables** tab
 2. Add each variable from the list above
-3. Click **"Add Variable"** for each one
+3. **IMPORTANT**: Replace all placeholder values with your actual credentials
+4. Click **"Add Variable"** for each one
 
 ### Step 4: Deploy
 1. Railway will automatically detect Python app
@@ -85,60 +86,22 @@ GITHUB_USERNAME=daniyalareeb
 2. **API Docs**: `https://your-app-name.railway.app/docs`
 3. **Test Endpoint**: `https://your-app-name.railway.app/api/v1/tools/list`
 
-## 🔧 Frontend Configuration
-
-After Railway deployment, update your frontend:
-
-### Update Frontend Environment Variables
-In your Vercel deployment, set:
-```bash
-NEXT_PUBLIC_API_URL=https://your-railway-app-name.railway.app
-```
-
-### Update Frontend Domain
-Your frontend will be available at:
-- **Primary**: `https://daniyalareeb.com`
-- **Vercel**: `https://daniyalareeb.vercel.app`
-
-## 🎯 Domain Configuration
-
-### Namecheap DNS Settings
-Set these DNS records in Namecheap:
-
-```
-Type: A
-Host: @
-Value: 76.76.19.61
-TTL: Automatic
-
-Type: CNAME
-Host: www
-Value: cname.vercel-dns.com
-TTL: Automatic
-```
-
-### Vercel Domain Setup
-1. Go to Vercel dashboard → Your project
-2. Go to **Settings** → **Domains**
-3. Add `daniyalareeb.com`
-4. Add `www.daniyalareeb.com`
-5. Verify domain ownership
-
 ## 🔒 Security Notes
 
 ### Production Security Checklist
-- [x] **OpenRouter API Key**: Set (from your .env)
-- [x] **Admin Password**: Using current password
-- [x] **JWT Secret**: Generated secure key
-- [x] **Admin Secret**: Generated secure key
-- [x] **CORS Origins**: Updated for your domain
-- [x] **Email SMTP**: Configured with your Gmail
+- [ ] **OpenRouter API Key**: Set your actual API key
+- [ ] **Admin Password**: Use a strong, unique password
+- [ ] **JWT Secret**: Generate a secure 32+ character key
+- [ ] **Admin Secret**: Generate a secure secret key
+- [ ] **CORS Origins**: Updated for your domain
+- [ ] **Email SMTP**: Configured with your Gmail app password
 
 ### Important Security Reminders
-- Your current admin password will work
-- JWT secret is now production-ready
-- CORS is configured for your domain
-- Email notifications will work with your Gmail
+- Never commit real credentials to Git
+- Use environment variables for all sensitive data
+- Change default passwords and secrets
+- Use HTTPS in production
+- Monitor access logs regularly
 
 ## 📊 Expected Results
 
@@ -187,7 +150,7 @@ CORS_ORIGINS=["https://daniyalareeb.com", "https://www.daniyalareeb.com"]
 
 - [ ] Railway project created
 - [ ] PostgreSQL database added
-- [ ] All environment variables set
+- [ ] All environment variables set with REAL values
 - [ ] Deployment successful
 - [ ] Database initialized
 - [ ] Health check passes
@@ -203,4 +166,3 @@ CORS_ORIGINS=["https://daniyalareeb.com", "https://www.daniyalareeb.com"]
 **Frontend**: Vercel  
 **Backend**: Railway  
 **Last Updated**: January 2024
-
