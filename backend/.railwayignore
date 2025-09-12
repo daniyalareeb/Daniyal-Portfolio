@@ -1,0 +1,53 @@
+# Ignore development files
+.env
+.env.local
+*.log
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git
+.mypy_cache
+.pytest_cache
+.hypothesis
+
+# Ignore database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Ignore static uploads (will be handled by Railway)
+static/uploads/
+uploads/
+
+# Ignore data directory
+data/
+
+# Ignore test files
+test_*
+*_test.py
+tests/
+
+# Ignore documentation
+docs/
+*.md
+README.md
+DEPLOYMENT_READINESS.md
+
+# Ignore scripts
+scripts/
+
