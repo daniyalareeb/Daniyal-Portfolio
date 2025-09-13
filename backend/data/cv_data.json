@@ -1,0 +1,129 @@
+{
+  "personal_info": {
+    "full_name": "Daniyal Ahmad",
+    "age": 20,
+    "date_of_birth": "11/12/2004",
+    "location": "London, UK",
+    "origin": "India",
+    "github": "daniyalareeb",
+    "linkedin": "linkedin.com/in/daniyalareeb",
+    "instagram": "@daniyalareeb",
+    "twitter": "@daniyalareeb",
+    "portfolio": "daniyalareeb.com",
+    "email": "daniyalareeb@gmail.com",
+    "education": "Final year Computer Science student at University of East London",
+    "branding": "Ambitious backend engineer and AI enthusiast, building scalable solutions with modern tech stack. Business-minded problem solver with entrepreneurial drive."
+  },
+  "personality_traits": [
+    "Very ambitious and stubborn - goes to any length to achieve goals",
+    "Business-minded and money-focused - always looking for income opportunities",
+    "Analytical problem-solver - finds most efficient solutions",
+    "Hands-on learner - learns by doing and building projects",
+    "Passionate about AI agents, LLMs, and automation",
+    "Casual, direct, and friendly communication style"
+  ],
+  "interests_hobbies": [
+    "Car driving",
+    "Photography",
+    "Nature and gardening (bonsai)",
+    "Traveling",
+    "Adventure sports (sky-diving, scuba diving)",
+    "AI/ML technology",
+    "Business and entrepreneurship"
+  ],
+  "professional_summary": "Daniyal is a final-year Computer Science student at the University of East London with strong backend development skills and deep interest in AI/ML technologies. He specializes in Python, FastAPI, and data structures, with experience building REST APIs, full-stack apps, and AI-powered tools. His passion lies in LLMs, RAG systems, and AI agents, and he actively learns vector databases, sentence transformers, and fine-tuning techniques. Daniyal is seeking opportunities in software engineering or AI-focused roles at top tech companies to grow his expertise and contribute to meaningful, high-impact projects.",
+  "core_skills": [
+    "Python", "Java", "DSA (Data Structure & Algorithm)", "React.js", "Node.js", "REST APIs",
+    "ChromaDB", "MongoDB", "Model Fine-Tuning", "LLMs(Large Language Models", "Transfer Learning", "RAG(Retrieval-Augmented Generation)", "AI Agent",
+    "Docker", "Proxmox VE", "Linux", "GitHub", "Prompt Engineering", "FastAPI", "NumPy", "Pandas"
+  ],
+  "learning_approach": "Uses AI as teacher, asks questions until understanding, does test tasks, learns by building projects and experimenting with new technologies",
+  "experience": [
+    {
+      "role": "Freelance Web Developer",
+      "company": "Self-employed",
+      "duration": "Summer 2024",
+      "description": "ShortInStay: Built a room booking system using Wix. SPY TARGET: Developed a service website to improve online engagement. The Food Station: Created an interactive restaurant website with booking features, increasing reservations by 40%."
+    },
+    {
+      "role": "Backend Developer",
+      "company": "Manage Your Sales",
+      "duration": "2022",
+      "description": "Developed backend REST APIs for inventory and sales management, reducing processing time by 30%. Integrated automation scripts for data analysis, improving reporting speed by 25%. Collaborated with frontend teams, enhancing system performance and user experience."
+    }
+  ],
+  "projects": [
+    {
+      "name": "NFC Attendance Emulator",
+      "description": "Built a Flutter-based NFC emulator that clones university ID cards (Mifare Classic 1K) to enable phone-based attendance tapping. Frontend was vibe-coded while backend was sourced from GitHub repositories.",
+      "tech": ["Flutter", "NFC", "Mifare Classic", "Mobile Development"],
+      "url": "https://github.com/daniyalareeb"
+    },
+    {
+      "name": "Maker Club App",
+      "description": "Comprehensive Flutter app with Firebase backend and OpenRouter API integration. Features include member communication, project collaboration, CDT coin leaderboard system, news section with events and job postings, branded AI assistant using DeepSeek model, and DSA buddy with daily challenges and feedback system. Frontend was vibe-coded.",
+      "tech": ["Flutter", "Firebase", "OpenRouter API", "DeepSeek", "Real-time Database"],
+      "url": "https://github.com/daniyalareeb"
+    },
+    {
+      "name": "Portfolio Website",
+      "description": "AI-powered portfolio with Next.js frontend and FastAPI backend. Features OpenRouter DeepSeek API integration, ChromaDB for CV data, automated blog generation from authentic sources, AI tool management system, and SMTP email integration for contact form. Frontend was vibe-coded.",
+      "tech": ["Next.js", "FastAPI", "OpenRouter API", "ChromaDB", "SMTP", "AI Automation"],
+      "url": "https://daniyalareeb.com"
+    },
+    {
+      "name": "Charity Website",
+      "description": "Built responsive charity website using HTML, CSS, and JavaScript to improve client outreach and user engagement. Frontend was vibe-coded.",
+      "tech": ["HTML", "CSS", "JavaScript", "Web Development"],
+      "url": "https://github.com/daniyalareeb"
+    },
+    {
+      "name": "Football Scoreboard",
+      "description": "Real-time football scoreboard application with React.js frontend, Node.js backend, and MongoDB database for live score tracking and updates. Frontend was vibe-coded.",
+      "tech": ["React.js", "Node.js", "MongoDB", "Real-time Updates"],
+      "url": "https://github.com/daniyalareeb"
+    },
+    {
+      "name": "AI Mock Interviewer",
+      "description": "Interactive AI-powered mock interviewer system to help users prepare for technical interviews with personalized feedback and question generation.",
+      "tech": ["AI/ML", "LLMs", "Interview Preparation", "Personalized Learning"],
+      "url": "https://github.com/daniyalareeb"
+    }
+  ],
+  "portfolio_details": {
+    "description": "Daniyal built this portfolio with FastAPI backend, AI agents for blogs/tools, and Next.js frontend with dynamic routing. The backend includes ChromaDB for CV RAG, OpenRouter integration for AI chat, and automated content management. Features automated blog generation from authentic sources, AI tool management, and intelligent CV querying.",
+    "backend_features": ["FastAPI", "AI Agents", "ChromaDB", "OpenRouter API", "Automated Blog/Tools Sync", "SMTP Integration"],
+    "frontend_features": ["Next.js", "Dynamic Routing", "Modern UI/UX", "Responsive Design", "Interactive Components", "AI Chat Integration"]
+  },
+  "career_goals": {
+    "short_term": "Secure software engineering or AI/ML engineering role at top tech companies (Apple, Google, Tesla, Meta, Citadel, Jane Street)",
+    "medium_term": "Gain industry experience and understand work culture at top tech companies",
+    "long_term": "Start own AI HealthTech company focused on affordable/no-cost healthcare solutions",
+    "target_companies": ["Apple", "Google", "Tesla", "Meta", "Citadel", "Jane Street", "FAANG companies", "AI startups"],
+    "target_industries": ["AI/ML", "HealthTech", "Quant", "FinTech"],
+    "preferred_location": "Open to relocation, preference for California, USA"
+  },
+  "business_philosophy": "Driven by passion for solving meaningful problems through technology, particularly those that can make positive social impact. Believe innovation should be accessible, ethical, and designed to improve lives. Philosophy centers on learning continuously, building with empathy, and using tech to create solutions that matter.",
+  "problem_solving_approach": [
+    "Understand deeply - Break problems into smaller parts and gather relevant data",
+    "Brainstorm creatively - Explore multiple solutions, leveraging research and expert input",
+    "Test and iterate - Experiment with prototypes, learn from failures, and refine solutions",
+    "Stay resilient - View obstacles as opportunities to learn and grow"
+  ],
+  "ai_philosophy": {
+    "passion_reason": "AI has the power to achieve what once felt impossible. It simplifies complex tasks, makes life easier, and accelerates progress in every field. AI has transformed DNA analysis, making breakthroughs in biology and healthcare faster than ever. It's also revolutionizing software development, allowing people to build solutions more easily. AI feels as groundbreaking as the arrival of the internet—it's a shift that changes everything.",
+    "future_excitement": "AI's potential to become a true collaborator rather than just a tool. Future where AI agents can work autonomously, solving real-world problems at scale—whether that's advancing medicine, improving education, or making innovation accessible to everyone. Especially excited about AI's role in democratizing technology, empowering individuals and small teams to compete with large organizations.",
+    "favorite_technologies": ["AI Agents", "Large Language Models (LLMs)", "Small Language Models (SLMs)", "RAG Systems", "Vector Databases", "Fine-tuning", "Sentence Transformers"]
+  },
+  "certifications": [
+    "Python Development",
+    "FastAPI Framework",
+    "AI/ML Fundamentals",
+    "Web Development",
+    "Docker and Linux Administration"
+  ],
+  "education": "Final year Computer Science student at University of East London with focus on software engineering and AI technologies",
+  "languages": ["English", "Urdu", "Hindi"],
+  "interests": ["AI/ML", "Backend Development", "Open Source", "Technology Innovation", "Problem Solving", "Business and Entrepreneurship", "HealthTech", "Automation"]
+}
+

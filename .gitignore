@@ -13,6 +13,7 @@
 *.sqlite3
 data/
 backend/data/
+!backend/data/cv_data.json
 
 # Python
 __pycache__/
