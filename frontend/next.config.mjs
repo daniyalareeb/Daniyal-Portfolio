@@ -9,28 +9,7 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   
-  // Handle API routes with proper error handling
-  async rewrites() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://kind-perfection-production-ae48.up.railway.app';
-    if (!apiUrl) {
-      console.warn('NEXT_PUBLIC_API_URL not set, API rewrites disabled');
-      return [];
-    }
-    
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${apiUrl}/api/:path*`,
-        has: [
-          {
-            type: 'header',
-            key: 'content-type',
-            value: 'application/json'
-          }
-        ]
-      }
-    ];
-  },
+  // API routes are handled directly by the frontend components
   
   // Add proper headers for security
   async headers() {
