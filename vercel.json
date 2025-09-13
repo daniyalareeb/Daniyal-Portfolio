@@ -1,0 +1,15 @@
+{
+  "buildCommand": "cd frontend && npm run build",
+  "outputDirectory": "frontend/.next",
+  "installCommand": "cd frontend && npm install",
+  "framework": "nextjs",
+  "rootDirectory": "frontend",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://kind-perfection-production-ae48.up.railway.app",
+    "NEXT_PUBLIC_ADMIN_SECRET": "super-secret-string-change-me",
+    "CUSTOM_ADMIN_PATH": "/daniyal-secret-2024",
+    "ALLOWED_ADMIN_IPS": "217.44.77.70,127.0.0.1,::1",
+    "ALLOWED_ADMIN_HOURS": "9,10,11,12,13,14,15,16,17,18,19,20,21,22,23",
+    "ADMIN_PASSWORD": "daniyal-admin-2024"
+  }
+}
