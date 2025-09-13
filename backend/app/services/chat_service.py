@@ -2,9 +2,27 @@ import os, json, asyncio
 from app.core.ai_client import chat_complete
 DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "..", "data", "cv_data.json")
 
-# Load Daniyal facts
-with open(os.path.abspath(DATA_PATH), "r", encoding="utf-8") as f:
-    CV = json.load(f)
+# Load Daniyal facts with fallback
+try:
+    with open(os.path.abspath(DATA_PATH), "r", encoding="utf-8") as f:
+        CV = json.load(f)
+except FileNotFoundError:
+    # Fallback CV data if file is not found (e.g., in deployment)
+    CV = {
+        "personal_info": {
+            "full_name": "Daniyal Ahmad",
+            "github": "daniyalareeb",
+            "linkedin": "linkedin.com/in/daniyalareeb"
+        },
+        "education": {
+            "university": "University of East London",
+            "degree": "Computer Science",
+            "year": "Final year"
+        },
+        "skills": ["Python", "JavaScript", "React", "FastAPI", "SQL"],
+        "experience": ["Software Development", "Web Development", "AI/ML"],
+        "projects": ["Portfolio Website", "AI Chat Application", "Various Web Projects"]
+    }
 
 BRIEF_FACTS = f"""
 Full Name: {CV.get('personal_info', {}).get('full_name','Daniyal Ahmad')}
