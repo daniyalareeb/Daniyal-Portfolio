@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   images: {
     domains: ['images.unsplash.com'],
     unoptimized: true // For static export compatibility
@@ -12,7 +11,7 @@ const nextConfig = {
   
   // Handle API routes with proper error handling
   async rewrites() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://kind-perfection-production-ae48.up.railway.app';
     if (!apiUrl) {
       console.warn('NEXT_PUBLIC_API_URL not set, API rewrites disabled');
       return [];
