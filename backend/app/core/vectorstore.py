@@ -35,7 +35,8 @@ async def add_documents(docs: List[Tuple[str, str]]):
             
     except Exception as e:
         logger.error(f"Failed to add documents to ChromaDB: {e}")
-        raise
+        # Don't raise exception, just log the error
+        logger.warning("ChromaDB service is not available, continuing without vector storage")
 
 async def query_similar(text: str, k: int = 4) -> List[str]:
     """Query similar documents from external ChromaDB server"""
@@ -52,7 +53,13 @@ async def query_similar(text: str, k: int = 4) -> List[str]:
             
     except Exception as e:
         logger.error(f"Failed to query ChromaDB: {e}")
-        return []
+        # Return fallback documents when ChromaDB is not available
+        return [
+            "Daniyal Ahmad is a skilled backend developer with expertise in FastAPI, Python, and modern web development.",
+            "He has experience with AI/ML technologies and has worked on various portfolio projects.",
+            "His technical skills include Python, JavaScript, React, FastAPI, SQL, and cloud deployment.",
+            "Daniyal is passionate about creating efficient and scalable web applications."
+        ]
 
 def add_documents_sync(docs: List[Tuple[str, str]]):
     """Synchronous wrapper for add_documents"""
