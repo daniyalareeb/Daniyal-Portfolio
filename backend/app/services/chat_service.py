@@ -25,7 +25,11 @@ except FileNotFoundError:
             {"role": "Web Developer", "company": "Personal Projects"},
             {"role": "AI/ML Developer", "company": "University Projects"}
         ],
-        "projects": ["Portfolio Website", "AI Chat Application", "Various Web Projects"]
+        "projects": [
+            {"name": "Portfolio Website"},
+            {"name": "AI Chat Application"},
+            {"name": "Various Web Projects"}
+        ]
     }
 
 BRIEF_FACTS = f"""
