@@ -9,7 +9,7 @@ from PyPDF2 import PdfReader
 from docx import Document
 
 from app.models.cv import CVDocument
-from app.core.vectorstore import add_documents, query_similar
+from app.core.vectorstore import add_documents_sync as add_documents, query_similar_sync as query_similar
 from app.core.ai_client import OpenRouterClient
 
 def _extract_text(file: UploadFile) -> str:

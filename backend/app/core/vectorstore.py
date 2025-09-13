@@ -1,39 +1,75 @@
 """
 ChromaDB wrapper for storing your CV + portfolio notes and running RAG-like retrieval.
-We use local MiniLM sentence-transformers for embeddings (CPU friendly).
+Uses external ChromaDB server deployed on Railway.
 """
 import os
-from pathlib import Path
+import httpx
 from typing import List, Tuple
-import chromadb
-from chromadb.config import Settings as ChromaSettings
-from sentence_transformers import SentenceTransformer
+import logging
 
-# Get the absolute path to the backend directory and then to data/chroma
-backend_dir = Path(__file__).parent.parent.parent
-chroma_path = backend_dir / "data" / "chroma"
+# Configure logging
+logger = logging.getLogger(__name__)
 
-client = chromadb.PersistentClient(path=str(chroma_path), settings=ChromaSettings(allow_reset=True))
-
-_embedder = SentenceTransformer("all-MiniLM-L6-v2")
+# ChromaDB server URL (will be set via environment variable)
+CHROMADB_URL = os.getenv("CHROMADB_URL", "http://localhost:8001")
 
 CollectionName = "cv_data"  # Match the collection name from setup script
 
-def get_collection():
-    return client.get_or_create_collection(name=CollectionName)
-
-
-def add_documents(docs:List[Tuple[str,str]]):
-    col = get_collection()
+async def add_documents(docs: List[Tuple[str, str]]):
+    """Add documents to the external ChromaDB server"""
     if not docs:
         return
-    ids = [d[0] for d in docs]
-    texts = [d[1] for d in docs]
-    embeddings = _embedder.encode(texts, convert_to_numpy=True).tolist()
-    col.upsert(ids=ids, documents=texts, embeddings=embeddings)
+    
+    try:
+        # Prepare documents for API
+        documents = [{"id": doc[0], "text": doc[1]} for doc in docs]
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{CHROMADB_URL}/add_documents",
+                json={"documents": documents},
+                timeout=30.0
+            )
+            response.raise_for_status()
+            logger.info(f"Added {len(docs)} documents to ChromaDB")
+            
+    except Exception as e:
+        logger.error(f"Failed to add documents to ChromaDB: {e}")
+        raise
 
-def query_similar(text: str, k: int = 4) -> List[str]:
-    col = get_collection()
-    emb = _embedder.encode([text], convert_to_numpy=True).tolist()
-    res = col.query(query_embeddings=emb, n_results=k)
-    return res.get("documents", [[]])[0]  # list of strings
+async def query_similar(text: str, k: int = 4) -> List[str]:
+    """Query similar documents from external ChromaDB server"""
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{CHROMADB_URL}/query",
+                json={"query": text, "k": k},
+                timeout=30.0
+            )
+            response.raise_for_status()
+            result = response.json()
+            return result.get("documents", [])
+            
+    except Exception as e:
+        logger.error(f"Failed to query ChromaDB: {e}")
+        return []
+
+def add_documents_sync(docs: List[Tuple[str, str]]):
+    """Synchronous wrapper for add_documents"""
+    import asyncio
+    try:
+        loop = asyncio.get_event_loop()
+        return loop.run_until_complete(add_documents(docs))
+    except RuntimeError:
+        # If no event loop is running, create a new one
+        return asyncio.run(add_documents(docs))
+
+def query_similar_sync(text: str, k: int = 4) -> List[str]:
+    """Synchronous wrapper for query_similar"""
+    import asyncio
+    try:
+        loop = asyncio.get_event_loop()
+        return loop.run_until_complete(query_similar(text, k))
+    except RuntimeError:
+        # If no event loop is running, create a new one
+        return asyncio.run(query_similar(text, k))

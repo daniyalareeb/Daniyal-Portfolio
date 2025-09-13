@@ -14,7 +14,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from app.database import engine, Base
 from app.models import BlogPost, Tool, ChatMessage, CVChunk, ContactSubmission, Project
-from app.core.vectorstore import add_documents
+from app.core.vectorstore import add_documents_sync as add_documents
 
 # Import all models to ensure they're registered with Base
 from app.models import *
