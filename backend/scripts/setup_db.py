@@ -25,22 +25,9 @@ def create_tables():
     Base.metadata.create_all(bind=engine)
     print("✅ Database tables created successfully!")
 
-def setup_vector_store():
-    """Setup vector store with structured CV data."""
-    print("Setting up vector store with CV data...")
-    
-    # Check if vector store is available
-    try:
-        from app.core.vectorstore import PGVECTOR_AVAILABLE, initialize_vector_store
-        if not PGVECTOR_AVAILABLE:
-            print("⚠️ Vector store not available. Skipping vector store setup.")
-            return
-        
-        # Initialize vector store
-        initialize_vector_store()
-    except ImportError:
-        print("⚠️ Vector store not available. Skipping vector store setup.")
-        return
+def setup_chromadb():
+    """Setup ChromaDB with structured CV data."""
+    print("Setting up ChromaDB with CV data...")
     
     # Load structured CV data
     cv_data_path = Path(__file__).parent.parent / "data" / "cv_data.json"
