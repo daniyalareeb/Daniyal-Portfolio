@@ -77,6 +77,10 @@ async def on_startup():
     This function runs when the FastAPI application starts up.
     It initializes background services and schedulers.
     """
+    # Initialize database tables
+    from app.database import engine, Base
+    Base.metadata.create_all(bind=engine)
+    
     # Start the automatic blog scheduler for content updates
     # This runs background jobs to generate and update blog content
     start_scheduler()
