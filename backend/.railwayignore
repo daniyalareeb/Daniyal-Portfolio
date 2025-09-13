@@ -34,8 +34,9 @@ coverage.xml
 static/uploads/
 uploads/
 
-# Ignore data directory
+# Ignore data directory (except cv_data.json)
 data/
+!data/cv_data.json
 
 # Ignore test files
 test_*
