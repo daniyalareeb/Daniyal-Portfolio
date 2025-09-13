@@ -20,7 +20,11 @@ except FileNotFoundError:
             "year": "Final year"
         },
         "skills": ["Python", "JavaScript", "React", "FastAPI", "SQL"],
-        "experience": ["Software Development", "Web Development", "AI/ML"],
+        "experience": [
+            {"role": "Software Developer", "company": "Freelance"},
+            {"role": "Web Developer", "company": "Personal Projects"},
+            {"role": "AI/ML Developer", "company": "University Projects"}
+        ],
         "projects": ["Portfolio Website", "AI Chat Application", "Various Web Projects"]
     }
 
