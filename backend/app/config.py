@@ -11,8 +11,11 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = "sqlite:///./portfolio.db"
     
-    # OpenRouter API
-    OPENROUTER_API_KEY: str
+    # ChromaDB (external service)
+    CHROMADB_URL: str = "http://localhost:8001"
+    
+    # OpenRouter API (with default for deployment)
+    OPENROUTER_API_KEY: str = "your-api-key-here"
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
     OPENROUTER_MODEL: str = "deepseek/deepseek-chat-v3-0324:free"
     
@@ -21,12 +24,12 @@ class Settings(BaseSettings):
     ADMIN_PASSWORD: str = "daniyal-admin-2024"
     JWT_SECRET_KEY: str = "your-super-secret-jwt-key-change-in-production"
     
-    # Email SMTP
+    # Email SMTP (with defaults for deployment)
     SMTP_HOST: str = "smtp.gmail.com"
     SMTP_PORT: int = 587
-    SMTP_USER: str
-    SMTP_PASSWORD: str
-    ADMIN_EMAIL: str
+    SMTP_USER: str = "your-email@gmail.com"
+    SMTP_PASSWORD: str = "your-app-password"
+    ADMIN_EMAIL: str = "admin@example.com"
     GITHUB_USERNAME: str = "daniyalareeb"
     
     # CORS
@@ -36,9 +39,6 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     
     class Config:
-        env_file = ".env"
-
-settings = Settings()
         env_file = ".env"
 
 settings = Settings()
