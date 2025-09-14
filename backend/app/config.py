@@ -37,7 +37,8 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "https://portfolio-frontend-ruddy-eta.vercel.app",
         "https://portfolio-frontend-1lavp6rgq-daniyalareebs-projects.vercel.app",
-        "https://portfolio-frontend-i63wb20qg-daniyalareebs-projects.vercel.app"
+        "https://portfolio-frontend-i63wb20qg-daniyalareebs-projects.vercel.app",
+        "https://portfolio-frontend-ibu13yoth-daniyalareebs-projects.vercel.app"
     ]
     
     # API
