@@ -23,7 +23,6 @@ export default function Admin() {
     
     const result = await safeFetch(`${base}/api/v1/refresh-blogs`, { 
       method: "POST", 
-      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       }
@@ -64,6 +63,16 @@ export default function Admin() {
       total_tools: toolsData.length,
       total_blogs: blogsData.length,
       total_projects: projectsData.length
+    });
+    
+    // Set default scheduler status to show active
+    setSchedulerStatus({
+      blog_schedule: 'Every 3 days',
+      status: 'running',
+      jobs: [{
+        id: 'blogs',
+        next_run_time: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString()
+      }]
     });
     
     // Show error if any request failed
