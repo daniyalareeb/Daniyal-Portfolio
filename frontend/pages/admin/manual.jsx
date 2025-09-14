@@ -66,9 +66,9 @@ export default function ManualAdmin() {
     console.log('API Base URL:', base);
     try {
       const [toolsRes, projectsRes, blogsRes] = await Promise.all([
-        fetch(`${base}/api/v1/list-tools-public`),
-        fetch(`${base}/api/v1/list-projects-public`),
-        fetch(`${base}/api/v1/list-blogs-public`)
+        fetch(`${base}/api/v1/tools/list`),
+        fetch(`${base}/api/v1/projects/list`),
+        fetch(`${base}/api/v1/news/list`)
       ]);
       
       console.log('Tools response status:', toolsRes.status);
@@ -83,15 +83,20 @@ export default function ManualAdmin() {
       console.log('Projects result:', projectsResult);
       console.log('Blogs result:', blogsResult);
       
-      if (toolsResult.success) setTools(toolsResult.data);
-      if (projectsResult.success) setProjects(projectsResult.data);
-      if (blogsResult.success) setBlogs(blogsResult.data);
+      // Handle different data formats
+      const toolsData = toolsResult.success ? (toolsResult.data?.items || toolsResult.data || []) : [];
+      const projectsData = projectsResult.success ? (projectsResult.data?.items || projectsResult.data || []) : [];
+      const blogsData = blogsResult.success ? (blogsResult.data?.items || blogsResult.data || []) : [];
+      
+      setTools(toolsData);
+      setProjects(projectsData);
+      setBlogs(blogsData);
       
       // Set stats based on data
       setStats({
-        tools: toolsResult.success ? toolsResult.data.length : 0,
-        projects: projectsResult.success ? projectsResult.data.length : 0,
-        blogs: blogsResult.success ? blogsResult.data.length : 0
+        tools: toolsData.length,
+        projects: projectsData.length,
+        blogs: blogsData.length
       });
     } catch (error) {
       console.error('Fetch error:', error);
