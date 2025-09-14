@@ -25,7 +25,14 @@ def contact_submit(payload: ContactIn, db: Session = Depends(get_db)):
 
     # send email (won't crash if SMTP fails would be ideal; keep simple)
     try:
-        send_contact_email(payload.name, payload.email, payload.message)
+        # Only try to send email if SMTP credentials are properly configured
+        from app.config import settings
+        if (settings.SMTP_USER != "your-email@gmail.com" and 
+            settings.SMTP_PASSWORD != "your-app-password"):
+            send_contact_email(payload.name, payload.email, payload.message)
+            print(f"Contact email sent successfully from {payload.name}")
+        else:
+            print("SMTP credentials not configured, skipping email send")
     except Exception as e:
         # still return success for UX; log later
         print(f"Email sending failed (but contact saved): {e}")
