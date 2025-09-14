@@ -150,6 +150,50 @@ async def delete_project(
         db.rollback()
         return {"success": False, "error": str(e)}
 
+@router.post("/upload-image-public")
+async def upload_image_public(
+    request: Request,
+    file: UploadFile = File(...)
+):
+    """Public endpoint to upload image files without authentication"""
+    try:
+        # Validate file type
+        if not file.content_type.startswith('image/'):
+            return {"success": False, "error": "Only image files are allowed"}
+        
+        # Validate file size (max 5MB)
+        file_size = 0
+        content = await file.read()
+        file_size = len(content)
+        if file_size > 5 * 1024 * 1024:  # 5MB
+            return {"success": False, "error": "File size too large. Maximum 5MB allowed"}
+        
+        # Generate unique filename
+        import uuid
+        file_extension = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
+        unique_filename = f"{uuid.uuid4()}.{file_extension}"
+        
+        # Create uploads directory if it doesn't exist
+        import os
+        upload_dir = "static/uploads"
+        os.makedirs(upload_dir, exist_ok=True)
+        
+        # Save file
+        file_path = os.path.join(upload_dir, unique_filename)
+        with open(file_path, "wb") as buffer:
+            buffer.write(content)
+        
+        # Return the URL
+        image_url = f"/static/uploads/{unique_filename}"
+        return {
+            "success": True, 
+            "message": "Image uploaded successfully",
+            "data": {"image_url": image_url}
+        }
+        
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
 @router.post("/upload-image")
 async def upload_image(
     request: Request,
