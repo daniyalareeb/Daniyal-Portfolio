@@ -44,7 +44,8 @@ class Settings(BaseSettings):
         "https://portfolio-frontend-9s81f6rvc-daniyalareebs-projects.vercel.app",
         "https://portfolio-frontend-93ozpdybl-daniyalareebs-projects.vercel.app",
         "https://portfolio-frontend-fqjgi8t2r-daniyalareebs-projects.vercel.app",
-        "https://portfolio-frontend-gw0hmyqa6-daniyalareebs-projects.vercel.app"
+        "https://portfolio-frontend-gw0hmyqa6-daniyalareebs-projects.vercel.app",
+        "https://portfolio-frontend-6zjtin9bp-daniyalareebs-projects.vercel.app"
     ]
     
     # API
