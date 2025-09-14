@@ -9,7 +9,7 @@ from PyPDF2 import PdfReader
 from docx import Document
 
 from app.models.cv import CVDocument
-from app.core.vectorstore import add_documents_sync as add_documents, query_similar_sync as query_similar
+from app.core.vectorstore import add_documents, query_similar
 from app.core.ai_client import OpenRouterClient
 
 def _extract_text(file: UploadFile) -> str:
@@ -47,11 +47,11 @@ async def process_cv_upload(db: Session, file: UploadFile):
     # Add to vector store along with your portfolio notes
     chunks = [content[i:i+1000] for i in range(0, len(content), 1000)]
     docs = [(f"{doc_id}_{i}", chunk) for i, chunk in enumerate(chunks)]
-    add_documents(docs)
+    await add_documents(docs)
     return {"message": "CV processed successfully"}
 
 async def query_cv(question: str, detailed: bool = False) -> Dict:
-    contexts = query_similar(question, k=4)
+    contexts = await query_similar(question, k=4)
     context_blob = "\n\n".join(contexts)
 
     system = (
