@@ -143,3 +143,69 @@ def populate_database(db: Session = Depends(get_db)):
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error populating database: {str(e)}")
+
+@router.post("/add-tool-public")
+def add_tool_public(
+    name: str,
+    description: str,
+    category: str,
+    url: str,
+    pricing: str = "Free",
+    status: str = "Active",
+    db: Session = Depends(get_db)
+):
+    """Public endpoint to add tools without authentication"""
+    try:
+        tool = Tool(
+            name=name,
+            description=description,
+            category=category,
+            url=url,
+            pricing=pricing,
+            status=status
+        )
+        db.add(tool)
+        db.commit()
+        db.refresh(tool)
+        
+        return {
+            "success": True,
+            "message": "Tool added successfully",
+            "data": {"tool_id": tool.id, "name": tool.name}
+        }
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error adding tool: {str(e)}")
+
+@router.post("/add-project-public")
+def add_project_public(
+    name: str,
+    description: str,
+    technologies: str,
+    github_url: str = None,
+    url: str = None,
+    category: str = "Web Development",
+    db: Session = Depends(get_db)
+):
+    """Public endpoint to add projects without authentication"""
+    try:
+        project = Project(
+            name=name,
+            description=description,
+            technologies=technologies,
+            github_url=github_url,
+            url=url,
+            category=category
+        )
+        db.add(project)
+        db.commit()
+        db.refresh(project)
+        
+        return {
+            "success": True,
+            "message": "Project added successfully",
+            "data": {"project_id": project.id, "name": project.name}
+        }
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error adding project: {str(e)}")
