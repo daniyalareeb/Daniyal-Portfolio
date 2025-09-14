@@ -70,8 +70,7 @@ def populate_database(db: Session = Depends(get_db)):
                 description="A modern portfolio website with AI-powered features including chat functionality and dynamic content generation",
                 technologies="FastAPI, Next.js, OpenAI, PostgreSQL",
                 github_url="https://github.com/daniyalareeb/portfolio",
-                live_url="https://daniyalareeb.me",
-                featured=True,
+                url="https://daniyalareeb.me",
                 category="Web Development"
             ),
             Project(
@@ -79,8 +78,7 @@ def populate_database(db: Session = Depends(get_db)):
                 description="Backend API for inventory and sales management with automated data analysis",
                 technologies="Python, FastAPI, SQLAlchemy, REST APIs",
                 github_url="https://github.com/daniyalareeb/inventory-management",
-                live_url=None,
-                featured=True,
+                url=None,
                 category="Backend Development"
             ),
             Project(
@@ -88,8 +86,7 @@ def populate_database(db: Session = Depends(get_db)):
                 description="Automated news collection and categorization system using AI",
                 technologies="Python, BeautifulSoup, FastAPI, Machine Learning",
                 github_url="https://github.com/daniyalareeb/ai-news-aggregator",
-                live_url=None,
-                featured=False,
+                url=None,
                 category="AI/ML"
             )
         ]
