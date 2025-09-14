@@ -77,6 +77,10 @@ async def on_startup():
     This function runs when the FastAPI application starts up.
     It initializes background services and schedulers.
     """
+    # Create data directory if it doesn't exist
+    import os
+    os.makedirs("data", exist_ok=True)
+    
     # Initialize database tables
     from app.database import engine, Base
     Base.metadata.create_all(bind=engine)

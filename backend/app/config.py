@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     APP_PORT: int = 8000
     
     # Database
-    DATABASE_URL: str = "sqlite:///./portfolio.db"
+    DATABASE_URL: str = "sqlite:///./data/portfolio.db"
     
     # ChromaDB (external service)
     CHROMADB_URL: str = "http://localhost:8001"
