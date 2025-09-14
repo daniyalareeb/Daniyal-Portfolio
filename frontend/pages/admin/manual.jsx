@@ -376,7 +376,7 @@ export default function ManualAdmin() {
     setMessage("Updating project...");
     const base = process.env.NEXT_PUBLIC_API_URL;
     try {
-      const response = await fetch(`${base}/api/v1/update-project/${editingProject.id}`, {
+      const response = await fetch(`${base}/api/v1/update-project-public/${editingProject.id}`, {
         method: "PUT",
         headers: { 
           "Content-Type": "application/json"
@@ -404,7 +404,7 @@ export default function ManualAdmin() {
     setMessage("Updating tool...");
     const base = process.env.NEXT_PUBLIC_API_URL;
     try {
-      const response = await fetch(`${base}/api/v1/update-tool/${editingTool.id}`, {
+      const response = await fetch(`${base}/api/v1/update-tool-public/${editingTool.id}`, {
         method: "PUT",
         headers: { 
           "Content-Type": "application/json"

@@ -236,6 +236,50 @@ async def upload_image(
     except Exception as e:
         return {"success": False, "error": str(e)}
 
+@router.put("/update-project-public/{project_id}")
+async def update_project_public(
+    request: Request,
+    project_id: int,
+    db: Session = Depends(get_db)
+):
+    """Public endpoint to update projects without authentication"""
+    try:
+        # Get the project data from request body
+        body = await request.json()
+        
+        # Find the project
+        project = db.query(Project).filter(Project.id == project_id).first()
+        if not project:
+            return {"success": False, "error": "Project not found"}
+        
+        # Update project fields
+        if "name" in body:
+            project.name = body["name"]
+        if "description" in body:
+            project.description = body["description"]
+        if "url" in body:
+            project.url = body["url"]
+        if "github_url" in body:
+            project.github_url = body["github_url"]
+        if "category" in body:
+            project.category = body["category"]
+        if "technologies" in body:
+            project.technologies = body["technologies"]
+        if "image_url" in body:
+            project.image_url = body["image_url"]
+        
+        db.commit()
+        db.refresh(project)
+        
+        return {
+            "success": True,
+            "message": "Project updated successfully",
+            "data": {"project_id": project.id, "name": project.name}
+        }
+    except Exception as e:
+        db.rollback()
+        return {"success": False, "error": str(e)}
+
 @router.put("/update-project/{project_id}")
 async def update_project(
     request: Request,
@@ -262,6 +306,48 @@ async def update_project(
         db.commit()
         
         return {"success": True, "message": "Project updated successfully"}
+    except Exception as e:
+        db.rollback()
+        return {"success": False, "error": str(e)}
+
+@router.put("/update-tool-public/{tool_id}")
+async def update_tool_public(
+    request: Request,
+    tool_id: int,
+    db: Session = Depends(get_db)
+):
+    """Public endpoint to update tools without authentication"""
+    try:
+        # Get the tool data from request body
+        body = await request.json()
+        
+        # Find the tool
+        tool = db.query(Tool).filter(Tool.id == tool_id).first()
+        if not tool:
+            return {"success": False, "error": "Tool not found"}
+        
+        # Update tool fields
+        if "name" in body:
+            tool.name = body["name"]
+        if "description" in body:
+            tool.description = body["description"]
+        if "url" in body:
+            tool.url = body["url"]
+        if "category" in body:
+            tool.category = body["category"]
+        if "pricing" in body:
+            tool.pricing = body["pricing"]
+        if "status" in body:
+            tool.status = body["status"]
+        
+        db.commit()
+        db.refresh(tool)
+        
+        return {
+            "success": True,
+            "message": "Tool updated successfully",
+            "data": {"tool_id": tool.id, "name": tool.name}
+        }
     except Exception as e:
         db.rollback()
         return {"success": False, "error": str(e)}
