@@ -285,18 +285,18 @@ def delete_blog_public(blog_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Error deleting blog: {str(e)}")
 
 @router.post("/refresh-blogs")
-def refresh_blogs(db: Session = Depends(get_db)):
-    """Public endpoint to refresh blogs from external sources"""
+async def refresh_blogs(db: Session = Depends(get_db)):
+    """Public endpoint to refresh blogs from external RSS sources"""
     try:
-        # For now, just return a success message since we don't have external blog sources configured
-        # In the future, this could fetch from RSS feeds or other sources
+        from app.services.blog_service import fetch_and_update_blogs
+        
+        # Fetch blogs from RSS sources and update database
+        result = await fetch_and_update_blogs(db)
+        
         return {
             "success": True,
-            "message": "Blog refresh completed",
-            "data": {
-                "added": 0,
-                "message": "No external blog sources configured. Use manual blog generation instead."
-            }
+            "message": "Blog refresh completed successfully",
+            "data": result
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error refreshing blogs: {str(e)}")
