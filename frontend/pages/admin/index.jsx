@@ -39,27 +39,32 @@ export default function Admin() {
   }
 
   async function fetchAll() {
-    const base = process.env.NEXT_PUBLIC_API_URL;
+    const base = process.env.NEXT_PUBLIC_API_URL || 'https://kind-perfection-production-ae48.up.railway.app';
     
     const requests = [
-      { url: `${base}/api/v1/tools/status`, options: { credentials: 'include' } },
-      { url: `${base}/api/v1/dashboard`, options: { credentials: 'include' } },
-      { url: `${base}/api/v1/scheduler-status`, options: { credentials: 'include' } }
+      { url: `${base}/api/v1/tools/list`, options: {} },
+      { url: `${base}/api/v1/projects/list`, options: {} },
+      { url: `${base}/api/v1/news/list`, options: {} }
     ];
     
     const results = await fetchMultiple(requests);
-    const [t, d, s] = results;
+    const [toolsRes, projectsRes, blogsRes] = results;
     
-    if (t.success) {
-      setTools(t.data?.data?.recent_tools || []);
-    }
-    if (d.success) {
-      setBlogs(d.data?.data?.recent_blogs || []);
-      setStats(d.data?.data?.overview || {});
-    }
-    if (s.success) {
-      setSchedulerStatus(s.data?.data || {});
-    }
+    // Extract data from working endpoints
+    const toolsData = toolsRes.success ? (toolsRes.data?.data?.items || toolsRes.data?.items || []) : [];
+    const projectsData = projectsRes.success ? (projectsRes.data?.data?.items || projectsRes.data?.items || []) : [];
+    const blogsData = blogsRes.success ? (blogsRes.data?.data?.items || blogsRes.data?.items || []) : [];
+    
+    // Set the data
+    setTools(toolsData.slice(0, 5)); // Show recent 5 tools
+    setBlogs(blogsData.slice(0, 5)); // Show recent 5 blogs
+    
+    // Set stats with correct structure
+    setStats({
+      total_tools: toolsData.length,
+      total_blogs: blogsData.length,
+      total_projects: projectsData.length
+    });
     
     // Show error if any request failed
     const errors = results.filter(r => !r.success).map(r => r.error);
