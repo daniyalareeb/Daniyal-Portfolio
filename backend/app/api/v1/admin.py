@@ -1,158 +1,148 @@
-from fastapi import APIRouter, Header, HTTPException, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.services.tools_service import fetch_and_update_tools
-from app.services.scheduler import get_scheduler_status, reset_blog_scheduler
-from app.models import Tool, BlogPost, Project
-from app.config import settings
-from app.core.security import get_security_manager
-from typing import Optional
-import json
+from app.models import Tool, Project, BlogPost
+from datetime import datetime
 
 router = APIRouter()
 
-def verify_admin_secret(x_admin_secret: Optional[str] = Header(None)):
-    """Verify admin secret header."""
-    if x_admin_secret != settings.ADMIN_SECRET:
-        raise HTTPException(status_code=401, detail="Invalid admin secret")
-    return x_admin_secret
-
-def verify_admin_session(request: Request):
-    """Verify admin session cookie using JWT."""
-    security_manager = get_security_manager()
-    return security_manager.verify_admin_session(request)
-
-@router.post("/refresh-tools")
-async def refresh_tools(admin_secret: str = Depends(verify_admin_secret), db: Session = Depends(get_db)):
-    """Refresh tools from external sources."""
+@router.post("/populate-database")
+def populate_database(db: Session = Depends(get_db)):
+    """Populate the database with sample data"""
     try:
-        result = await fetch_and_update_tools(db)
-        return {"success": True, "message": "Tools refreshed successfully", "data": result}
-    except Exception as e:
-        return {"success": False, "error": str(e)}
-
-@router.get("/tools/status")
-async def tools_status(session: dict = Depends(verify_admin_session), db: Session = Depends(get_db)):
-    """Get tools status and statistics."""
-    try:
-        total_tools = db.query(Tool).count()
-        auto_fetched = db.query(Tool).filter(Tool.auto_fetched == True).count()
-        manual_tools = db.query(Tool).filter(Tool.auto_fetched == False).count()
+        # Clear existing data
+        db.query(Tool).delete()
+        db.query(Project).delete()
+        db.query(BlogPost).delete()
+        db.commit()
         
-        categories = db.query(Tool.category).distinct().all()
-        category_count = len(categories)
+        # Add sample tools
+        tools = [
+            Tool(
+                name="Midjourney",
+                description="AI-powered image generation with stunning artistic results",
+                category="Image Generation",
+                status="Popular",
+                url="https://midjourney.com",
+                pricing="Paid"
+            ),
+            Tool(
+                name="ChatGPT",
+                description="Advanced conversational AI for various tasks",
+                category="Text Generation",
+                status="Popular",
+                url="https://chat.openai.com",
+                pricing="Freemium"
+            ),
+            Tool(
+                name="DALL-E 3",
+                description="Create images from text descriptions with high quality",
+                category="Image Generation",
+                status="Trending",
+                url="https://openai.com/dall-e-3",
+                pricing="Paid"
+            ),
+            Tool(
+                name="Runway ML",
+                description="Professional video editing and generation using AI",
+                category="Video Generation",
+                status="Trending",
+                url="https://runwayml.com",
+                pricing="Freemium"
+            ),
+            Tool(
+                name="Gamma",
+                description="AI-powered presentation creation and design",
+                category="Presentation",
+                status="Trending",
+                url="https://gamma.app",
+                pricing="Freemium"
+            )
+        ]
+        
+        for tool in tools:
+            db.add(tool)
+        
+        # Add sample projects
+        projects = [
+            Project(
+                name="AI Portfolio Website",
+                description="A modern portfolio website with AI-powered features including chat functionality and dynamic content generation",
+                technologies="FastAPI, Next.js, OpenAI, PostgreSQL",
+                github_url="https://github.com/daniyalareeb/portfolio",
+                live_url="https://daniyalareeb.me",
+                featured=True,
+                category="Web Development"
+            ),
+            Project(
+                name="Smart Inventory Management",
+                description="Backend API for inventory and sales management with automated data analysis",
+                technologies="Python, FastAPI, SQLAlchemy, REST APIs",
+                github_url="https://github.com/daniyalareeb/inventory-management",
+                live_url=None,
+                featured=True,
+                category="Backend Development"
+            ),
+            Project(
+                name="AI News Aggregator",
+                description="Automated news collection and categorization system using AI",
+                technologies="Python, BeautifulSoup, FastAPI, Machine Learning",
+                github_url="https://github.com/daniyalareeb/ai-news-aggregator",
+                live_url=None,
+                featured=False,
+                category="AI/ML"
+            )
+        ]
+        
+        for project in projects:
+            db.add(project)
+        
+        # Add sample blog posts
+        blogs = [
+            BlogPost(
+                title="AI in Healthcare: Revolutionizing Patient Care",
+                excerpt="Exploring how artificial intelligence is transforming healthcare delivery and patient outcomes.",
+                content="Artificial intelligence is revolutionizing healthcare in unprecedented ways...",
+                category="AI",
+                published=True,
+                featured=True,
+                source="AI Healthcare Research"
+            ),
+            BlogPost(
+                title="Building Scalable APIs with FastAPI",
+                excerpt="Best practices for creating high-performance APIs using FastAPI framework.",
+                content="FastAPI has become one of the most popular Python web frameworks...",
+                category="Backend Development",
+                published=True,
+                featured=False,
+                source="Tech Blog"
+            ),
+            BlogPost(
+                title="The Future of Machine Learning",
+                excerpt="Trends and predictions for the next decade in machine learning and AI.",
+                content="Machine learning continues to evolve at a rapid pace...",
+                category="AI",
+                published=True,
+                featured=True,
+                source="ML Research"
+            )
+        ]
+        
+        for blog in blogs:
+            db.add(blog)
+        
+        db.commit()
         
         return {
             "success": True,
+            "message": "Database populated successfully",
             "data": {
-                "total_tools": total_tools,
-                "auto_fetched": auto_fetched,
-                "manual_tools": manual_tools,
-                "categories": [cat[0] for cat in categories],
-                "category_count": category_count
+                "tools_added": len(tools),
+                "projects_added": len(projects),
+                "blogs_added": len(blogs)
             }
         }
+        
     except Exception as e:
-        return {"success": False, "error": str(e)}
-
-@router.post("/refresh-blogs")
-async def refresh_blogs(
-    request: Request,
-    session: dict = Depends(verify_admin_session), 
-    db: Session = Depends(get_db)
-):
-    """Refresh blogs from external sources and reset the 3-day timer."""
-    try:
-        from app.services.blog_service import fetch_and_update_blogs
-        
-        # Refresh the blogs
-        result = await fetch_and_update_blogs(db)
-        
-        # Reset the scheduler timer to run again in 3 days from now
-        scheduler_reset = reset_blog_scheduler()
-        
-        return {
-            "success": True, 
-            "message": "Blogs refreshed successfully and timer reset to 3 days", 
-            "data": result,
-            "scheduler_reset": scheduler_reset
-        }
-    except Exception as e:
-        return {"success": False, "error": str(e)}
-
-@router.get("/dashboard")
-async def admin_dashboard(session: dict = Depends(verify_admin_session), db: Session = Depends(get_db)):
-    """Admin dashboard with overview of all data."""
-    try:
-        # Get counts
-        tools_count = db.query(Tool).count()
-        blogs_count = db.query(BlogPost).count()
-        projects_count = db.query(Project).count()
-        
-        # Get recent items
-        recent_tools = db.query(Tool).order_by(Tool.id.desc()).limit(5).all()
-        recent_blogs = db.query(BlogPost).order_by(BlogPost.id.desc()).limit(5).all()
-        recent_projects = db.query(Project).order_by(Project.id.desc()).limit(5).all()
-        
-        # Get category breakdown
-        tool_categories = db.query(Tool.category).distinct().all()
-        blog_categories = db.query(BlogPost.category).distinct().all()
-        
-        return {
-            "success": True,
-            "data": {
-                "overview": {
-                    "total_tools": tools_count,
-                    "total_blogs": blogs_count,
-                    "total_projects": projects_count
-                },
-                "recent_tools": [
-                    {
-                        "id": tool.id,
-                        "name": tool.name,
-                        "category": tool.category,
-                        "status": tool.status
-                    } for tool in recent_tools
-                ],
-                "recent_blogs": [
-                    {
-                        "id": blog.id,
-                        "title": blog.title,
-                        "category": blog.category,
-                        "featured": blog.featured
-                    } for blog in recent_blogs
-                ],
-                "recent_projects": [
-                    {
-                        "id": project.id,
-                        "name": project.name,
-                        "url": project.url
-                    } for project in recent_projects
-                ],
-                "categories": {
-                    "tools": [cat[0] for cat in tool_categories],
-                    "blogs": [cat[0] for cat in blog_categories]
-                },
-                "scheduler": {
-                    "is_running": True,  # Scheduler is always running when app starts
-                    "blog_interval": "3 days",
-                    "project_interval": "2 hours",
-                    "last_blog_update": recent_blogs[0].last_updated.isoformat() if recent_blogs else None,
-                    "next_blog_update": "Every 3 days automatically",
-                    "blog_update_status": "Active - Next update in 3 days"
-                }
-            }
-        }
-    except Exception as e:
-        return {"success": False, "error": str(e)}
-
-
-
-@router.get("/scheduler-status")
-async def get_scheduler_status_endpoint(session: dict = Depends(verify_admin_session)):
-    """Get detailed scheduler status including next blog update time."""
-    try:
-        status = get_scheduler_status()
-        return {"success": True, "data": status}
-    except Exception as e:
-        return {"success": False, "error": str(e)}
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error populating database: {str(e)}")
