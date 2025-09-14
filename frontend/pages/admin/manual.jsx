@@ -64,22 +64,26 @@ export default function ManualAdmin() {
   async function fetchStats() {
     const base = process.env.NEXT_PUBLIC_API_URL;
     try {
-      const [statsRes, toolsRes, projectsRes, blogsRes] = await Promise.all([
-        fetch(`${base}/api/v1/manual-stats`, { credentials: 'include' }),
-        fetch(`${base}/api/v1/list-tools`, { credentials: 'include' }),
-        fetch(`${base}/api/v1/list-projects`, { credentials: 'include' }),
-        fetch(`${base}/api/v1/list-blogs`, { credentials: 'include' })
+      const [toolsRes, projectsRes, blogsRes] = await Promise.all([
+        fetch(`${base}/api/v1/list-tools-public`),
+        fetch(`${base}/api/v1/list-projects-public`),
+        fetch(`${base}/api/v1/list-blogs-public`)
       ]);
       
-      const statsResult = await statsRes.json();
       const toolsResult = await toolsRes.json();
       const projectsResult = await projectsRes.json();
       const blogsResult = await blogsRes.json();
       
-      if (statsResult.success) setStats(statsResult.data);
       if (toolsResult.success) setTools(toolsResult.data);
       if (projectsResult.success) setProjects(projectsResult.data);
       if (blogsResult.success) setBlogs(blogsResult.data);
+      
+      // Set stats based on data
+      setStats({
+        tools: toolsResult.success ? toolsResult.data.length : 0,
+        projects: projectsResult.success ? projectsResult.data.length : 0,
+        blogs: blogsResult.success ? blogsResult.data.length : 0
+      });
     } catch (error) {
       setMessage(`Error fetching data: ${error.message}`);
     }
@@ -90,12 +94,11 @@ export default function ManualAdmin() {
     setMessage("Adding tool...");
     const base = process.env.NEXT_PUBLIC_API_URL;
     try {
-      const response = await fetch(`${base}/api/v1/add-tool`, {
+      const response = await fetch(`${base}/api/v1/add-tool-public`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json"
         },
-        credentials: 'include',
         body: JSON.stringify(toolForm)
       });
       const result = await response.json();
@@ -124,12 +127,11 @@ export default function ManualAdmin() {
     setMessage("Adding project...");
     const base = process.env.NEXT_PUBLIC_API_URL;
     try {
-      const response = await fetch(`${base}/api/v1/add-project`, {
+      const response = await fetch(`${base}/api/v1/add-project-public`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json"
         },
-        credentials: 'include',
         body: JSON.stringify(projectForm)
       });
       const result = await response.json();
