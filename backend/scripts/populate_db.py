@@ -68,9 +68,7 @@ def populate_database():
         ]
         
         for tool in tools:
-            existing = db.query(Tool).filter(Tool.id == tool.id).first()
-            if not existing:
-                db.add(tool)
+            db.add(tool)
         
         # Add sample blog posts
         blogs = [
