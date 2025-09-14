@@ -97,16 +97,26 @@ export default function ManualAdmin() {
         blogs: blogsData.length
       });
       
+      console.log('DEBUG - Setting stats to:', {
+        tools: toolsData.length,
+        projects: projectsData.length,
+        blogs: blogsData.length
+      });
+      
       setTools(toolsData);
       setProjects(projectsData);
       setBlogs(blogsData);
       
       // Set stats based on data
-      setStats({
+      const newStats = {
         tools: toolsData.length,
         projects: projectsData.length,
         blogs: blogsData.length
-      });
+      };
+      
+      console.log('DEBUG - About to set stats:', newStats);
+      setStats(newStats);
+      console.log('DEBUG - Stats set successfully');
     } catch (error) {
       console.error('Fetch error:', error);
       setMessage(`Error fetching data: ${error.message}`);
