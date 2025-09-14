@@ -7,12 +7,13 @@ router = APIRouter()
 
 @router.post("/cv/query")
 async def cv_query(
-    question: str,
-    detailed: bool = Query(False, description="Get detailed answer (default: concise)"),
+    request: dict,
     db: Session = Depends(get_db)
 ):
     """Query CV using RAG with option for concise or detailed answers."""
     try:
+        question = request.get("question")
+        detailed = request.get("detailed", False)
         result = await query_cv(question, detailed=detailed)
         return {"success": True, "data": result}
     except Exception as e:
