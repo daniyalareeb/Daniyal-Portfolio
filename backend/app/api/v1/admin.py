@@ -283,3 +283,20 @@ def delete_blog_public(blog_id: int, db: Session = Depends(get_db)):
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error deleting blog: {str(e)}")
+
+@router.post("/refresh-blogs")
+def refresh_blogs(db: Session = Depends(get_db)):
+    """Public endpoint to refresh blogs from external sources"""
+    try:
+        # For now, just return a success message since we don't have external blog sources configured
+        # In the future, this could fetch from RSS feeds or other sources
+        return {
+            "success": True,
+            "message": "Blog refresh completed",
+            "data": {
+                "added": 0,
+                "message": "No external blog sources configured. Use manual blog generation instead."
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error refreshing blogs: {str(e)}")
