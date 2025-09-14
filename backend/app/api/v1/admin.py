@@ -146,23 +146,18 @@ def populate_database(db: Session = Depends(get_db)):
 
 @router.post("/add-tool-public")
 def add_tool_public(
-    name: str,
-    description: str,
-    category: str,
-    url: str,
-    pricing: str = "Free",
-    status: str = "Active",
+    request: dict,
     db: Session = Depends(get_db)
 ):
     """Public endpoint to add tools without authentication"""
     try:
         tool = Tool(
-            name=name,
-            description=description,
-            category=category,
-            url=url,
-            pricing=pricing,
-            status=status
+            name=request.get("name"),
+            description=request.get("description"),
+            category=request.get("category"),
+            url=request.get("url"),
+            pricing=request.get("pricing", "Free"),
+            status=request.get("status", "Active")
         )
         db.add(tool)
         db.commit()
@@ -179,23 +174,18 @@ def add_tool_public(
 
 @router.post("/add-project-public")
 def add_project_public(
-    name: str,
-    description: str,
-    technologies: str,
-    github_url: str = None,
-    url: str = None,
-    category: str = "Web Development",
+    request: dict,
     db: Session = Depends(get_db)
 ):
     """Public endpoint to add projects without authentication"""
     try:
         project = Project(
-            name=name,
-            description=description,
-            technologies=technologies,
-            github_url=github_url,
-            url=url,
-            category=category
+            name=request.get("name"),
+            description=request.get("description"),
+            technologies=request.get("technologies"),
+            github_url=request.get("github_url"),
+            url=request.get("url"),
+            category=request.get("category", "Web Development")
         )
         db.add(project)
         db.commit()
@@ -209,3 +199,39 @@ def add_project_public(
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error adding project: {str(e)}")
+
+@router.get("/list-tools-public")
+def list_tools_public(db: Session = Depends(get_db)):
+    """Public endpoint to list tools without authentication"""
+    try:
+        tools = db.query(Tool).all()
+        return {
+            "success": True,
+            "data": tools
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error listing tools: {str(e)}")
+
+@router.get("/list-projects-public")
+def list_projects_public(db: Session = Depends(get_db)):
+    """Public endpoint to list projects without authentication"""
+    try:
+        projects = db.query(Project).all()
+        return {
+            "success": True,
+            "data": projects
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error listing projects: {str(e)}")
+
+@router.get("/list-blogs-public")
+def list_blogs_public(db: Session = Depends(get_db)):
+    """Public endpoint to list blogs without authentication"""
+    try:
+        blogs = db.query(BlogPost).all()
+        return {
+            "success": True,
+            "data": blogs
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error listing blogs: {str(e)}")
