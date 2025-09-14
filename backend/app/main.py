@@ -85,6 +85,27 @@ async def on_startup():
     from app.database import engine, Base
     Base.metadata.create_all(bind=engine)
     
+    # Auto-populate database if empty
+    try:
+        from app.database import get_db
+        from app.models import Tool, Project, BlogPost
+        from sqlalchemy.orm import Session
+        
+        db = next(get_db())
+        tools_count = db.query(Tool).count()
+        
+        if tools_count == 0:
+            print("Database is empty, auto-populating...")
+            # Import and call populate function
+            from app.api.v1.admin import populate_database
+            result = populate_database(db)
+            print(f"Auto-population result: {result}")
+        else:
+            print(f"Database already has {tools_count} tools")
+            
+    except Exception as e:
+        print(f"Error auto-populating database: {e}")
+    
     # Start the automatic blog scheduler for content updates
     # This runs background jobs to generate and update blog content
     start_scheduler()

@@ -28,6 +28,7 @@ def contact_submit(payload: ContactIn, db: Session = Depends(get_db)):
         send_contact_email(payload.name, payload.email, payload.message)
     except Exception as e:
         # still return success for UX; log later
+        print(f"Email sending failed (but contact saved): {e}")
         pass
 
     return APIResponse(success=True, data={"message": "Thanks! I'll get back to you soon.", "submission_id": sub.id})

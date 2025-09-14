@@ -62,15 +62,10 @@ export default function ManualAdmin() {
   ];
 
   async function fetchStats() {
-    const base = process.env.NEXT_PUBLIC_API_URL;
+    const base = process.env.NEXT_PUBLIC_API_URL || 'https://kind-perfection-production-ae48.up.railway.app';
     console.log('DEBUG - API Base URL:', base);
     console.log('DEBUG - Environment:', process.env.NODE_ENV);
-    
-    if (!base) {
-      console.error('NEXT_PUBLIC_API_URL is undefined!');
-      setMessage('Error: API URL not configured. Please check environment variables.');
-      return;
-    }
+    console.log('DEBUG - NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
     
     try {
       const [toolsRes, projectsRes, blogsRes] = await Promise.all([
