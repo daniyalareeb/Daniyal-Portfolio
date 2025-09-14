@@ -63,7 +63,15 @@ export default function ManualAdmin() {
 
   async function fetchStats() {
     const base = process.env.NEXT_PUBLIC_API_URL;
-    console.log('API Base URL:', base);
+    console.log('DEBUG - API Base URL:', base);
+    console.log('DEBUG - Environment:', process.env.NODE_ENV);
+    
+    if (!base) {
+      console.error('NEXT_PUBLIC_API_URL is undefined!');
+      setMessage('Error: API URL not configured. Please check environment variables.');
+      return;
+    }
+    
     try {
       const [toolsRes, projectsRes, blogsRes] = await Promise.all([
         fetch(`${base}/api/v1/tools/list`),
@@ -87,6 +95,12 @@ export default function ManualAdmin() {
       const toolsData = toolsResult.success ? (toolsResult.data?.items || toolsResult.data || []) : [];
       const projectsData = projectsResult.success ? (projectsResult.data?.items || projectsResult.data || []) : [];
       const blogsData = blogsResult.success ? (blogsResult.data?.items || blogsResult.data || []) : [];
+      
+      console.log('DEBUG - Final data counts:', {
+        tools: toolsData.length,
+        projects: projectsData.length,
+        blogs: blogsData.length
+      });
       
       setTools(toolsData);
       setProjects(projectsData);
@@ -272,9 +286,9 @@ export default function ManualAdmin() {
     setMessage("Deleting tool...");
     const base = process.env.NEXT_PUBLIC_API_URL;
     try {
-      const response = await fetch(`${base}/api/v1/delete-tool/${toolId}`, {
+      const response = await fetch(`${base}/api/v1/delete-tool-public/${toolId}`, {
         method: "DELETE",
-        credentials: 'include'
+        headers: { 'Origin': window.location.origin }
       });
       const result = await response.json();
       if (result.success) {
@@ -295,9 +309,9 @@ export default function ManualAdmin() {
     setMessage("Deleting project...");
     const base = process.env.NEXT_PUBLIC_API_URL;
     try {
-      const response = await fetch(`${base}/api/v1/delete-project/${projectId}`, {
+      const response = await fetch(`${base}/api/v1/delete-project-public/${projectId}`, {
         method: "DELETE",
-        credentials: 'include'
+        headers: { 'Origin': window.location.origin }
       });
       const result = await response.json();
       if (result.success) {
@@ -318,9 +332,9 @@ export default function ManualAdmin() {
     setMessage("Deleting blog...");
     const base = process.env.NEXT_PUBLIC_API_URL;
     try {
-      const response = await fetch(`${base}/api/v1/delete-blog/${blogId}`, {
+      const response = await fetch(`${base}/api/v1/delete-blog-public/${blogId}`, {
         method: "DELETE",
-        credentials: 'include'
+        headers: { 'Origin': window.location.origin }
       });
       const result = await response.json();
       if (result.success) {

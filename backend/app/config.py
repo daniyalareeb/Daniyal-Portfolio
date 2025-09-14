@@ -35,6 +35,8 @@ class Settings(BaseSettings):
     # CORS
     CORS_ORIGINS: List[str] = [
         "http://localhost:3000",
+        "https://daniyalareeb.com",
+        "https://www.daniyalareeb.com",
         "https://portfolio-frontend-ruddy-eta.vercel.app",
         "https://portfolio-frontend-1lavp6rgq-daniyalareebs-projects.vercel.app",
         "https://portfolio-frontend-i63wb20qg-daniyalareebs-projects.vercel.app",

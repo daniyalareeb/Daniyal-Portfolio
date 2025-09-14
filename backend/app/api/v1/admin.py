@@ -235,3 +235,51 @@ def list_blogs_public(db: Session = Depends(get_db)):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error listing blogs: {str(e)}")
+
+@router.delete("/delete-tool-public/{tool_id}")
+def delete_tool_public(tool_id: int, db: Session = Depends(get_db)):
+    """Public endpoint to delete tools without authentication"""
+    try:
+        tool = db.query(Tool).filter(Tool.id == tool_id).first()
+        if not tool:
+            return {"success": False, "error": "Tool not found"}
+        
+        db.delete(tool)
+        db.commit()
+        
+        return {"success": True, "message": "Tool deleted successfully"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error deleting tool: {str(e)}")
+
+@router.delete("/delete-project-public/{project_id}")
+def delete_project_public(project_id: int, db: Session = Depends(get_db)):
+    """Public endpoint to delete projects without authentication"""
+    try:
+        project = db.query(Project).filter(Project.id == project_id).first()
+        if not project:
+            return {"success": False, "error": "Project not found"}
+        
+        db.delete(project)
+        db.commit()
+        
+        return {"success": True, "message": "Project deleted successfully"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error deleting project: {str(e)}")
+
+@router.delete("/delete-blog-public/{blog_id}")
+def delete_blog_public(blog_id: int, db: Session = Depends(get_db)):
+    """Public endpoint to delete blogs without authentication"""
+    try:
+        blog = db.query(BlogPost).filter(BlogPost.id == blog_id).first()
+        if not blog:
+            return {"success": False, "error": "Blog not found"}
+        
+        db.delete(blog)
+        db.commit()
+        
+        return {"success": True, "message": "Blog deleted successfully"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error deleting blog: {str(e)}")
