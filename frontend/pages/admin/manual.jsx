@@ -63,6 +63,7 @@ export default function ManualAdmin() {
 
   async function fetchStats() {
     const base = process.env.NEXT_PUBLIC_API_URL;
+    console.log('API Base URL:', base);
     try {
       const [toolsRes, projectsRes, blogsRes] = await Promise.all([
         fetch(`${base}/api/v1/list-tools-public`),
@@ -70,9 +71,17 @@ export default function ManualAdmin() {
         fetch(`${base}/api/v1/list-blogs-public`)
       ]);
       
+      console.log('Tools response status:', toolsRes.status);
+      console.log('Projects response status:', projectsRes.status);
+      console.log('Blogs response status:', blogsRes.status);
+      
       const toolsResult = await toolsRes.json();
       const projectsResult = await projectsRes.json();
       const blogsResult = await blogsRes.json();
+      
+      console.log('Tools result:', toolsResult);
+      console.log('Projects result:', projectsResult);
+      console.log('Blogs result:', blogsResult);
       
       if (toolsResult.success) setTools(toolsResult.data);
       if (projectsResult.success) setProjects(projectsResult.data);
@@ -85,6 +94,7 @@ export default function ManualAdmin() {
         blogs: blogsResult.success ? blogsResult.data.length : 0
       });
     } catch (error) {
+      console.error('Fetch error:', error);
       setMessage(`Error fetching data: ${error.message}`);
     }
   }
