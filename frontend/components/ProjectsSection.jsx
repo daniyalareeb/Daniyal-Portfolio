@@ -33,16 +33,16 @@ export default function ProjectsSection(){
     return (
       <Section id="projects" title="Projects" subtitle="Loading projects...">
         <div className="flex justify-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-24 md:h-32 w-24 md:w-32 border-b-2 border-blue-600"></div>
         </div>
       </Section>
     )
   }
 
   return (
-    <Section id="projects" title="Projects" subtitle="Real projects from my portfolio.">
+    <Section id="projects" title="Projects" subtitle="Turning innovative ideas into real-world solutions that make a difference.">
       {/* Projects Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {projects.map((project, index) => (
           <motion.div 
             key={project.id} 

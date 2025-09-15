@@ -53,20 +53,20 @@ export default function BlogPage() {
 
   if (loading) {
     return (
-      <div className="pt-24 px-6 flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div className="pt-20 md:pt-24 px-4 md:px-6 flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-24 md:h-32 w-24 md:w-32 border-b-2 border-blue-600"></div>
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-hero">
-      <div className="pt-24 pb-8">
-        <div className="max-w-7xl mx-auto px-6">
+      <div className="pt-20 md:pt-24 pb-6 md:pb-8">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
+            className="text-center mb-8 md:mb-12"
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-brand-300 bg-clip-text text-transparent">
               AI Insights & Analysis

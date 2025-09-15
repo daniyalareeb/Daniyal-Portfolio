@@ -6,7 +6,7 @@ export default function ProjectCard({ title, description, tags = [], demo, url, 
   const [imageError, setImageError] = useState(false)
   return (
     <motion.div 
-      whileHover={{ y:-8, scale: 1.02 }} 
+      whileHover={{ y:-4, scale: 1.01 }} 
       className="group card overflow-hidden h-full flex flex-col"
     >
       {/* Project Preview */}
@@ -43,23 +43,23 @@ export default function ProjectCard({ title, description, tags = [], demo, url, 
       </div>
       
       {/* Content */}
-      <div className="p-6 space-y-4 flex-1 flex flex-col">
+      <div className="p-4 md:p-6 space-y-3 md:space-y-4 flex-1 flex flex-col">
         {/* Title */}
-        <h3 className="text-xl font-bold text-white group-hover:text-brand-300 transition-colors duration-300">
+        <h3 className="text-lg md:text-xl font-bold text-white group-hover:text-brand-300 transition-colors duration-300">
           {title}
         </h3>
         
         {/* Description */}
-        <p className="text-slate-300 leading-relaxed text-sm">
+        <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
           {description}
         </p>
         
         {/* Technologies */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1 md:gap-2">
           {tags.map((tag, index) => (
             <span 
               key={index}
-              className="px-3 py-1 rounded-full bg-brand-500/20 text-brand-300 text-xs font-medium ring-1 ring-brand-500/30"
+              className="px-2 md:px-3 py-1 rounded-full bg-brand-500/20 text-brand-300 text-xs font-medium ring-1 ring-brand-500/30"
             >
               {tag}
             </span>

@@ -19,22 +19,22 @@ const experiences = [
 
 export default function WorkExperience(){
   return (
-    <section id="experience" className="py-16">
-      <div className="mx-auto max-w-7xl px-6">
+    <section id="experience" className="py-12 md:py-16">
+      <div className="mx-auto max-w-7xl px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-8 md:mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Work Experience</h2>
-          <p className="text-lg text-slate-300 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 md:mb-4">Work Experience</h2>
+          <p className="text-base md:text-lg text-slate-300 max-w-3xl mx-auto px-4">
             My professional journey in software development, focusing on building innovative solutions and growing technical expertise.
           </p>
         </motion.div>
 
-        <div className="space-y-8">
+        <div className="space-y-6 md:space-y-8">
           {experiences.map((exp, index) => (
             <motion.div
               key={exp.title}
@@ -42,27 +42,27 @@ export default function WorkExperience(){
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="card p-8"
+              className="card p-4 md:p-8"
             >
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3 md:mb-4">
                 <div>
-                  <h3 className="text-xl font-semibold text-white">{exp.title}</h3>
-                  <p className="text-brand-300 font-medium">{exp.company}</p>
+                  <h3 className="text-lg md:text-xl font-semibold text-white">{exp.title}</h3>
+                  <p className="text-brand-300 font-medium text-sm md:text-base">{exp.company}</p>
                 </div>
-                <span className="text-slate-400 text-sm md:text-base mt-2 md:mt-0">
+                <span className="text-slate-400 text-xs md:text-sm mt-1 md:mt-0">
                   {exp.period}
                 </span>
               </div>
               
-              <p className="text-slate-300 mb-4 leading-relaxed">
+              <p className="text-sm md:text-base text-slate-300 mb-3 md:mb-4 leading-relaxed">
                 {exp.description}
               </p>
               
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1 md:gap-2">
                 {exp.technologies.map(tech => (
                   <span
                     key={tech}
-                    className="px-3 py-1 rounded-full bg-white/10 text-slate-200 text-xs font-medium"
+                    className="px-2 md:px-3 py-1 rounded-full bg-white/10 text-slate-200 text-xs font-medium"
                   >
                     {tech}
                   </span>

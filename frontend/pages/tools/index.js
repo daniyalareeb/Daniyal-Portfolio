@@ -37,30 +37,30 @@ export default function ToolsPage() {
 
   if (loading) {
     return (
-      <div className="pt-24 px-6 flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div className="pt-20 md:pt-24 px-4 md:px-6 flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-24 md:h-32 w-24 md:w-32 border-b-2 border-blue-600"></div>
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-hero">
-      <div className="pt-24 pb-8">
-        <div className="max-w-7xl mx-auto px-6">
+      <div className="pt-20 md:pt-24 pb-6 md:pb-8">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
+            className="text-center mb-8 md:mb-12"
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-brand-300 bg-clip-text text-transparent">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-white to-brand-300 bg-clip-text text-transparent">
               AI Tools Directory
             </h1>
-            <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed mb-4">
+            <p className="text-base md:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed mb-3 md:mb-4 px-4">
               Discover the latest and greatest AI tools for content creation, design, and productivity. 
               From image generation to video creation, find the perfect AI tool for your needs.
             </p>
-            <div className="flex justify-center items-center gap-4 text-sm text-slate-400">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-wrap justify-center items-center gap-2 md:gap-4 text-xs md:text-sm text-slate-400">
+              <div className="flex items-center gap-1 md:gap-2">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                 <span>Live Updates</span>
               </div>
@@ -76,17 +76,17 @@ export default function ToolsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="mb-12"
+            className="mb-8 md:mb-12"
           >
-            <div className="card p-6">
-              <div className="flex flex-col lg:flex-row gap-4 items-center">
+            <div className="card p-4 md:p-6">
+              <div className="flex flex-col lg:flex-row gap-3 md:gap-4 items-center">
                 <div className="relative flex-1">
                   <input
                     type="text"
                     placeholder="Search AI tools..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-4 py-3 pl-12 rounded-xl bg-white/5 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-brand-400 text-white placeholder-slate-400"
+                    className="w-full px-3 md:px-4 py-2 md:py-3 pl-10 md:pl-12 rounded-xl bg-white/5 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-brand-400 text-white placeholder-slate-400 text-sm md:text-base"
                   />
                   <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
