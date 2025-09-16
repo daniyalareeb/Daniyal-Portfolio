@@ -8,9 +8,9 @@ router = APIRouter()
 
 @router.post("/populate-database")
 def populate_database(db: Session = Depends(get_db)):
-    """Populate the database with sample data"""
+    """Populate the database with sample data (WARNING: This will clear existing data)"""
     try:
-        # Clear existing data
+        # Clear existing data (only for manual admin use)
         db.query(Tool).delete()
         db.query(Project).delete()
         db.query(BlogPost).delete()

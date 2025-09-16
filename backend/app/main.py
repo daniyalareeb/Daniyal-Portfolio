@@ -85,7 +85,7 @@ async def on_startup():
     from app.database import engine, Base
     Base.metadata.create_all(bind=engine)
     
-    # Auto-populate database if empty
+    # Check database status (but don't auto-populate to preserve manual data)
     try:
         from app.database import get_db
         from app.models import Tool, Project, BlogPost
@@ -93,18 +93,22 @@ async def on_startup():
         
         db = next(get_db())
         tools_count = db.query(Tool).count()
+        projects_count = db.query(Project).count()
+        blogs_count = db.query(BlogPost).count()
         
-        if tools_count == 0:
-            print("Database is empty, auto-populating...")
-            # Import and call populate function
+        print(f"Database status: {tools_count} tools, {projects_count} projects, {blogs_count} blogs")
+        
+        # Only populate if completely empty (first time setup)
+        if tools_count == 0 and projects_count == 0 and blogs_count == 0:
+            print("Database is completely empty, auto-populating with sample data...")
             from app.api.v1.admin import populate_database
             result = populate_database(db)
             print(f"Auto-population result: {result}")
         else:
-            print(f"Database already has {tools_count} tools")
+            print("Database has data, preserving existing content")
             
     except Exception as e:
-        print(f"Error auto-populating database: {e}")
+        print(f"Error checking database: {e}")
     
     # Start the automatic blog scheduler for content updates
     # This runs background jobs to generate and update blog content
