@@ -37,15 +37,15 @@ export default function ContactPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
+            className="text-center mb-8 md:mb-12"
           >
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-white to-brand-300 bg-clip-text text-transparent">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 md:mb-4 lg:mb-6 bg-gradient-to-r from-white to-brand-300 bg-clip-text text-transparent">
               Contact Me
             </h1>
-            <p className="text-lg md:text-xl text-slate-300 mb-4 md:mb-6 text-center max-w-3xl mx-auto leading-relaxed px-4">
+            <p className="text-base md:text-lg lg:text-xl text-slate-300 mb-3 md:mb-4 lg:mb-6 text-center max-w-3xl mx-auto leading-relaxed px-4">
           Want to collaborate or hire me? Fill the form below and your message will be delivered directly to my inbox.
         </p>
-            <div className="flex flex-wrap justify-center items-center gap-2 md:gap-4 text-xs md:text-sm text-slate-400 px-4">
+            <div className="flex flex-wrap justify-center items-center gap-1 md:gap-2 lg:gap-4 text-xs md:text-sm text-slate-400 px-4">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                 <span>Quick Response</span>
@@ -61,15 +61,15 @@ export default function ContactPage() {
             {/* Contact Form */}
         <motion.form
           onSubmit={handleSubmit}
-              className="card p-4 md:p-8 space-y-4 md:space-y-6"
+              className="card p-3 md:p-6 lg:p-8 space-y-3 md:space-y-4 lg:space-y-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <h2 className="text-xl md:text-2xl font-semibold text-white mb-4 md:mb-6">Send a Message</h2>
+              <h2 className="text-lg md:text-xl lg:text-2xl font-semibold text-white mb-3 md:mb-4 lg:mb-6">Send a Message</h2>
               
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Your Name</label>
+                <label className="block text-xs md:text-sm font-medium text-slate-300 mb-1 md:mb-2">Your Name</label>
           <input
             type="text"
             name="name"
@@ -83,7 +83,7 @@ export default function ContactPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Your Email</label>
+                <label className="block text-xs md:text-sm font-medium text-slate-300 mb-1 md:mb-2">Your Email</label>
           <input
             type="email"
             name="email"
@@ -97,14 +97,14 @@ export default function ContactPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Your Message</label>
+                <label className="block text-xs md:text-sm font-medium text-slate-300 mb-1 md:mb-2">Your Message</label>
           <textarea
             name="message"
                   placeholder="Tell me about your project or collaboration idea..."
             value={form.message}
             onChange={handleChange}
             required
-            rows="5"
+            rows="4"
                   disabled={isLoading}
                   className="w-full px-3 md:px-4 py-2 md:py-3 rounded-xl bg-white/5 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-brand-400 text-white placeholder-slate-400 resize-none text-sm md:text-base"
           />
