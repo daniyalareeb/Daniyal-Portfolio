@@ -41,7 +41,7 @@ class GistBackupService:
             }
             
             # Make API request
-            async with httpx.AsyncClient() as client:
+            with httpx.Client() as client:
                 response = await client.post(
                     "https://api.github.com/gists",
                     headers={
@@ -86,7 +86,7 @@ class GistBackupService:
             }
             
             # Make API request
-            async with httpx.AsyncClient() as client:
+            with httpx.Client() as client:
                 response = await client.patch(
                     f"https://api.github.com/gists/{gist_id}",
                     headers={
@@ -115,7 +115,7 @@ class GistBackupService:
             return None
             
         try:
-            async with httpx.AsyncClient() as client:
+            with httpx.Client() as client:
                 response = await client.get(
                     f"https://api.github.com/gists/{gist_id}",
                     headers={
