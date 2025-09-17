@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.services.data_persistence import DataPersistenceService
-from app.core.responses import APIResponse
+from app.schemas.common import APIResponse
 import logging
 
 logger = logging.getLogger(__name__)
