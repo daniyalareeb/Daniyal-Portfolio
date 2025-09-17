@@ -8,8 +8,8 @@ class Settings(BaseSettings):
     APP_HOST: str = "0.0.0.0"
     APP_PORT: int = 8000
     
-    # Database
-    DATABASE_URL: str = "sqlite:///./data/portfolio.db"
+    # Database - PostgreSQL for persistent storage
+    DATABASE_URL: str = "postgresql://postgres:password@localhost:5432/portfolio"
     
     # ChromaDB (external service)
     CHROMADB_URL: str = "http://localhost:8001"
