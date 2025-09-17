@@ -1,0 +1,16 @@
+{
+  "build": {
+    "builder": "nixpacks"
+  },
+  "deploy": {
+    "startCommand": "cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT",
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  },
+  "mounts": {
+    "data": {
+      "path": "/data",
+      "persistent": true
+    }
+  }
+}

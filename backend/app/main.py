@@ -78,10 +78,14 @@ async def on_startup():
     This function runs when the FastAPI application starts up.
     It initializes background services and schedulers.
     """
-    # Create data directory if it doesn't exist
+    # Create data directory in persistent storage
     import os
     import json
-    os.makedirs("data", exist_ok=True)
+    
+    # Use Railway persistent mount if available, otherwise fallback to ./data
+    data_dir = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', '/data') or './data'
+    os.makedirs(data_dir, exist_ok=True)
+    print(f"Using data directory: {data_dir}")
     
     # Initialize database tables
     from app.database import engine, Base
