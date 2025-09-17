@@ -23,7 +23,7 @@ from fastapi.staticfiles import StaticFiles
 from app.config import settings
 
 # Import all API routers for modular organization
-from app.api.v1 import chat, news, tools, cv, contact, projects, admin, manual_admin, auth
+from app.api.v1 import chat, news, tools, cv, contact, projects, admin, manual_admin, auth, data_backup
 
 # Import scheduler for background tasks
 from app.services.scheduler import start_scheduler, get_scheduler_status
@@ -64,6 +64,7 @@ app.include_router(projects.router, prefix=settings.API_V1_STR, tags=["projects"
 app.include_router(admin.router, prefix=settings.API_V1_STR, tags=["admin"])
 app.include_router(manual_admin.router, prefix=settings.API_V1_STR, tags=["manual-admin"])
 app.include_router(auth.router, prefix=settings.API_V1_STR, tags=["auth"])
+app.include_router(data_backup.router, prefix=settings.API_V1_STR, tags=["data-backup"])
 
 # Mount static file serving for uploaded images and assets
 # This allows serving files uploaded through the admin interface
@@ -86,10 +87,11 @@ async def on_startup():
     from app.database import engine, Base
     Base.metadata.create_all(bind=engine)
     
-    # Check database status (but don't auto-populate to preserve manual data)
+    # Check database status and implement data persistence
     try:
         from app.database import get_db
         from app.models import Tool, Project, BlogPost
+        from app.services.data_persistence import DataPersistenceService
         from sqlalchemy.orm import Session
         
         db = next(get_db())
@@ -99,22 +101,33 @@ async def on_startup():
         
         print(f"Database status: {tools_count} tools, {projects_count} projects, {blogs_count} blogs")
         
+        # Initialize data persistence service
+        persistence_service = DataPersistenceService()
+        
         # Only populate if completely empty (first time setup)
         if tools_count == 0 and projects_count == 0 and blogs_count == 0:
-            # Try to restore from backup first
-            if os.path.exists("data/portfolio_backup.db"):
-                print("Restoring database from backup...")
-                shutil.copy2("data/portfolio_backup.db", "data/portfolio.db")
-                # Recreate tables after restore
-                Base.metadata.create_all(bind=engine)
-                print("Database restored from backup")
+            print("Database is empty, attempting to restore from backup...")
+            
+            # Try to restore from environment variable backup
+            env_restore_success = persistence_service.restore_from_environment()
+            
+            # If environment restore failed, try file restore
+            if not env_restore_success:
+                file_restore_success = persistence_service.restore_from_file()
+                if file_restore_success:
+                    print("Database restored from file backup")
+                else:
+                    print("No backup found, auto-populating with sample data...")
+                    from app.api.v1.admin import populate_database
+                    result = populate_database(db)
+                    print(f"Auto-population result: {result}")
             else:
-                print("Database is completely empty, auto-populating with sample data...")
-                from app.api.v1.admin import populate_database
-                result = populate_database(db)
-                print(f"Auto-population result: {result}")
+                print("Database restored from environment backup")
         else:
-            print("Database has data, preserving existing content")
+            print("Database has data, creating backup...")
+            # Create backup of existing data
+            persistence_service.backup_to_environment()
+            persistence_service.backup_to_file()
             
     except Exception as e:
         print(f"Error checking database: {e}")
