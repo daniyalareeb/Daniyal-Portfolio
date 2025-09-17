@@ -101,8 +101,10 @@ async def on_startup():
         
         print(f"Database status: {tools_count} tools, {projects_count} projects, {blogs_count} blogs")
         
-        # Initialize data persistence service
+        # Initialize data persistence services
         persistence_service = DataPersistenceService()
+        from app.services.gist_backup import GistBackupService
+        gist_service = GistBackupService()
         
         # Only populate if completely empty (first time setup)
         if tools_count == 0 and projects_count == 0 and blogs_count == 0:
@@ -111,12 +113,13 @@ async def on_startup():
             # Try to restore from multiple backup sources
             restore_success = False
             
-            # Try environment backup first
-            if persistence_service.restore_from_environment():
-                print("Database restored from environment backup")
+            # Try Gist backup first (cloud-based, most reliable)
+            gist_data = gist_service.restore_data()
+            if gist_data and persistence_service.import_data_from_json(gist_data):
+                print("Database restored from Gist backup")
                 restore_success = True
             
-            # Try file backup if environment restore failed
+            # Try file backup if Gist restore failed
             if not restore_success and persistence_service.restore_from_file():
                 print("Database restored from file backup")
                 restore_success = True
@@ -134,10 +137,13 @@ async def on_startup():
                 print(f"Auto-population result: {result}")
         else:
             print("Database has data, creating backup...")
-            # Create multiple backups for redundancy
-            persistence_service.backup_to_environment()
-            persistence_service.backup_to_file()
-            persistence_service.backup_to_file("data/portfolio_backup.json")
+            # Export current data
+            current_data = persistence_service.export_data_to_json()
+            if current_data:
+                # Create multiple backups for redundancy
+                gist_service.backup_data(current_data)
+                persistence_service.backup_to_file()
+                persistence_service.backup_to_file("data/portfolio_backup.json")
             
     except Exception as e:
         print(f"Error checking database: {e}")
