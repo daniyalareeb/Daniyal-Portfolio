@@ -122,38 +122,19 @@ class DataPersistenceService:
             return False
     
     def backup_to_environment(self) -> bool:
-        """Backup data to Railway environment variable (base64 encoded)"""
+        """Backup data to persistent file (Railway environment variables can't be modified at runtime)"""
         try:
-            data = self.export_data_to_json()
-            if not data:
-                return False
-                
-            # Convert to base64 for storage in environment variable
-            json_str = json.dumps(data)
-            b64_data = base64.b64encode(json_str.encode()).decode()
-            
-            # Store in environment variable (this would need Railway CLI to update)
-            os.environ["DATABASE_BACKUP"] = b64_data
-            logger.info(f"Data backed up to environment variable (size: {len(b64_data)} chars)")
-            return True
+            # Since Railway doesn't allow runtime env var modification, use file backup instead
+            return self.backup_to_file("data/environment_backup.json")
             
         except Exception as e:
             logger.error(f"Failed to backup to environment: {e}")
             return False
     
     def restore_from_environment(self) -> bool:
-        """Restore data from Railway environment variable"""
+        """Restore data from persistent file"""
         try:
-            b64_data = os.getenv("DATABASE_BACKUP")
-            if not b64_data:
-                return False
-                
-            # Decode from base64
-            json_str = base64.b64decode(b64_data).decode()
-            data = json.loads(json_str)
-            
-            # Import data
-            return self.import_data_from_json(data)
+            return self.restore_from_file("data/environment_backup.json")
             
         except Exception as e:
             logger.error(f"Failed to restore from environment: {e}")

@@ -108,26 +108,36 @@ async def on_startup():
         if tools_count == 0 and projects_count == 0 and blogs_count == 0:
             print("Database is empty, attempting to restore from backup...")
             
-            # Try to restore from environment variable backup
-            env_restore_success = persistence_service.restore_from_environment()
+            # Try to restore from multiple backup sources
+            restore_success = False
             
-            # If environment restore failed, try file restore
-            if not env_restore_success:
-                file_restore_success = persistence_service.restore_from_file()
-                if file_restore_success:
-                    print("Database restored from file backup")
-                else:
-                    print("No backup found, auto-populating with sample data...")
-                    from app.api.v1.admin import populate_database
-                    result = populate_database(db)
-                    print(f"Auto-population result: {result}")
-            else:
+            # Try environment backup first
+            if persistence_service.restore_from_environment():
                 print("Database restored from environment backup")
+                restore_success = True
+            
+            # Try file backup if environment restore failed
+            if not restore_success and persistence_service.restore_from_file():
+                print("Database restored from file backup")
+                restore_success = True
+            
+            # Try alternative backup locations
+            if not restore_success and persistence_service.restore_from_file("data/portfolio_backup.json"):
+                print("Database restored from portfolio backup")
+                restore_success = True
+            
+            # If no backup found, auto-populate
+            if not restore_success:
+                print("No backup found, auto-populating with sample data...")
+                from app.api.v1.admin import populate_database
+                result = populate_database(db)
+                print(f"Auto-population result: {result}")
         else:
             print("Database has data, creating backup...")
-            # Create backup of existing data
+            # Create multiple backups for redundancy
             persistence_service.backup_to_environment()
             persistence_service.backup_to_file()
+            persistence_service.backup_to_file("data/portfolio_backup.json")
             
     except Exception as e:
         print(f"Error checking database: {e}")
