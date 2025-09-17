@@ -2,6 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "description": "Portfolio frontend - FORCE VERCEL REBUILD",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
