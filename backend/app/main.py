@@ -79,7 +79,13 @@ async def on_startup():
     """
     # Create data directory if it doesn't exist
     import os
+    import shutil
     os.makedirs("data", exist_ok=True)
+    
+    # Backup existing database if it exists
+    if os.path.exists("data/portfolio.db"):
+        shutil.copy2("data/portfolio.db", "data/portfolio_backup.db")
+        print("Database backed up successfully")
     
     # Initialize database tables
     from app.database import engine, Base
@@ -100,10 +106,18 @@ async def on_startup():
         
         # Only populate if completely empty (first time setup)
         if tools_count == 0 and projects_count == 0 and blogs_count == 0:
-            print("Database is completely empty, auto-populating with sample data...")
-            from app.api.v1.admin import populate_database
-            result = populate_database(db)
-            print(f"Auto-population result: {result}")
+            # Try to restore from backup first
+            if os.path.exists("data/portfolio_backup.db"):
+                print("Restoring database from backup...")
+                shutil.copy2("data/portfolio_backup.db", "data/portfolio.db")
+                # Recreate tables after restore
+                Base.metadata.create_all(bind=engine)
+                print("Database restored from backup")
+            else:
+                print("Database is completely empty, auto-populating with sample data...")
+                from app.api.v1.admin import populate_database
+                result = populate_database(db)
+                print(f"Auto-population result: {result}")
         else:
             print("Database has data, preserving existing content")
             
