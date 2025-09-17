@@ -79,13 +79,8 @@ async def on_startup():
     """
     # Create data directory if it doesn't exist
     import os
-    import shutil
+    import json
     os.makedirs("data", exist_ok=True)
-    
-    # Backup existing database if it exists
-    if os.path.exists("data/portfolio.db"):
-        shutil.copy2("data/portfolio.db", "data/portfolio_backup.db")
-        print("Database backed up successfully")
     
     # Initialize database tables
     from app.database import engine, Base
