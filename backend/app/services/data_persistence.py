@@ -26,7 +26,7 @@ class DataPersistenceService:
             cursor = conn.cursor()
             
             # Export tools
-            cursor.execute("SELECT * FROM tools")
+            cursor.execute("SELECT * FROM ai_tools")
             tools = [dict(row) for row in cursor.fetchall()]
             
             # Export projects
@@ -34,11 +34,11 @@ class DataPersistenceService:
             projects = [dict(row) for row in cursor.fetchall()]
             
             # Export blogs
-            cursor.execute("SELECT * FROM blogposts")
+            cursor.execute("SELECT * FROM blog_posts")
             blogs = [dict(row) for row in cursor.fetchall()]
             
             # Export contacts
-            cursor.execute("SELECT * FROM contacts")
+            cursor.execute("SELECT * FROM contact_submissions")
             contacts = [dict(row) for row in cursor.fetchall()]
             
             conn.close()
@@ -63,10 +63,10 @@ class DataPersistenceService:
             
             # Import tools
             if "tools" in data:
-                cursor.execute("DELETE FROM tools")
+                cursor.execute("DELETE FROM ai_tools")
                 for tool in data["tools"]:
                     cursor.execute("""
-                        INSERT INTO tools (id, name, description, category, status, url, pricing, source, auto_fetched, last_checked)
+                        INSERT INTO ai_tools (id, name, description, category, status, url, pricing, source, auto_fetched, last_checked)
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, (
                         tool.get("id"), tool.get("name"), tool.get("description"),
@@ -90,26 +90,27 @@ class DataPersistenceService:
             
             # Import blogs
             if "blogs" in data:
-                cursor.execute("DELETE FROM blogposts")
+                cursor.execute("DELETE FROM blog_posts")
                 for blog in data["blogs"]:
                     cursor.execute("""
-                        INSERT INTO blogposts (id, title, content, url, published_at, source)
-                        VALUES (?, ?, ?, ?, ?, ?)
+                        INSERT INTO blog_posts (id, title, excerpt, content, url, category, published, featured, source, published_date, last_updated)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, (
-                        blog.get("id"), blog.get("title"), blog.get("content"),
-                        blog.get("url"), blog.get("published_at"), blog.get("source")
+                        blog.get("id"), blog.get("title"), blog.get("excerpt"), blog.get("content"),
+                        blog.get("url"), blog.get("category"), blog.get("published"), blog.get("featured"),
+                        blog.get("source"), blog.get("published_date"), blog.get("last_updated")
                     ))
             
             # Import contacts
             if "contacts" in data:
-                cursor.execute("DELETE FROM contacts")
+                cursor.execute("DELETE FROM contact_submissions")
                 for contact in data["contacts"]:
                     cursor.execute("""
-                        INSERT INTO contacts (id, name, email, message, submitted_at)
-                        VALUES (?, ?, ?, ?, ?)
+                        INSERT INTO contact_submissions (id, name, email, message)
+                        VALUES (?, ?, ?, ?)
                     """, (
                         contact.get("id"), contact.get("name"), contact.get("email"),
-                        contact.get("message"), contact.get("submitted_at")
+                        contact.get("message")
                     ))
             
             conn.commit()
