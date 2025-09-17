@@ -8,6 +8,13 @@ export default function Document() {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
         
+        {/* Version and Cache Busting */}
+        <meta name="version" content="3.0.0" />
+        <meta name="build-time" content="2025-01-16T12:00:00Z" />
+        <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta httpEquiv="Pragma" content="no-cache" />
+        <meta httpEquiv="Expires" content="0" />
+        
         {/* Google Analytics */}
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-QW5L3B3G34"></script>
         <script
