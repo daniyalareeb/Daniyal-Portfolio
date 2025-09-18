@@ -16,7 +16,8 @@ export default function ToolsPage() {
   const loadTools = async () => {
     try {
       setLoading(true)
-      const response = await ApiClient.getTools()
+      // Add cache busting parameter
+      const response = await ApiClient.getTools(null, null, 100)
       setTools(response.data.items || [])
     } catch (error) {
       console.error('Failed to load tools:', error)
@@ -123,6 +124,17 @@ export default function ToolsPage() {
                 transition={{ delay: index * 0.1 }}
                 className="card p-6 hover:shadow-lg hover:shadow-brand-500/10 transition-all duration-300 group"
               >
+                {/* Tool Image */}
+                {tool.image_url && (
+                  <div className="mb-4">
+                    <img 
+                      src={`${process.env.NEXT_PUBLIC_API_URL}${tool.image_url}`} 
+                      alt={tool.name}
+                      className="w-full h-32 object-cover rounded-lg"
+                    />
+                  </div>
+                )}
+                
                 <div className="flex justify-between items-start mb-4">
                   <h3 className="text-xl font-semibold text-white group-hover:text-brand-300 transition-colors">
                     {tool.name}
