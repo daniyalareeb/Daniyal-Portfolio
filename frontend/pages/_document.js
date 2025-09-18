@@ -9,9 +9,9 @@ export default function Document() {
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
         
         {/* Version and Cache Busting - FORCE VERCEL REBUILD */}
-        <meta name="version" content="8.0.0" />
-        <meta name="build-time" content="2025-01-17T16:00:00Z" />
-        <meta name="deployment-id" content="manual-deploy-003" />
+        <meta name="version" content="9.0.0" />
+        <meta name="build-time" content="2025-01-17T17:00:00Z" />
+        <meta name="deployment-id" content="analytics-deploy-001" />
         <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
         <meta httpEquiv="Pragma" content="no-cache" />
         <meta httpEquiv="Expires" content="0" />
@@ -28,6 +28,9 @@ export default function Document() {
             `,
           }}
         />
+        
+        {/* Google Analytics Verification */}
+        <meta name="google-site-verification" content="G-3MSZ0CBER8" />
         
         {/* SEO Meta Tags */}
         <meta name="description" content="Daniyal Ahmad (daniyalareeb) - AI & Backend Engineer Portfolio. Expert in FastAPI, LLMs, Next.js, Python, React. Building intelligent software solutions and modern web applications." />
@@ -80,9 +83,6 @@ export default function Document() {
         
         {/* Favicon */}
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
       </Head>
       <body>
