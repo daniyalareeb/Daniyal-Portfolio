@@ -214,6 +214,60 @@ def list_tools_public(db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error listing tools: {str(e)}")
 
+@router.post("/migrate-database")
+def migrate_database(db: Session = Depends(get_db)):
+    """Run database migration to add image_url columns"""
+    try:
+        from sqlalchemy import text
+        
+        # Add to ai_tools table
+        try:
+            result = db.execute(text("""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name = 'ai_tools' AND column_name = 'image_url'
+            """))
+            
+            if result.fetchone() is None:
+                db.execute(text("ALTER TABLE ai_tools ADD COLUMN image_url VARCHAR(500)"))
+                db.commit()
+                tools_msg = "ai_tools.image_url column added successfully!"
+            else:
+                tools_msg = "ai_tools.image_url column already exists"
+        except Exception as e:
+            tools_msg = f"Error with ai_tools: {str(e)}"
+        
+        # Add to projects table
+        try:
+            result = db.execute(text("""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name = 'projects' AND column_name = 'image_url'
+            """))
+            
+            if result.fetchone() is None:
+                db.execute(text("ALTER TABLE projects ADD COLUMN image_url VARCHAR(500)"))
+                db.commit()
+                projects_msg = "projects.image_url column added successfully!"
+            else:
+                projects_msg = "projects.image_url column already exists"
+        except Exception as e:
+            projects_msg = f"Error with projects: {str(e)}"
+        
+        return {
+            "success": True,
+            "message": "Migration completed",
+            "data": {
+                "ai_tools": tools_msg,
+                "projects": projects_msg
+            }
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 @router.get("/list-projects-public")
 def list_projects_public(db: Session = Depends(get_db)):
     """Public endpoint to list projects without authentication"""
