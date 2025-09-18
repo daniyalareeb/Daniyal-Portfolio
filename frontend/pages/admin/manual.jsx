@@ -566,9 +566,9 @@ export default function ManualAdmin() {
                   </button>
                 )}
               </div>
-          <div style={{display: 'grid', gap: 16}}>
+          <div className="grid gap-4">
             <div>
-              <label style={{color: '#fff', display: 'block', marginBottom: 8}}>Tool Name *</label>
+              <label className="text-white block mb-2">Tool Name *</label>
               <input
                 type="text"
                 value={toolForm.name}
@@ -659,8 +659,8 @@ export default function ManualAdmin() {
             
             {/* Image Upload Section */}
             <div>
-              <label style={{color: '#fff', display: 'block', marginBottom: 8}}>Tool Thumbnail Image</label>
-              <div style={{display: 'flex', gap: 12, alignItems: 'center'}}>
+              <label className="text-white block mb-2">Tool Thumbnail Image</label>
+              <div className="flex gap-3 items-center">
                 <input
                   type="file"
                   accept="image/*"
@@ -692,34 +692,19 @@ export default function ManualAdmin() {
                       setBusy(false);
                     }
                   }}
-                  style={{
-                    padding: '8px',
-                    borderRadius: '6px',
-                    border: '1px solid #444',
-                    background: '#333',
-                    color: '#fff',
-                    flex: 1
-                  }}
+                  className="flex-1 p-2 rounded-md border border-slate-600 bg-slate-800 text-white file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
                 />
                 {toolForm.image_url && (
-                  <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                  <div className="flex items-center gap-2">
                     <img 
                       src={`${process.env.NEXT_PUBLIC_API_URL}${toolForm.image_url}`} 
                       alt="Tool thumbnail" 
-                      style={{width: 40, height: 40, borderRadius: 4, objectFit: 'cover'}}
+                      className="w-10 h-10 rounded object-cover"
                     />
                     <button
                       type="button"
                       onClick={() => setToolForm({...toolForm, image_url: ""})}
-                      style={{
-                        background: '#dc3545',
-                        color: '#fff',
-                        border: 'none',
-                        padding: '4px 8px',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        fontSize: '12px'
-                      }}
+                      className="bg-red-600 hover:bg-red-700 text-white border-none px-2 py-1 rounded text-xs cursor-pointer"
                     >
                       Remove
                     </button>

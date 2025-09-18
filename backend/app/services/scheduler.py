@@ -105,12 +105,23 @@ def reset_blog_scheduler():
         return False
     
     try:
+        from datetime import datetime, timedelta
+        
         # Remove the existing blog job
         _scheduler.remove_job("blogs")
         
-        # Add a new blog job that runs in 3 days from now
-        _scheduler.add_job(_job(fetch_and_update_blogs), "interval", days=3, id="blogs")
+        # Calculate next run time: 3 days from now
+        next_run_time = datetime.now() + timedelta(days=3)
         
+        # Add a new blog job that runs at the specific time
+        _scheduler.add_job(
+            _job(fetch_and_update_blogs), 
+            "date", 
+            run_date=next_run_time, 
+            id="blogs"
+        )
+        
+        print(f"Blog scheduler reset. Next run: {next_run_time}")
         return True
     except Exception as e:
         print(f"Error resetting blog scheduler: {e}")
