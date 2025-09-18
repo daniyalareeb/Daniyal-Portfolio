@@ -270,53 +270,26 @@ def migrate_database(db: Session = Depends(get_db)):
 
 @router.post("/update-tool-categories")
 def update_tool_categories(db: Session = Depends(get_db)):
-    """Update existing tool categories to new professional categories"""
+    """Clear all tools and reset to use new professional categories"""
     try:
-        # Professional categories from tools_service.py
+        # Professional categories for display
         professional_categories = [
             "AI Chat & Assistant", "Image & Visual AI", "Video & Media AI", "Audio & Voice AI", 
             "Development & Code", "Content Creation", "Productivity & Automation", "Design & UX",
             "Business & Marketing", "Research & Analytics", "Other"
         ]
         
-        # Category mapping from old to new professional categories
-        category_mapping = {
-            "Chat Assistant": "AI Chat & Assistant",
-            "Text Generation": "AI Chat & Assistant", 
-            "Image Generation": "Image & Visual AI",
-            "Video Generation": "Video & Media AI",
-            "Audio Generation": "Audio & Voice AI",
-            "Voice Assistant": "Audio & Voice AI",
-            "Code Assistant": "Development & Code",
-            "Programming": "Development & Code",
-            "Developer Tools": "Development & Code",
-            "Content Creation": "Content Creation",
-            "Writing": "Content Creation",
-            "Productivity": "Productivity & Automation",
-            "Automation": "Productivity & Automation",
-            "Design": "Design & UX",
-            "UI/UX": "Design & UX",
-            "Business": "Business & Marketing",
-            "Marketing": "Business & Marketing",
-            "Analytics": "Research & Analytics",
-            "Research": "Research & Analytics",
-            "Database": "Development & Code",
-            "Presentation": "Content Creation"
-        }
+        # Count tools to be deleted
+        tools_count = db.query(Tool).count()
         
-        updated_count = 0
-        for old_category, new_category in category_mapping.items():
-            tools = db.query(Tool).filter(Tool.category == old_category).all()
-            for tool in tools:
-                tool.category = new_category
-                updated_count += 1
-        
+        # Delete all tools
+        db.query(Tool).delete()
         db.commit()
         
         return {
             "success": True,
-            "message": f"Updated {updated_count} tools with new professional categories: {', '.join(professional_categories)}",
-            "data": {"updated_count": updated_count, "new_categories": professional_categories}
+            "message": f"Cleared {tools_count} tools. You can now add new tools with professional categories: {', '.join(professional_categories)}",
+            "data": {"deleted_count": tools_count, "available_categories": professional_categories}
         }
     except Exception as e:
         db.rollback()
@@ -327,47 +300,26 @@ def update_tool_categories(db: Session = Depends(get_db)):
 
 @router.post("/update-blog-categories")
 def update_blog_categories(db: Session = Depends(get_db)):
-    """Update existing blog categories to new professional categories"""
+    """Clear all blogs and reset to use new professional categories"""
     try:
-        # Professional blog categories from blog_service.py
+        # Professional blog categories for display
         professional_blog_categories = [
             "AI Research & Development", "Machine Learning", "AI Applications", 
             "AI Business & Industry", "AI Ethics & Policy", "AI Tools & Platforms", 
             "AI News & Trends", "Other"
         ]
         
-        # Category mapping from old to new professional blog categories
-        blog_category_mapping = {
-            "Technology": "AI Tools & Platforms",
-            "AI/ML Theory": "AI Research & Development",
-            "Deep Learning": "Machine Learning",
-            "NLP": "Machine Learning",
-            "Reinforcement Learning": "Machine Learning",
-            "Entertainment AI": "AI Applications",
-            "AI": "AI Research & Development",
-            "Machine Learning": "Machine Learning",
-            "AI Research & Development": "AI Research & Development",
-            "AI Applications": "AI Applications",
-            "AI Business & Industry": "AI Business & Industry",
-            "AI Ethics & Policy": "AI Ethics & Policy",
-            "AI Tools & Platforms": "AI Tools & Platforms",
-            "AI News & Trends": "AI News & Trends",
-            "Other": "Other"
-        }
+        # Count blogs to be deleted
+        blogs_count = db.query(BlogPost).count()
         
-        updated_count = 0
-        for old_category, new_category in blog_category_mapping.items():
-            blogs = db.query(BlogPost).filter(BlogPost.category == old_category).all()
-            for blog in blogs:
-                blog.category = new_category
-                updated_count += 1
-        
+        # Delete all blogs
+        db.query(BlogPost).delete()
         db.commit()
         
         return {
             "success": True,
-            "message": f"Updated {updated_count} blogs with new professional categories: {', '.join(professional_blog_categories)}",
-            "data": {"updated_count": updated_count, "new_categories": professional_blog_categories}
+            "message": f"Cleared {blogs_count} blogs. Fresh blogs will be fetched with professional categories: {', '.join(professional_blog_categories)}",
+            "data": {"deleted_count": blogs_count, "available_categories": professional_blog_categories}
         }
     except Exception as e:
         db.rollback()
