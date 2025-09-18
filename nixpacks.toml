@@ -1,8 +1,8 @@
 [phases.setup]
-nixPkgs = ["python39", "python39Packages.pip"]
+nixPkgs = ["python39", "python39Packages.pip", "python39Packages.setuptools", "python39Packages.wheel"]
 
 [phases.install]
-cmds = ["cd backend && pip install -r requirements.txt"]
+cmds = ["cd backend && pip install --break-system-packages -r requirements.txt"]
 
 [phases.build]
 cmds = ["cd backend && echo 'Backend build complete'"]
