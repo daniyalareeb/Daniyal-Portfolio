@@ -75,56 +75,16 @@ async def on_startup():
     """
     Application startup event handler.
     
-    Simplified approach: Trust Railway's persistent volume for data persistence.
-    Railway automatically persists the /data directory across deployments.
+    Using PostgreSQL for reliable data persistence across deployments.
     """
-    import os
-    
-    # Ensure data directory exists in Railway persistent volume
-    data_dir = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', '/data')  # Use actual Railway mount path
-    os.makedirs(data_dir, exist_ok=True)
-    print(f"Using Railway persistent data directory: {data_dir}")
-    
-    # Debug: Check if directory exists and is writable
-    print(f"Data directory exists: {os.path.exists(data_dir)}")
-    print(f"Data directory is writable: {os.access(data_dir, os.W_OK)}")
-    
-    # Debug: List contents of data directory
-    try:
-        contents = os.listdir(data_dir)
-        print(f"Data directory contents: {contents}")
-        
-        # Check if there's an existing database file
-        db_files = [f for f in contents if f.endswith('.db')]
-        print(f"Database files found: {db_files}")
-        
-        if db_files:
-            print("Found existing database files in volume!")
-            for db_file in db_files:
-                full_path = os.path.join(data_dir, db_file)
-                print(f"  {db_file}: {os.path.getsize(full_path)} bytes")
-    except Exception as e:
-        print(f"Error listing data directory: {e}")
-    
-    # Initialize database tables
     from app.database import engine, Base
     from app.config import settings
     
-    # Debug: Show actual database URL being used
-    print(f"Database URL: {settings.DATABASE_URL}")
+    print(f"Using database: {settings.DATABASE_URL}")
     
-    # Debug: Check if database file exists before creating tables
-    db_path = settings.DATABASE_URL.replace("sqlite:///", "")
-    print(f"Database file path: {db_path}")
-    print(f"Database file exists: {os.path.exists(db_path)}")
-    
+    # Initialize database tables
     Base.metadata.create_all(bind=engine)
     print("Database tables initialized")
-    
-    # Debug: Check if database file exists after creating tables
-    print(f"Database file exists after init: {os.path.exists(db_path)}")
-    if os.path.exists(db_path):
-        print(f"Database file size: {os.path.getsize(db_path)} bytes")
     
     # Simple check: only populate if database is completely empty
     try:
@@ -145,7 +105,7 @@ async def on_startup():
             result = populate_database(db)
             print(f"Sample data populated: {result}")
         else:
-            print("Database has existing data - Railway persistent volume working!")
+            print("Database has existing data - PostgreSQL persistence working!")
             
     except Exception as e:
         print(f"Error during startup: {e}")

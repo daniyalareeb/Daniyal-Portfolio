@@ -9,8 +9,8 @@ class Settings(BaseSettings):
     APP_HOST: str = "0.0.0.0"
     APP_PORT: int = 8000
     
-    # Database - SQLite with Railway persistent storage
-    DATABASE_URL: str = f"sqlite:///{os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', '/data')}/portfolio.db"
+    # Database - PostgreSQL for reliable persistence
+    DATABASE_URL: str = os.environ.get('DATABASE_URL', 'sqlite:///./data/portfolio.db')
     
     # ChromaDB (external service)
     CHROMADB_URL: str = "http://localhost:8001"
