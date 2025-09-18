@@ -3,7 +3,7 @@
     "builder": "nixpacks"
   },
   "deploy": {
-    "startCommand": "cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT",
+    "startCommand": "cd backend && python -c 'import uvicorn; uvicorn.run(\"app.main:app\", host=\"0.0.0.0\", port=int(\"$PORT\"))'",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   },
