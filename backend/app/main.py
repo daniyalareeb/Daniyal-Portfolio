@@ -75,28 +75,25 @@ async def on_startup():
     """
     Application startup event handler.
     
-    This function runs when the FastAPI application starts up.
-    It initializes background services and schedulers.
+    Simplified approach: Trust Railway's persistent volume for data persistence.
+    Railway automatically persists the /data directory across deployments.
     """
-    # Create data directory in persistent storage
     import os
-    import json
     
-    # Use Railway persistent mount if available, otherwise fallback to ./data
-    data_dir = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', '/data') or './data'
+    # Ensure data directory exists in Railway persistent volume
+    data_dir = "/data"  # Railway persistent mount path
     os.makedirs(data_dir, exist_ok=True)
-    print(f"Using data directory: {data_dir}")
+    print(f"Using Railway persistent data directory: {data_dir}")
     
     # Initialize database tables
     from app.database import engine, Base
     Base.metadata.create_all(bind=engine)
+    print("Database tables initialized")
     
-    # Check database status and implement data persistence
+    # Simple check: only populate if database is completely empty
     try:
         from app.database import get_db
         from app.models import Tool, Project, BlogPost
-        from app.services.data_persistence import DataPersistenceService
-        from sqlalchemy.orm import Session
         
         db = next(get_db())
         tools_count = db.query(Tool).count()
@@ -105,55 +102,19 @@ async def on_startup():
         
         print(f"Database status: {tools_count} tools, {projects_count} projects, {blogs_count} blogs")
         
-        # Initialize data persistence services
-        persistence_service = DataPersistenceService()
-        from app.services.gist_backup import GistBackupService
-        gist_service = GistBackupService()
-        
-        # Only populate if completely empty (first time setup)
+        # Only populate if completely empty (first deployment)
         if tools_count == 0 and projects_count == 0 and blogs_count == 0:
-            print("Database is empty, attempting to restore from backup...")
-            
-            # Try to restore from multiple backup sources
-            restore_success = False
-            
-            # Try Gist backup first (cloud-based, most reliable)
-            gist_data = gist_service.restore_data()
-            if gist_data and persistence_service.import_data_from_json(gist_data):
-                print("Database restored from Gist backup")
-                restore_success = True
-            
-            # Try file backup if Gist restore failed
-            if not restore_success and persistence_service.restore_from_file():
-                print("Database restored from file backup")
-                restore_success = True
-            
-            # Try alternative backup locations
-            if not restore_success and persistence_service.restore_from_file("data/portfolio_backup.json"):
-                print("Database restored from portfolio backup")
-                restore_success = True
-            
-            # If no backup found, auto-populate
-            if not restore_success:
-                print("No backup found, auto-populating with sample data...")
-                from app.api.v1.admin import populate_database
-                result = populate_database(db)
-                print(f"Auto-population result: {result}")
+            print("Database is empty, populating with sample data...")
+            from app.api.v1.admin import populate_database
+            result = populate_database(db)
+            print(f"Sample data populated: {result}")
         else:
-            print("Database has data, creating backup...")
-            # Export current data
-            current_data = persistence_service.export_data_to_json()
-            if current_data:
-                # Create multiple backups for redundancy
-                gist_service.backup_data(current_data)
-                persistence_service.backup_to_file()
-                persistence_service.backup_to_file("data/portfolio_backup.json")
+            print("Database has existing data - Railway persistent volume working!")
             
     except Exception as e:
-        print(f"Error checking database: {e}")
+        print(f"Error during startup: {e}")
     
     # Start the automatic blog scheduler for content updates
-    # This runs background jobs to generate and update blog content
     start_scheduler()
 
 @app.get("/")
