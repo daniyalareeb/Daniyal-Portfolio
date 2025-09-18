@@ -17,14 +17,14 @@ export default function Document() {
         <meta httpEquiv="Expires" content="0" />
         
         {/* Google Analytics */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QW5L3B3G34"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-3MSZ0CBER8"></script>
         <script
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'G-QW5L3B3G34');
+              gtag('config', 'G-3MSZ0CBER8');
             `,
           }}
         />
