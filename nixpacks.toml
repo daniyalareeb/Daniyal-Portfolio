@@ -2,13 +2,10 @@
 nixPkgs = ["python39", "python39Packages.pip"]
 
 [phases.install]
-cmds = [
-  "pip install --break-system-packages uvicorn",
-  "pip install --break-system-packages -r backend/requirements.txt"
-]
+cmds = ["pip install --break-system-packages -r backend/requirements.txt"]
 
 [phases.build]
 cmds = ["echo 'Python backend build complete'"]
 
 [start]
-cmd = "./start.sh"
+cmd = "cd backend && python -c 'import uvicorn; uvicorn.run(\"app.main:app\", host=\"0.0.0.0\", port=int(\"$PORT\"))'"
