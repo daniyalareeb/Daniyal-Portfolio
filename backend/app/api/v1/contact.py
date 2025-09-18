@@ -1,4 +1,5 @@
 import uuid
+import httpx
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.database import get_db
@@ -11,22 +12,30 @@ router = APIRouter()
 
 @router.post("/contact/submit", response_model=APIResponse)
 def contact_submit(payload: ContactIn, db: Session = Depends(get_db)):
-    # Try to send email directly - no database storage
+    # Try webhook-based email service (Formspree) - no database storage
     email_sent = False
     try:
-        # Only try to send email if SMTP credentials are properly configured
-        from app.config import settings
-        if (settings.SMTP_USER != "your-email@gmail.com" and 
-            settings.SMTP_PASSWORD != "your-app-password"):
-            email_sent = send_contact_email(payload.name, payload.email, payload.message)
-            if email_sent:
-                print(f"Contact email sent successfully from {payload.name}")
+        # Use Formspree webhook for email delivery
+        formspree_url = "https://formspree.io/f/xpwgqkqv"  # Replace with your Formspree endpoint
+        
+        form_data = {
+            "name": payload.name,
+            "email": payload.email,
+            "message": payload.message,
+            "_subject": f"New Contact from {payload.name}",
+            "_replyto": payload.email
+        }
+        
+        with httpx.Client(timeout=10.0) as client:
+            response = client.post(formspree_url, data=form_data)
+            if response.status_code == 200:
+                email_sent = True
+                print(f"Contact email sent via Formspree from {payload.name}")
             else:
-                print(f"Failed to send email from {payload.name}")
-        else:
-            print("SMTP credentials not configured, skipping email send")
+                print(f"Formspree failed: {response.status_code}")
+                
     except Exception as e:
-        print(f"Email sending failed: {e}")
+        print(f"Webhook email sending failed: {e}")
         email_sent = False
 
     # Return success regardless of email status for better UX
