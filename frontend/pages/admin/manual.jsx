@@ -435,6 +435,54 @@ export default function ManualAdmin() {
     setBusy(false);
   }
 
+  async function updateToolCategories() {
+    setBusy(true);
+    setMessage("Updating tool categories...");
+    const base = process.env.NEXT_PUBLIC_API_URL;
+    try {
+      const response = await fetch(`${base}/api/v1/update-tool-categories`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json"
+        }
+      });
+      const result = await response.json();
+      if (result.success) {
+        setMessage(`✅ ${result.message}`);
+        fetchStats();
+      } else {
+        setMessage(`❌ Error: ${result.error}`);
+      }
+    } catch (error) {
+      setMessage(`❌ Error updating categories: ${error.message}`);
+    }
+    setBusy(false);
+  }
+
+  async function updateBlogCategories() {
+    setBusy(true);
+    setMessage("Updating blog categories...");
+    const base = process.env.NEXT_PUBLIC_API_URL;
+    try {
+      const response = await fetch(`${base}/api/v1/update-blog-categories`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json"
+        }
+      });
+      const result = await response.json();
+      if (result.success) {
+        setMessage(`✅ ${result.message}`);
+        fetchStats();
+      } else {
+        setMessage(`❌ Error: ${result.error}`);
+      }
+    } catch (error) {
+      setMessage(`❌ Error updating blog categories: ${error.message}`);
+    }
+    setBusy(false);
+  }
+
   async function updateTool() {
     if (!editingTool) return;
     setBusy(true);
@@ -1090,7 +1138,25 @@ export default function ManualAdmin() {
       {/* List Tools Tab */}
       {activeTab === "list-tools" && (
         <div style={{background: '#2a2a2a', padding: 24, borderRadius: 12}}>
-          <h2 style={{color: '#fff', margin: 0, marginBottom: 16}}>📋 AI Tools List</h2>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16}}>
+            <h2 style={{color: '#fff', margin: 0}}>📋 AI Tools List</h2>
+            <button
+              onClick={updateToolCategories}
+              disabled={busy}
+              style={{
+                background: '#007bff',
+                color: '#fff',
+                border: 'none',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                cursor: busy ? 'not-allowed' : 'pointer',
+                opacity: busy ? 0.6 : 1,
+                fontSize: '14px'
+              }}
+            >
+              {busy ? 'Updating...' : '🔄 Update Categories'}
+            </button>
+          </div>
           <div style={{display: 'grid', gap: 12}}>
             {tools.map(t => (
               <div key={t.id} style={{
