@@ -12,9 +12,9 @@ export default function Admin() {
   const [message, setMessage] = useState("");
 
   const categories = [
-    "Chat Assistant", "Image Generation", "Video Editing", "Voice", 
-    "Presentation", "Coding & Development", "Productivity", "Writing",
-    "Art & Design", "Marketing", "Research", "Other"
+    "AI Chat & Assistant", "Image & Visual AI", "Video & Media AI", "Audio & Voice AI", 
+    "Development & Code", "Content Creation", "Productivity & Automation", "Design & UX",
+    "Business & Marketing", "Research & Analytics", "Other"
   ];
   async function refreshBlogs() {
     setBusy(true);
@@ -31,10 +31,28 @@ export default function Admin() {
     if (result.success) {
       setMessage(`✅ ${result.data.message} - ${result.data.data?.added || 0} new blogs added`);
       await fetchAll();
+      await fetchSchedulerStatus(); // Refresh scheduler status after manual refresh
     } else {
       setMessage(`❌ Error: ${result.error}`);
     }
     setBusy(false);
+  }
+
+  async function fetchSchedulerStatus() {
+    const base = process.env.NEXT_PUBLIC_API_URL || 'https://kind-perfection-production-ae48.up.railway.app';
+    try {
+      const response = await fetch(`${base}/api/v1/scheduler-status`);
+      const result = await response.json();
+      if (result.success) {
+        setSchedulerStatus({
+          blog_schedule: 'Every 3 days',
+          status: result.data.status,
+          jobs: result.data.jobs
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching scheduler status:', error);
+    }
   }
 
   async function fetchAll() {
@@ -71,7 +89,7 @@ export default function Admin() {
       status: 'running',
       jobs: [{
         id: 'blogs',
-        next_run_time: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString()
+        next_run_time: null // Will be fetched from actual scheduler
       }]
     });
     
@@ -86,6 +104,7 @@ export default function Admin() {
 
   useEffect(() => { 
     fetchAll();
+    fetchSchedulerStatus();
   }, []);
 
   return (

@@ -20,7 +20,7 @@ export default function ManualAdmin() {
     name: "",
     description: "",
     url: "",
-    category: "Chat Assistant",
+    category: "AI Chat & Assistant",
     pricing: "",
     status: "Active"
   });
@@ -46,9 +46,9 @@ export default function ManualAdmin() {
   const [generatedBlog, setGeneratedBlog] = useState(null);
 
   const categories = [
-    "Chat Assistant", "Image Generation", "Video Editing", "Voice", 
-    "Presentation", "Coding & Development", "Productivity", "Writing",
-    "Art & Design", "Marketing", "Research", "Other"
+    "AI Chat & Assistant", "Image & Visual AI", "Video & Media AI", "Audio & Voice AI", 
+    "Development & Code", "Content Creation", "Productivity & Automation", "Design & UX",
+    "Business & Marketing", "Research & Analytics", "Other"
   ];
 
   const projectCategories = [
@@ -57,8 +57,9 @@ export default function ManualAdmin() {
   ];
 
   const blogCategories = [
-    "Technology", "AI/ML", "Web Development", "Career", "Tutorial",
-    "Industry Insights", "Personal", "Other"
+    "AI Research & Development", "Machine Learning", "AI Applications", 
+    "AI Business & Industry", "AI Ethics & Policy", "AI Tools & Platforms", 
+    "AI News & Trends", "Other"
   ];
 
   async function fetchStats() {
@@ -142,7 +143,7 @@ export default function ManualAdmin() {
           name: "",
           description: "",
           url: "",
-          category: "Chat Assistant",
+          category: "AI Chat & Assistant",
           pricing: "",
           status: "Active"
         });
@@ -398,7 +399,7 @@ export default function ManualAdmin() {
       name: "",
       description: "",
       url: "",
-      category: "Chat Assistant",
+      category: "AI Chat & Assistant",
       pricing: "",
       status: "Active"
     });

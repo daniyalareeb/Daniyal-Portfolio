@@ -289,14 +289,33 @@ async def refresh_blogs(db: Session = Depends(get_db)):
     """Public endpoint to refresh blogs from external RSS sources"""
     try:
         from app.services.blog_service import fetch_and_update_blogs
+        from app.services.scheduler import reset_blog_scheduler
         
         # Fetch blogs from RSS sources and update database
         result = await fetch_and_update_blogs(db)
         
+        # Reset the scheduler timer to run again in 3 days from now
+        reset_blog_scheduler()
+        
         return {
             "success": True,
-            "message": "Blog refresh completed successfully",
+            "message": "Blog refresh completed successfully and timer reset",
             "data": result
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error refreshing blogs: {str(e)}")
+
+@router.get("/scheduler-status")
+async def get_scheduler_status():
+    """Get the current status of the background scheduler"""
+    try:
+        from app.services.scheduler import get_scheduler_status
+        
+        status = get_scheduler_status()
+        
+        return {
+            "success": True,
+            "data": status
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error getting scheduler status: {str(e)}")
