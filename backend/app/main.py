@@ -93,13 +93,38 @@ async def on_startup():
     try:
         contents = os.listdir(data_dir)
         print(f"Data directory contents: {contents}")
+        
+        # Check if there's an existing database file
+        db_files = [f for f in contents if f.endswith('.db')]
+        print(f"Database files found: {db_files}")
+        
+        if db_files:
+            print("Found existing database files in volume!")
+            for db_file in db_files:
+                full_path = os.path.join(data_dir, db_file)
+                print(f"  {db_file}: {os.path.getsize(full_path)} bytes")
     except Exception as e:
         print(f"Error listing data directory: {e}")
     
     # Initialize database tables
     from app.database import engine, Base
+    from app.config import settings
+    
+    # Debug: Show actual database URL being used
+    print(f"Database URL: {settings.DATABASE_URL}")
+    
+    # Debug: Check if database file exists before creating tables
+    db_path = settings.DATABASE_URL.replace("sqlite:///", "")
+    print(f"Database file path: {db_path}")
+    print(f"Database file exists: {os.path.exists(db_path)}")
+    
     Base.metadata.create_all(bind=engine)
     print("Database tables initialized")
+    
+    # Debug: Check if database file exists after creating tables
+    print(f"Database file exists after init: {os.path.exists(db_path)}")
+    if os.path.exists(db_path):
+        print(f"Database file size: {os.path.getsize(db_path)} bytes")
     
     # Simple check: only populate if database is completely empty
     try:
