@@ -157,7 +157,8 @@ def add_tool_public(
             category=request.get("category"),
             url=request.get("url"),
             pricing=request.get("pricing", "Free"),
-            status=request.get("status", "Active")
+            status=request.get("status", "Active"),
+            image_url=request.get("image_url")
         )
         db.add(tool)
         db.commit()
@@ -185,7 +186,8 @@ def add_project_public(
             technologies=request.get("technologies"),
             github_url=request.get("github_url"),
             url=request.get("url"),
-            category=request.get("category", "Web Development")
+            category=request.get("category", "Web Development"),
+            image_url=request.get("image_url")
         )
         db.add(project)
         db.commit()

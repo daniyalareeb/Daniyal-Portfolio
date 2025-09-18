@@ -71,8 +71,8 @@ export default function ManualAdmin() {
     
     try {
       const [toolsRes, projectsRes, blogsRes] = await Promise.all([
-        fetch(`${base}/api/v1/tools/list`),
-        fetch(`${base}/api/v1/projects/list`),
+        fetch(`${base}/api/v1/list-tools-public`),
+        fetch(`${base}/api/v1/list-projects-public`),
         fetch(`${base}/api/v1/news/list`)
       ]);
       
@@ -89,8 +89,8 @@ export default function ManualAdmin() {
       console.log('Blogs result:', blogsResult);
       
       // Handle different data formats
-      const toolsData = toolsResult.success ? (toolsResult.data?.items || toolsResult.data || []) : [];
-      const projectsData = projectsResult.success ? (projectsResult.data?.items || projectsResult.data || []) : [];
+      const toolsData = toolsResult.success ? (toolsResult.data || []) : [];
+      const projectsData = projectsResult.success ? (projectsResult.data || []) : [];
       const blogsData = blogsResult.success ? (blogsResult.data?.items || blogsResult.data || []) : [];
       
       console.log('DEBUG - Final data counts:', {
