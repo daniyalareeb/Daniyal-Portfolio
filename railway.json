@@ -9,7 +9,7 @@
   },
   "mounts": {
     "data": {
-      "path": "/data",
+      "path": "/app/data",
       "persistent": true
     }
   }

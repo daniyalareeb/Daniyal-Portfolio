@@ -85,6 +85,17 @@ async def on_startup():
     os.makedirs(data_dir, exist_ok=True)
     print(f"Using Railway persistent data directory: {data_dir}")
     
+    # Debug: Check if directory exists and is writable
+    print(f"Data directory exists: {os.path.exists(data_dir)}")
+    print(f"Data directory is writable: {os.access(data_dir, os.W_OK)}")
+    
+    # Debug: List contents of data directory
+    try:
+        contents = os.listdir(data_dir)
+        print(f"Data directory contents: {contents}")
+    except Exception as e:
+        print(f"Error listing data directory: {e}")
+    
     # Initialize database tables
     from app.database import engine, Base
     Base.metadata.create_all(bind=engine)
