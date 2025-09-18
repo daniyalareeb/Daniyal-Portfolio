@@ -42,10 +42,15 @@ class EmailService:
 
             msg.attach(MIMEText(body, 'plain'))
 
-            # Send email with timeout - handle both TLS and SSL
+            # Send email with timeout - handle different ports
             if self.smtp_port == 465:
                 # Use SSL for port 465
                 with smtplib.SMTP_SSL(self.smtp_host, self.smtp_port, timeout=10) as server:
+                    server.login(self.smtp_user, self.smtp_password)
+                    server.send_message(msg)
+            elif self.smtp_port == 25:
+                # Use plain SMTP for port 25
+                with smtplib.SMTP(self.smtp_host, self.smtp_port, timeout=10) as server:
                     server.login(self.smtp_user, self.smtp_password)
                     server.send_message(msg)
             else:
@@ -72,10 +77,15 @@ class EmailService:
 
             msg.attach(MIMEText(message, 'plain'))
 
-            # Send email with timeout - handle both TLS and SSL
+            # Send email with timeout - handle different ports
             if self.smtp_port == 465:
                 # Use SSL for port 465
                 with smtplib.SMTP_SSL(self.smtp_host, self.smtp_port, timeout=10) as server:
+                    server.login(self.smtp_user, self.smtp_password)
+                    server.send_message(msg)
+            elif self.smtp_port == 25:
+                # Use plain SMTP for port 25
+                with smtplib.SMTP(self.smtp_host, self.smtp_port, timeout=10) as server:
                     server.login(self.smtp_user, self.smtp_password)
                     server.send_message(msg)
             else:

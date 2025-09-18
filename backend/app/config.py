@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     
     # Email SMTP (with defaults for deployment)
     SMTP_HOST: str = "smtp.gmail.com"
-    SMTP_PORT: int = 465  # Try SSL port instead of TLS
+    SMTP_PORT: int = 25  # Try port 25 (standard SMTP)
     SMTP_USER: str = "your-email@gmail.com"
     SMTP_PASSWORD: str = "your-app-password"
     ADMIN_EMAIL: str = "admin@example.com"
