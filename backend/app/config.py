@@ -31,6 +31,10 @@ class Settings(BaseSettings):
     SMTP_USER: str = "your-email@gmail.com"
     SMTP_PASSWORD: str = "your-app-password"
     ADMIN_EMAIL: str = "admin@example.com"
+    
+    # Resend API (modern email service)
+    RESEND_API_KEY: str = "your-resend-api-key"
+    RESEND_FROM_EMAIL: str = "noreply@yourdomain.com"
     GITHUB_USERNAME: str = "daniyalareeb"
     
     # CORS
