@@ -8,4 +8,4 @@ cmds = ["pip install --break-system-packages -r backend/requirements.txt"]
 cmds = ["echo 'Python backend build complete'"]
 
 [start]
-cmd = "cd backend && python -c 'import uvicorn; uvicorn.run(\"app.main:app\", host=\"0.0.0.0\", port=int(\"$PORT\"))'"
+cmd = "cd backend && python -c 'import uvicorn, os; uvicorn.run(\"app.main:app\", host=\"0.0.0.0\", port=int(os.environ[\"PORT\"]))'"
