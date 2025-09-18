@@ -1,0 +1,12 @@
+frontend/
+chromadb/
+chromadb-service/
+standalone-chromadb/
+*.md
+.git/
+node_modules/
+.next/
+.env
+.env.local
+.env.production.local
+.env.development.local
