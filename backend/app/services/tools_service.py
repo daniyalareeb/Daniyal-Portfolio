@@ -15,26 +15,26 @@ from app.database import SessionLocal
 
 logger = logging.getLogger(__name__)
 
+# Updated professional categories
 CATEGORIES = [
-    "Chat Assistant", "Image Generation", "Video Editing", "Voice", 
-    "Presentation", "Coding & Development", "Productivity", "Writing",
-    "Art & Design", "Marketing", "Research", "Other"
+    "AI Chat & Assistant", "Image & Visual AI", "Video & Media AI", "Audio & Voice AI", 
+    "Development & Code", "Content Creation", "Productivity & Automation", "Design & UX",
+    "Business & Marketing", "Research & Analytics", "Other"
 ]
 
 def _heuristic_category(name: str, description: str) -> str:
     s = f"{name} {description}".lower()
     pairs = [
-        ("Chat Assistant", ["chat", "assistant", "gpt", "claude", "perplexity", "conversation"]),
-        ("Image Generation", ["image", "diffusion", "photo", "midjourney", "stability", "art", "generate image"]),
-        ("Video Editing", ["video", "runway", "sora", "edit video", "video generation", "animation"]),
-        ("Voice", ["voice", "speech", "tts", "stt", "podcast", "audio", "elevenlabs", "murf"]),
-        ("Presentation", ["slide", "presentation", "deck", "pitch", "beautiful.ai", "canva"]),
-        ("Coding & Development", ["code", "developer", "ide", "copilot", "repo", "debug", "programming"]),
-        ("Productivity", ["notion", "todo", "calendar", "automation", "workflow", "productivity"]),
-        ("Writing", ["writer", "copy", "content", "email", "blog", "writing"]),
-        ("Art & Design", ["figma", "ux", "design", "ui", "mockup", "art", "creative"]),
-        ("Marketing", ["marketing", "ads", "campaign", "social media", "seo"]),
-        ("Research", ["paper", "summarize", "search papers", "arxiv", "research"]),
+        ("AI Chat & Assistant", ["chat", "assistant", "gpt", "claude", "perplexity", "conversation", "ai chat", "chatbot"]),
+        ("Image & Visual AI", ["image", "diffusion", "photo", "midjourney", "stability", "art", "generate image", "visual", "picture", "graphic"]),
+        ("Video & Media AI", ["video", "runway", "sora", "edit video", "video generation", "animation", "media", "film", "movie"]),
+        ("Audio & Voice AI", ["voice", "speech", "tts", "stt", "podcast", "audio", "elevenlabs", "murf", "sound", "music"]),
+        ("Development & Code", ["code", "developer", "ide", "copilot", "repo", "debug", "programming", "software", "api", "github"]),
+        ("Content Creation", ["writer", "copy", "content", "email", "blog", "writing", "article", "text", "copywriting", "presentation"]),
+        ("Productivity & Automation", ["notion", "todo", "calendar", "automation", "workflow", "productivity", "task", "schedule", "organize"]),
+        ("Design & UX", ["figma", "ux", "design", "ui", "mockup", "art", "creative", "prototype", "wireframe", "user experience"]),
+        ("Business & Marketing", ["marketing", "ads", "campaign", "social media", "seo", "business", "sales", "analytics", "growth"]),
+        ("Research & Analytics", ["paper", "summarize", "search papers", "arxiv", "research", "data", "analysis", "insights", "intelligence"]),
     ]
     for cat, keys in pairs:
         if any(k in s for k in keys): return cat
@@ -65,66 +65,41 @@ def _parse_feed_entry(entry):
 
 async def fetch_tools_from_source(url: str, limit_per_source: int = 10):
     """
-    Try RSS first. If not, perform a best-effort scrape for external links.
-    Returns list of dicts: {name, url, description, source}
+    Fetch tools from a single RSS/Atom feed source.
     """
     tools = []
     try:
         feed = feedparser.parse(url)
-        if feed and getattr(feed, "entries", None):
-            for entry in feed.entries[:limit_per_source]:
-                name, link, summary = _parse_feed_entry(entry)
-                if link:
-                    tools.append({"name": name or link, "url": link, "description": summary, "source": url})
+        if not feed.entries:
+            logger.warning("No entries found in feed: %s", url)
             return tools
-    except Exception as e:
-        logger.debug("Feed parse failed for %s: %s", url, e)
 
-    # Fallback: HTML parse (simple heuristic)
-    try:
-        async with httpx.AsyncClient(timeout=20) as client:
-            r = await client.get(url)
-            r.raise_for_status()
-            soup = BeautifulSoup(r.text, "lxml")
-            # collect candidate links (external)
-            anchors = soup.find_all("a", href=True)
-            # heuristic: choose anchors with text length and external links
-            candidates = []
-            for a in anchors:
-                href = a["href"]
-                text = a.get_text(separator=" ", strip=True)
-                if href.startswith("#") or href.startswith("mailto:"):
+        for entry in feed.entries[:limit_per_source]:
+            try:
+                title, link, summary = _parse_feed_entry(entry)
+                
+                if not title or not link:
                     continue
-                if not href.startswith("http"):
-                    # make absolute if relative
-                    href = httpx.URL(url).join(href)
-                if len(text) < 3 or len(text) > 120:
-                    # short names or reasonable names only
-                    continue
-                candidates.append((text, str(href)))
-            # dedupe and return up to limit
-            seen = set()
-            for text, link in candidates:
-                if link in seen:
-                    continue
-                seen.add(link)
-                # quick description by trying to fetch meta description (safe, but try/catch)
-                desc = ""
-                try:
-                    async with httpx.AsyncClient(timeout=10) as c2:
-                        rr = await c2.get(link)
-                        soup2 = BeautifulSoup(rr.text, "lxml")
-                        m = soup2.find("meta", {"name": "description"}) or soup2.find("meta", {"property": "og:description"})
-                        if m and m.get("content"):
-                            desc = m["content"]
-                except Exception:
-                    desc = ""
-                tools.append({"name": text, "url": link, "description": desc, "source": url})
-                if len(tools) >= limit_per_source:
-                    break
+                
+                # Clean up description
+                description = summary
+                if len(description) > 2000:
+                    description = description[:2000] + "..."
+                
+                tools.append({
+                    "name": title,
+                    "url": link,
+                    "description": description,
+                    "source": url
+                })
+                
+            except Exception as e:
+                logger.warning("Failed to parse entry from %s: %s", url, e)
+                continue
+                
     except Exception as e:
-        logger.warning("HTML parse failed for %s: %s", url, e)
-
+        logger.error("Failed to parse feed %s: %s", url, e)
+    
     return tools
 
 async def fetch_and_update_tools(db: Session):
@@ -178,10 +153,13 @@ async def fetch_and_update_tools(db: Session):
     return {"added": added, "timestamp": datetime.utcnow().isoformat()}
 
 def list_tools_db(db: Session, q: str = None, category: str = None, limit: int = 50):
+    """List tools with optional search and category filtering."""
     query = db.query(Tool)
+    
     if q:
-        qlower = f"%{q.lower()}%"
-        query = query.filter((Tool.name.ilike(qlower)) | (Tool.description.ilike(qlower)))
-    if category and category.lower() != "all":
+        query = query.filter(Tool.name.ilike(f"%{q}%") | Tool.description.ilike(f"%{q}%"))
+    
+    if category:
         query = query.filter(Tool.category == category)
+    
     return query.order_by(Tool.last_checked.desc()).limit(limit).all()

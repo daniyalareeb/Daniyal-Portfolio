@@ -30,91 +30,30 @@ BLOG_SOURCES = SOURCES + [
 ]
 
 BLOG_CATEGORIES = [
-    "AI/ML Theory", "Deep Learning", "NLP", "Computer Vision", 
-    "Reinforcement Learning", "Generative AI", "AI Ethics", 
-    "MLOps", "Data Engineering", "AI Infrastructure", 
-    "AI SaaS Tools", "Open Source AI", "AI APIs", 
-    "AI Automation", "AI Frameworks", "Healthcare AI", 
-    "Finance AI", "Marketing AI", "Education AI", 
-    "Entertainment AI", "AI Startups", "AI Trends", 
-    "Enterprise AI", "AI Consulting", "Responsible AI", 
-    "AI Regulation", "AI Safety", "AI Learning", 
-    "AI Research", "Other"
+    "AI Research & Development", "Machine Learning", "AI Applications", 
+    "AI Business & Industry", "AI Ethics & Policy", "AI Tools & Platforms", 
+    "AI News & Trends", "Other"
 ]
 
 def _heuristic_category(title: str, content: str) -> str:
     """Heuristic categorization for blog posts with specific AI/ML topics."""
     text = f"{title} {content}".lower()
     
-    # AI/ML Theory & Fundamentals
-    if any(word in text for word in ["machine learning theory", "ml theory", "algorithm", "mathematical", "statistical", "probability"]):
-        return "AI/ML Theory"
-    elif any(word in text for word in ["deep learning", "neural network", "cnn", "rnn", "lstm", "transformer", "attention"]):
-        return "Deep Learning"
-    elif any(word in text for word in ["nlp", "natural language", "text processing", "language model", "bert", "gpt", "llm"]):
-        return "NLP"
-    elif any(word in text for word in ["computer vision", "image recognition", "object detection", "segmentation", "opencv"]):
-        return "Computer Vision"
-    elif any(word in text for word in ["reinforcement learning", "rl", "q-learning", "policy gradient", "agent"]):
-        return "Reinforcement Learning"
-    elif any(word in text for word in ["generative ai", "diffusion", "gan", "stable diffusion", "midjourney", "dall-e"]):
-        return "Generative AI"
-    elif any(word in text for word in ["ai ethics", "bias", "fairness", "responsible ai", "ethical ai"]):
-        return "AI Ethics"
-    
-    # Engineering & Operations
-    elif any(word in text for word in ["mlops", "model deployment", "model serving", "pipeline", "monitoring"]):
-        return "MLOps"
-    elif any(word in text for word in ["data engineering", "etl", "data pipeline", "data warehouse", "big data"]):
-        return "Data Engineering"
-    elif any(word in text for word in ["ai infrastructure", "cloud ai", "gpu", "distributed", "scaling"]):
-        return "AI Infrastructure"
-    elif any(word in text for word in ["saas", "productivity", "automation tool", "workflow", "zapier"]):
-        return "AI SaaS Tools"
-    elif any(word in text for word in ["open source", "github", "hugging face", "tensorflow", "pytorch"]):
-        return "Open Source AI"
-    elif any(word in text for word in ["api", "rest api", "graphql", "integration", "tutorial"]):
-        return "AI APIs"
-    elif any(word in text for word in ["automation", "workflow automation", "process automation", "rpa"]):
-        return "AI Automation"
-    elif any(word in text for word in ["framework", "library", "tensorflow", "pytorch", "scikit-learn"]):
-        return "AI Frameworks"
-    
-    # Industry Applications
-    elif any(word in text for word in ["healthcare", "medical", "diagnosis", "drug discovery", "biomedical"]):
-        return "Healthcare AI"
-    elif any(word in text for word in ["finance", "banking", "trading", "fraud detection", "risk assessment"]):
-        return "Finance AI"
-    elif any(word in text for word in ["marketing", "advertising", "personalization", "customer", "sales"]):
-        return "Marketing AI"
-    elif any(word in text for word in ["education", "learning", "adaptive", "tutoring", "edtech"]):
-        return "Education AI"
-    elif any(word in text for word in ["entertainment", "gaming", "music", "video", "art", "creative"]):
-        return "Entertainment AI"
-    
-    # Business & Industry
-    elif any(word in text for word in ["startup", "funding", "venture", "entrepreneur", "founder"]):
-        return "AI Startups"
-    elif any(word in text for word in ["trend", "market analysis", "industry report", "forecast"]):
-        return "AI Trends"
-    elif any(word in text for word in ["enterprise", "corporate", "business", "company", "organization"]):
-        return "Enterprise AI"
-    elif any(word in text for word in ["consulting", "service", "agency", "advisory", "expert"]):
-        return "AI Consulting"
-    
-    # Governance & Safety
-    elif any(word in text for word in ["regulation", "governance", "policy", "compliance", "legal"]):
-        return "AI Regulation"
-    elif any(word in text for word in ["safety", "alignment", "existential risk", "control", "robustness"]):
-        return "AI Safety"
-    elif any(word in text for word in ["privacy", "data protection", "gdpr", "security"]):
-        return "Responsible AI"
-    
-    # Learning & Research
-    elif any(word in text for word in ["course", "certification", "bootcamp", "tutorial", "learning path"]):
-        return "AI Learning"
-    elif any(word in text for word in ["research", "paper", "academic", "conference", "breakthrough"]):
-        return "AI Research"
+    # AI Research & Development
+    if any(word in text for word in ["research", "paper", "arxiv", "algorithm", "model", "neural network", "deep learning", "transformer", "llm", "gpt", "bert", "academic", "study", "experiment", "methodology", "innovation"]):
+        return "AI Research & Development"
+    elif any(word in text for word in ["machine learning", "ml", "training", "dataset", "model training", "supervised", "unsupervised", "reinforcement learning", "classification", "regression", "clustering", "feature", "prediction", "mlops"]):
+        return "Machine Learning"
+    elif any(word in text for word in ["application", "use case", "implementation", "deployment", "production", "chatbot", "recommendation", "computer vision", "nlp", "speech recognition", "image recognition", "autonomous", "robotics", "healthcare", "finance"]):
+        return "AI Applications"
+    elif any(word in text for word in ["business", "industry", "enterprise", "startup", "investment", "funding", "market", "revenue", "strategy", "leadership", "management", "consulting", "case study", "roi", "adoption", "transformation", "digital"]):
+        return "AI Business & Industry"
+    elif any(word in text for word in ["ethics", "bias", "fairness", "privacy", "security", "regulation", "policy", "governance", "responsible ai", "transparency", "accountability", "safety", "ai safety", "algorithmic bias", "data protection", "compliance"]):
+        return "AI Ethics & Policy"
+    elif any(word in text for word in ["tool", "platform", "framework", "library", "api", "sdk", "software", "openai", "hugging face", "tensorflow", "pytorch", "cloud", "aws", "azure", "google cloud", "infrastructure", "development", "coding"]):
+        return "AI Tools & Platforms"
+    elif any(word in text for word in ["news", "announcement", "release", "update", "trend", "future", "forecast", "prediction", "outlook", "breakthrough", "milestone", "achievement", "competition", "market analysis", "industry report"]):
+        return "AI News & Trends"
     
     else:
         return "Other"
