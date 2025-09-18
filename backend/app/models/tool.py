@@ -12,6 +12,7 @@ class Tool(Base):
     status = Column(String(50), nullable=True)
     url = Column(String(500), nullable=False, unique=True)
     pricing = Column(String(50), nullable=True)
+    image_url = Column(String(500), nullable=True)         # thumbnail image
     source = Column(String(255), nullable=True)            # where we found it
     auto_fetched = Column(Boolean, default=False)          # was it added by the agent?
     last_checked = Column(DateTime(timezone=True), server_default=func.now())

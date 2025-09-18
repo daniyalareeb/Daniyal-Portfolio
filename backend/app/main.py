@@ -68,7 +68,10 @@ app.include_router(data_backup.router, prefix=settings.API_V1_STR, tags=["data-b
 
 # Mount static file serving for uploaded images and assets
 # This allows serving files uploaded through the admin interface
-app.mount("/static", StaticFiles(directory="static"), name="static")
+import os
+static_dir = os.path.join(os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', '/app/data'), 'uploads')
+os.makedirs(static_dir, exist_ok=True)
+app.mount("/static/uploads", StaticFiles(directory=static_dir), name="static-uploads")
 
 @app.on_event("startup")
 async def on_startup():

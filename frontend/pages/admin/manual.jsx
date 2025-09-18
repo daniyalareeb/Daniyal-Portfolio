@@ -22,7 +22,8 @@ export default function ManualAdmin() {
     url: "",
     category: "AI Chat & Assistant",
     pricing: "",
-    status: "Active"
+    status: "Active",
+    image_url: ""
   });
 
   // Project form state
@@ -145,7 +146,8 @@ export default function ManualAdmin() {
           url: "",
           category: "AI Chat & Assistant",
           pricing: "",
-          status: "Active"
+          status: "Active",
+          image_url: ""
         });
         fetchStats();
       } else {
@@ -654,6 +656,78 @@ export default function ManualAdmin() {
                 />
               </div>
             </div>
+            
+            {/* Image Upload Section */}
+            <div>
+              <label style={{color: '#fff', display: 'block', marginBottom: 8}}>Tool Thumbnail Image</label>
+              <div style={{display: 'flex', gap: 12, alignItems: 'center'}}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      setBusy(true);
+                      setMessage("Uploading image...");
+                      try {
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        
+                        const base = process.env.NEXT_PUBLIC_API_URL;
+                        const response = await fetch(`${base}/api/v1/upload-image-public`, {
+                          method: 'POST',
+                          body: formData
+                        });
+                        
+                        const result = await response.json();
+                        if (result.success) {
+                          setToolForm({...toolForm, image_url: result.data.image_url});
+                          setMessage("Image uploaded successfully!");
+                        } else {
+                          setMessage(`Error uploading image: ${result.error}`);
+                        }
+                      } catch (error) {
+                        setMessage(`Error uploading image: ${error.message}`);
+                      }
+                      setBusy(false);
+                    }
+                  }}
+                  style={{
+                    padding: '8px',
+                    borderRadius: '6px',
+                    border: '1px solid #444',
+                    background: '#333',
+                    color: '#fff',
+                    flex: 1
+                  }}
+                />
+                {toolForm.image_url && (
+                  <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                    <img 
+                      src={`${process.env.NEXT_PUBLIC_API_URL}${toolForm.image_url}`} 
+                      alt="Tool thumbnail" 
+                      style={{width: 40, height: 40, borderRadius: 4, objectFit: 'cover'}}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setToolForm({...toolForm, image_url: ""})}
+                      style={{
+                        background: '#dc3545',
+                        color: '#fff',
+                        border: 'none',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '12px'
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+            
             <button
               onClick={editingTool ? updateTool : addTool}
               disabled={busy || !toolForm.name || !toolForm.description || !toolForm.url}

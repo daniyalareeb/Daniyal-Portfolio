@@ -37,6 +37,7 @@ class ToolCreate(BaseModel):
     category: str
     pricing: Optional[str] = None
     status: Optional[str] = "Active"
+    image_url: Optional[str] = None
 
 @router.post("/add-tool")
 async def add_tool(
@@ -59,6 +60,7 @@ async def add_tool(
             category=tool.category,
             pricing=tool.pricing,
             status=tool.status,
+            image_url=tool.image_url,
             auto_fetched=False,
             source="Manual Admin"
         )
@@ -173,9 +175,11 @@ async def upload_image_public(
         file_extension = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
         unique_filename = f"{uuid.uuid4()}.{file_extension}"
         
-        # Create uploads directory if it doesn't exist
+        # Create uploads directory in persistent volume if it doesn't exist
         import os
-        upload_dir = "static/uploads"
+        # Use persistent volume for file storage
+        persistent_path = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', '/app/data')
+        upload_dir = os.path.join(persistent_path, "uploads")
         os.makedirs(upload_dir, exist_ok=True)
         
         # Save file
@@ -183,7 +187,7 @@ async def upload_image_public(
         with open(file_path, "wb") as buffer:
             buffer.write(content)
         
-        # Return the URL
+        # Return the URL - use the persistent path
         image_url = f"/static/uploads/{unique_filename}"
         return {
             "success": True, 
@@ -217,8 +221,9 @@ async def upload_image(
         file_extension = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
         unique_filename = f"{uuid.uuid4()}.{file_extension}"
         
-        # Save file
-        upload_dir = "static/uploads"
+        # Save file in persistent volume
+        persistent_path = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', '/app/data')
+        upload_dir = os.path.join(persistent_path, "uploads")
         os.makedirs(upload_dir, exist_ok=True)
         file_path = os.path.join(upload_dir, unique_filename)
         
@@ -339,6 +344,8 @@ async def update_tool_public(
             tool.pricing = body["pricing"]
         if "status" in body:
             tool.status = body["status"]
+        if "image_url" in body:
+            tool.image_url = body["image_url"]
         
         db.commit()
         db.refresh(tool)
@@ -373,6 +380,7 @@ async def update_tool(
         existing_tool.category = tool.category
         existing_tool.pricing = tool.pricing
         existing_tool.status = tool.status
+        existing_tool.image_url = tool.image_url
         
         db.commit()
         

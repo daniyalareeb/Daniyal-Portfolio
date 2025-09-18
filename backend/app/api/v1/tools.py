@@ -23,6 +23,7 @@ def tools_list(
                 "status": r.status,
                 "url": r.url,
                 "pricing": r.pricing,
+                "image_url": r.image_url,
                 "source": r.source,
                 "auto_fetched": r.auto_fetched,
                 "last_checked": r.last_checked.isoformat() if r.last_checked else None
