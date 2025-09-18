@@ -81,7 +81,7 @@ async def on_startup():
     import os
     
     # Ensure data directory exists in Railway persistent volume
-    data_dir = "/data"  # Railway persistent mount path
+    data_dir = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', '/data')  # Use actual Railway mount path
     os.makedirs(data_dir, exist_ok=True)
     print(f"Using Railway persistent data directory: {data_dir}")
     

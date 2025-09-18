@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 from typing import List
+import os
 
 class Settings(BaseSettings):
     # Server Config
@@ -9,7 +10,7 @@ class Settings(BaseSettings):
     APP_PORT: int = 8000
     
     # Database - SQLite with Railway persistent storage
-    DATABASE_URL: str = "sqlite:///data/portfolio.db"
+    DATABASE_URL: str = f"sqlite:///{os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', '/data')}/portfolio.db"
     
     # ChromaDB (external service)
     CHROMADB_URL: str = "http://localhost:8001"

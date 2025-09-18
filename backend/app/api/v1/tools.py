@@ -7,8 +7,8 @@ router = APIRouter()
 
 @router.get("/tools/list")
 def tools_list(
-    q: str | None = Query(None),
-    category: str | None = Query(None),
+    q: str = Query(None),
+    category: str = Query(None),
     limit: int = Query(20, ge=1, le=100),
     db: Session = Depends(get_db),
 ):
