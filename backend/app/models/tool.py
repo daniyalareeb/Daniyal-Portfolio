@@ -15,4 +15,5 @@ class Tool(Base):
     image_url = Column(String(500), nullable=True)         # thumbnail image
     source = Column(String(255), nullable=True)            # where we found it
     auto_fetched = Column(Boolean, default=False)          # was it added by the agent?
+    display_order = Column(Integer, default=0)            # for drag-and-drop ordering
     last_checked = Column(DateTime(timezone=True), server_default=func.now())

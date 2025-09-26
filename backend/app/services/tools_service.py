@@ -162,4 +162,4 @@ def list_tools_db(db: Session, q: str = None, category: str = None, limit: int =
     if category:
         query = query.filter(Tool.category == category)
     
-    return query.order_by(Tool.last_checked.desc()).limit(limit).all()
+    return query.order_by(Tool.display_order.asc(), Tool.last_checked.desc()).limit(limit).all()

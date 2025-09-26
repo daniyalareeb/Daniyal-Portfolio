@@ -8,7 +8,7 @@ router = APIRouter()
 
 @router.get("/projects/list", response_model=APIResponse)
 def projects_list(db: Session = Depends(get_db)):
-    items = db.query(Project).order_by(Project.id.desc()).all()
+    items = db.query(Project).order_by(Project.display_order.asc(), Project.id.desc()).all()
     data = {
         "items": [
             {

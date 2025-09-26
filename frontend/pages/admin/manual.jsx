@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import SessionTimeout from "../../components/SessionTimeout";
 import BrowserCloseHandler from "../../components/BrowserCloseHandler";
+import DragDropList, { DragHandle } from "../../components/DragDropList";
 
 export default function ManualAdmin() {
   const [activeTab, setActiveTab] = useState("tools");
@@ -122,6 +123,91 @@ export default function ManualAdmin() {
     } catch (error) {
       console.error('Fetch error:', error);
       setMessage(`Error fetching data: ${error.message}`);
+    }
+  }
+
+  // Drag and drop reorder functions
+  async function reorderTools(newOrder) {
+    try {
+      const base = process.env.NEXT_PUBLIC_API_URL || 'https://kind-perfection-production-ae48.up.railway.app';
+      const response = await fetch(`${base}/api/v1/reorder-tools`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          items: newOrder.map((item, index) => ({
+            id: item.id,
+            order: index
+          }))
+        })
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        setTools(newOrder);
+        setMessage(`✅ ${result.message}`);
+      } else {
+        setMessage(`❌ Error reordering tools: ${result.error}`);
+      }
+    } catch (error) {
+      setMessage(`❌ Error reordering tools: ${error.message}`);
+    }
+  }
+
+  async function reorderProjects(newOrder) {
+    try {
+      const base = process.env.NEXT_PUBLIC_API_URL || 'https://kind-perfection-production-ae48.up.railway.app';
+      const response = await fetch(`${base}/api/v1/reorder-projects`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          items: newOrder.map((item, index) => ({
+            id: item.id,
+            order: index
+          }))
+        })
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        setProjects(newOrder);
+        setMessage(`✅ ${result.message}`);
+      } else {
+        setMessage(`❌ Error reordering projects: ${result.error}`);
+      }
+    } catch (error) {
+      setMessage(`❌ Error reordering projects: ${error.message}`);
+    }
+  }
+
+  async function reorderBlogs(newOrder) {
+    try {
+      const base = process.env.NEXT_PUBLIC_API_URL || 'https://kind-perfection-production-ae48.up.railway.app';
+      const response = await fetch(`${base}/api/v1/reorder-blogs`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          items: newOrder.map((item, index) => ({
+            id: item.id,
+            order: index
+          }))
+        })
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        setBlogs(newOrder);
+        setMessage(`✅ ${result.message}`);
+      } else {
+        setMessage(`❌ Error reordering blogs: ${result.error}`);
+      }
+    } catch (error) {
+      setMessage(`❌ Error reordering blogs: ${error.message}`);
     }
   }
 
@@ -594,6 +680,31 @@ export default function ManualAdmin() {
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 bg-brand-400 rounded-full animate-pulse"></div>
                 <p className="text-white font-medium">{message}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Drag and Drop Instructions */}
+          {(activeTab === "list-tools" || activeTab === "list-projects" || activeTab === "list-blogs") && (
+            <div className="card p-6 mb-8 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-purple-500/20">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-500/30 to-pink-500/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-2">🎯 Drag & Drop Reordering</h3>
+                  <p className="text-slate-300 mb-3">
+                    Drag items by the <span className="text-purple-300 font-mono">⋮⋮</span> handle to reorder them. 
+                    The new order will be saved automatically and displayed on your public pages.
+                  </p>
+                  <div className="flex flex-wrap gap-2 text-sm">
+                    <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full">✨ Real-time updates</span>
+                    <span className="px-3 py-1 bg-pink-500/20 text-pink-300 rounded-full">🎨 Visual feedback</span>
+                    <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full">💾 Auto-save</span>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -1137,111 +1248,68 @@ export default function ManualAdmin() {
 
       {/* List Tools Tab */}
       {activeTab === "list-tools" && (
-        <div style={{background: '#2a2a2a', padding: 24, borderRadius: 12}}>
-          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16}}>
-            <h2 style={{color: '#fff', margin: 0}}>📋 AI Tools List</h2>
+        <div className="card p-8">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-2xl font-bold text-white">📋 AI Tools List</h2>
             <button
               onClick={updateToolCategories}
               disabled={busy}
-              style={{
-                background: '#007bff',
-                color: '#fff',
-                border: 'none',
-                padding: '8px 16px',
-                borderRadius: '6px',
-                cursor: busy ? 'not-allowed' : 'pointer',
-                opacity: busy ? 0.6 : 1,
-                fontSize: '14px'
-              }}
+              className="px-6 py-3 bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white rounded-xl font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-brand-500/25"
             >
               {busy ? 'Updating...' : '🔄 Update Categories'}
             </button>
           </div>
-          <div style={{display: 'grid', gap: 12}}>
-            {tools.map(t => (
-              <div key={t.id} style={{
-                background: '#333', 
-                padding: 16, 
-                borderRadius: 8,
-                border: '1px solid #444'
-              }}>
-                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                  <div style={{flex: 1}}>
-                    <h4 style={{color: '#fff', margin: 0, marginBottom: 4}}>{t.name}</h4>
-                    <p style={{color: '#ccc', margin: 0, marginBottom: 8}}>{t.description}</p>
-                    <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
-                      <span style={{
-                        background: '#007bff', 
-                        color: '#fff', 
-                        padding: '4px 8px', 
-                        borderRadius: 4, 
-                        fontSize: '12px'
-                      }}>
-                        {t.category}
-                      </span>
-                      {t.pricing && (
-                        <span style={{
-                          background: '#28a745', 
-                          color: '#fff', 
-                          padding: '4px 8px', 
-                          borderRadius: 4, 
-                          fontSize: '12px'
-                        }}>
-                          {t.pricing}
+          <div className="space-y-4">
+            <DragDropList
+              items={tools}
+              onReorder={reorderTools}
+              style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+              renderItem={(tool) => (
+                <div className="card p-6 hover:scale-[1.02] transition-all duration-300 border border-white/10 hover:border-brand-500/30">
+                  <div className="flex items-center gap-4">
+                    <DragHandle />
+                    <div className="flex-1">
+                      <h4 className="text-xl font-semibold text-white mb-2">{tool.name}</h4>
+                      <p className="text-slate-300 mb-4 leading-relaxed">{tool.description}</p>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="px-3 py-1 bg-brand-500/20 text-brand-300 rounded-full text-sm font-medium">
+                          {tool.category}
                         </span>
-                      )}
+                        {tool.pricing && (
+                          <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm font-medium">
+                            {tool.pricing}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <a 
+                        href={tool.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition-colors duration-200 shadow-lg shadow-emerald-500/25"
+                      >
+                        Visit
+                      </a>
+                      <button
+                        onClick={() => startEditTool(tool)}
+                        disabled={busy}
+                        className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => deleteTool(tool.id)}
+                        disabled={busy}
+                        className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Delete
+                      </button>
                     </div>
                   </div>
-                  <div style={{display: 'flex', gap: 8}}>
-                    <a 
-                      href={t.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      style={{
-                        background: '#28a745', 
-                        color: '#fff', 
-                        padding: '8px 16px', 
-                        borderRadius: 4, 
-                        textDecoration: 'none',
-                        fontSize: '14px'
-                      }}
-                    >
-                      Visit
-                    </a>
-                    <button
-                      onClick={() => startEditTool(t)}
-                      disabled={busy}
-                      style={{
-                        background: '#007bff', 
-                        color: '#fff', 
-                        border: 'none', 
-                        padding: '8px 16px', 
-                        borderRadius: 4,
-                        cursor: busy ? 'not-allowed' : 'pointer',
-                        fontSize: '14px'
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => deleteTool(t.id)}
-                      disabled={busy}
-                      style={{
-                        background: '#dc3545', 
-                        color: '#fff', 
-                        border: 'none', 
-                        padding: '8px 16px', 
-                        borderRadius: 4,
-                        cursor: busy ? 'not-allowed' : 'pointer',
-                        fontSize: '14px'
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </div>
                 </div>
-              </div>
-            ))}
+              )}
+            />
           </div>
         </div>
       )}
@@ -1251,19 +1319,26 @@ export default function ManualAdmin() {
         <div style={{background: '#2a2a2a', padding: 24, borderRadius: 12}}>
           <h2 style={{color: '#fff', margin: 0, marginBottom: 16}}>📋 Projects List</h2>
           <div style={{display: 'grid', gap: 12}}>
-            {projects.map(p => (
-              <div key={p.id} style={{
-                background: '#333', 
-                padding: 16, 
-                borderRadius: 8,
-                border: '1px solid #444'
-              }}>
-                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <DragDropList
+              items={projects}
+              onReorder={reorderProjects}
+              style={{ display: 'grid', gap: '12px' }}
+              renderItem={(project) => (
+                <div style={{
+                  background: '#333', 
+                  padding: 16, 
+                  borderRadius: 8,
+                  border: '1px solid #444',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px'
+                }}>
+                  <DragHandle />
                   <div style={{flex: 1, display: 'flex', gap: 16}}>
-                    {p.image_url && (
+                    {project.image_url && (
                       <img 
-                        src={`${process.env.NEXT_PUBLIC_API_URL}${p.image_url}`} 
-                        alt={p.name} 
+                        src={`${process.env.NEXT_PUBLIC_API_URL}${project.image_url}`} 
+                        alt={project.name} 
                         style={{
                           width: '80px', 
                           height: '60px', 
@@ -1275,8 +1350,8 @@ export default function ManualAdmin() {
                       />
                     )}
                     <div style={{flex: 1}}>
-                      <h4 style={{color: '#fff', margin: 0, marginBottom: 4}}>{p.name}</h4>
-                      <p style={{color: '#ccc', margin: 0, marginBottom: 8}}>{p.description}</p>
+                      <h4 style={{color: '#fff', margin: 0, marginBottom: 4}}>{project.name}</h4>
+                      <p style={{color: '#ccc', margin: 0, marginBottom: 8}}>{project.description}</p>
                       <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
                         <span style={{
                           background: '#007bff', 
@@ -1285,9 +1360,9 @@ export default function ManualAdmin() {
                           borderRadius: 4, 
                           fontSize: '12px'
                         }}>
-                          {p.category}
+                          {project.category}
                         </span>
-                        {p.technologies && (
+                        {project.technologies && (
                           <span style={{
                             background: '#6c757d', 
                             color: '#fff', 
@@ -1295,16 +1370,16 @@ export default function ManualAdmin() {
                             borderRadius: 4, 
                             fontSize: '12px'
                           }}>
-                            {p.technologies}
+                            {project.technologies}
                           </span>
                         )}
                       </div>
                     </div>
                   </div>
                   <div style={{display: 'flex', gap: 8}}>
-                    {p.url && (
+                    {project.url && (
                       <a 
-                        href={p.url} 
+                        href={project.url} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         style={{
@@ -1319,9 +1394,9 @@ export default function ManualAdmin() {
                         Live
                       </a>
                     )}
-                    {p.github_url && (
+                    {project.github_url && (
                       <a 
-                        href={p.github_url} 
+                        href={project.github_url} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         style={{
@@ -1337,7 +1412,7 @@ export default function ManualAdmin() {
                       </a>
                     )}
                     <button
-                      onClick={() => startEditProject(p)}
+                      onClick={() => startEditProject(project)}
                       disabled={busy}
                       style={{
                         background: '#007bff', 
@@ -1352,7 +1427,7 @@ export default function ManualAdmin() {
                       Edit
                     </button>
                     <button
-                      onClick={() => deleteProject(p.id)}
+                      onClick={() => deleteProject(project.id)}
                       disabled={busy}
                       style={{
                         background: '#dc3545', 
@@ -1368,8 +1443,8 @@ export default function ManualAdmin() {
                     </button>
                   </div>
                 </div>
-              </div>
-            ))}
+              )}
+            />
           </div>
         </div>
       )}
@@ -1379,17 +1454,24 @@ export default function ManualAdmin() {
         <div style={{background: '#2a2a2a', padding: 24, borderRadius: 12}}>
           <h2 style={{color: '#fff', margin: 0, marginBottom: 16}}>📋 Blogs List</h2>
           <div style={{display: 'grid', gap: 12}}>
-            {blogs.map(b => (
-              <div key={b.id} style={{
-                background: '#333', 
-                padding: 16, 
-                borderRadius: 8,
-                border: '1px solid #444'
-              }}>
-                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <DragDropList
+              items={blogs}
+              onReorder={reorderBlogs}
+              style={{ display: 'grid', gap: '12px' }}
+              renderItem={(blog) => (
+                <div style={{
+                  background: '#333', 
+                  padding: 16, 
+                  borderRadius: 8,
+                  border: '1px solid #444',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px'
+                }}>
+                  <DragHandle />
                   <div style={{flex: 1}}>
-                    <h4 style={{color: '#fff', margin: 0, marginBottom: 4}}>{b.title}</h4>
-                    <p style={{color: '#ccc', margin: 0, marginBottom: 8}}>{b.excerpt}</p>
+                    <h4 style={{color: '#fff', margin: 0, marginBottom: 4}}>{blog.title}</h4>
+                    <p style={{color: '#ccc', margin: 0, marginBottom: 8}}>{blog.excerpt}</p>
                     <span style={{
                       background: '#28a745', 
                       color: '#fff', 
@@ -1397,12 +1479,12 @@ export default function ManualAdmin() {
                       borderRadius: 4, 
                       fontSize: '12px'
                     }}>
-                      {b.category}
+                      {blog.category}
                     </span>
                   </div>
                   <div style={{display: 'flex', gap: 8}}>
                     <button
-                      onClick={() => deleteBlog(b.id)}
+                      onClick={() => deleteBlog(blog.id)}
                       disabled={busy}
                       style={{
                         background: '#dc3545', 
@@ -1418,8 +1500,8 @@ export default function ManualAdmin() {
                     </button>
                   </div>
                 </div>
-              </div>
-            ))}
+              )}
+            />
           </div>
             </div>
           )}

@@ -8,7 +8,7 @@ router = APIRouter()
 
 @router.get("/news/list", response_model=APIResponse)
 def list_blogs(db: Session = Depends(get_db)):
-    items = db.query(BlogPost).order_by(BlogPost.id.desc()).all()
+    items = db.query(BlogPost).order_by(BlogPost.display_order.asc(), BlogPost.id.desc()).all()
     # shape like frontend expects
     data = {
         "items": [
