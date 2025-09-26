@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.services.blog_service import fetch_and_update_blogs
 from app.services.projects_service import sync_projects
-from app.services.data_persistence import DataPersistenceService
+# Data persistence removed - using PostgreSQL for reliability
 
 _scheduler = None
 
@@ -37,17 +37,7 @@ def start_scheduler():
     _scheduler.add_job(_job(fetch_and_update_blogs), "interval", days=3, id="blogs")
     _scheduler.add_job(_job(sync_projects), "interval", hours=2, id="projects")
     
-    # Add data backup job - runs every 30 minutes
-    def backup_data_job():
-        try:
-            persistence_service = DataPersistenceService()
-            persistence_service.backup_to_environment()
-            persistence_service.backup_to_file()
-            print("Scheduled data backup completed")
-        except Exception as e:
-            print(f"Scheduled data backup failed: {e}")
-    
-    _scheduler.add_job(backup_data_job, "interval", minutes=30, id="data_backup")
+    # Data backup removed - using PostgreSQL for persistence
     _scheduler.start()
 
 # Admin functions for manual refresh
@@ -126,3 +116,18 @@ def reset_blog_scheduler():
     except Exception as e:
         print(f"Error resetting blog scheduler: {e}")
         return False
+
+def get_next_blog_update_time():
+    """Get the next blog update time for admin display"""
+    global _scheduler
+    if not _scheduler:
+        return None
+    
+    try:
+        blog_job = _scheduler.get_job("blogs")
+        if blog_job and blog_job.next_run_time:
+            return blog_job.next_run_time.isoformat()
+        return None
+    except Exception as e:
+        print(f"Error getting next blog update time: {e}")
+        return None

@@ -424,9 +424,18 @@ async def refresh_blogs(db: Session = Depends(get_db)):
 async def get_scheduler_status():
     """Get the current status of the background scheduler"""
     try:
-        from app.services.scheduler import get_scheduler_status
+        from app.services.scheduler import get_scheduler_status, get_next_blog_update_time
         
         status = get_scheduler_status()
+        
+        # Add next blog update time for better admin display
+        next_blog_time = get_next_blog_update_time()
+        if next_blog_time:
+            # Update the blogs job with the actual next run time
+            for job in status.get("jobs", []):
+                if job.get("id") == "blogs":
+                    job["next_run_time"] = next_blog_time
+                    break
         
         return {
             "success": True,
