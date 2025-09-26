@@ -93,40 +93,60 @@ def _is_ai_related(title: str, content: str) -> bool:
 def _enhance_blog_content(title: str, summary: str, url: str) -> str:
     """Enhance blog content to make it longer and more detailed."""
     
-    # Base content from RSS summary
-    base_content = summary
+    # Use the actual RSS summary as base content
+    base_content = summary.strip()
     
-    # Add contextual information based on title and content
-    enhanced_parts = [base_content]
+    # If summary is too short, try to get more context from title
+    if len(base_content) < 200:
+        # Create more specific content based on title analysis
+        title_lower = title.lower()
+        
+        if any(word in title_lower for word in ["research", "study", "paper", "algorithm", "model"]):
+            base_content = f"{base_content} This research presents new findings in artificial intelligence and machine learning, contributing to the advancement of AI technologies and their practical applications in various domains."
+        
+        elif any(word in title_lower for word in ["tool", "platform", "framework", "library", "api"]):
+            base_content = f"{base_content} This development introduces new capabilities for AI developers and researchers, expanding the ecosystem of artificial intelligence tools and platforms available for building intelligent systems."
+        
+        elif any(word in title_lower for word in ["business", "industry", "enterprise", "startup", "company"]):
+            base_content = f"{base_content} This business-focused development highlights the growing impact of artificial intelligence across industries, showcasing how AI technologies are transforming traditional business models and creating new opportunities."
+        
+        elif any(word in title_lower for word in ["ethics", "bias", "fairness", "policy", "governance"]):
+            base_content = f"{base_content} This important discussion addresses critical considerations in AI development, focusing on responsible artificial intelligence practices and the societal implications of AI technologies."
+        
+        elif any(word in title_lower for word in ["news", "announcement", "release", "update", "breakthrough"]):
+            base_content = f"{base_content} This announcement represents a significant development in the artificial intelligence field, highlighting the rapid pace of innovation and advancement in AI technologies."
+        
+        else:
+            base_content = f"{base_content} This article explores important developments in artificial intelligence, providing insights into how AI technologies are evolving and impacting various aspects of technology and society."
     
-    # Add introduction based on content analysis
-    if any(word in title.lower() for word in ["research", "study", "paper", "algorithm"]):
-        enhanced_parts.append("This research article presents significant findings in the field of artificial intelligence and machine learning. The study contributes to our understanding of advanced AI technologies and their practical applications.")
+    # Add contextual information that varies based on content
+    contextual_additions = []
     
-    elif any(word in title.lower() for word in ["tool", "platform", "framework", "library"]):
-        enhanced_parts.append("This tool or platform represents an important development in the AI ecosystem, offering new capabilities for developers and researchers working with artificial intelligence technologies.")
+    # Add different technical contexts based on content analysis
+    content_lower = f"{title} {base_content}".lower()
     
-    elif any(word in title.lower() for word in ["business", "industry", "enterprise", "startup"]):
-        enhanced_parts.append("This business-focused article explores the impact of artificial intelligence on various industries, highlighting opportunities for innovation and growth in the AI sector.")
+    if any(word in content_lower for word in ["neural", "deep learning", "transformer", "llm", "gpt"]):
+        contextual_additions.append("The advancement of neural networks and deep learning architectures continues to push the boundaries of what artificial intelligence can achieve, enabling more sophisticated and capable AI systems.")
     
-    elif any(word in title.lower() for word in ["ethics", "bias", "fairness", "policy"]):
-        enhanced_parts.append("This important discussion addresses critical ethical considerations in artificial intelligence development, focusing on responsible AI practices and societal implications.")
+    if any(word in content_lower for word in ["computer vision", "image", "visual", "recognition"]):
+        contextual_additions.append("Computer vision technologies are becoming increasingly sophisticated, enabling AI systems to understand and interpret visual information with remarkable accuracy and speed.")
     
-    else:
-        enhanced_parts.append("This article provides valuable insights into the rapidly evolving field of artificial intelligence, covering recent developments and emerging trends in AI technology.")
+    if any(word in content_lower for word in ["nlp", "language", "text", "speech", "conversation"]):
+        contextual_additions.append("Natural language processing capabilities are advancing rapidly, allowing AI systems to understand, generate, and interact with human language in increasingly natural and effective ways.")
     
-    # Add technical context
-    enhanced_parts.append("The field of artificial intelligence continues to advance rapidly, with new breakthroughs in machine learning, natural language processing, computer vision, and other AI domains. These developments are shaping the future of technology and creating new opportunities for innovation across various industries.")
+    if any(word in content_lower for word in ["automation", "robotics", "autonomous", "agent"]):
+        contextual_additions.append("AI-powered automation and autonomous systems are transforming how tasks are performed across various industries, from manufacturing to service delivery.")
     
-    # Add practical implications
-    enhanced_parts.append("Understanding these AI developments is crucial for professionals, researchers, and enthusiasts who want to stay informed about the latest trends and opportunities in artificial intelligence. The insights shared in this article can help readers make informed decisions about AI adoption and implementation.")
+    # Add practical implications that vary
+    if len(contextual_additions) == 0:
+        contextual_additions.append("These developments in artificial intelligence represent important steps forward in creating more capable, efficient, and beneficial AI systems that can address real-world challenges.")
     
     # Combine all parts
-    enhanced_content = " ".join(enhanced_parts)
+    enhanced_content = base_content + " " + " ".join(contextual_additions)
     
-    # Ensure minimum length (at least 800 characters)
-    if len(enhanced_content) < 800:
-        additional_context = " This comprehensive overview of AI developments provides readers with a deeper understanding of how artificial intelligence is transforming various sectors, from healthcare and finance to education and entertainment. The article highlights key trends, challenges, and opportunities in the AI landscape, making it an essential read for anyone interested in the future of technology."
+    # Ensure minimum length but avoid repetition
+    if len(enhanced_content) < 600:
+        additional_context = " The continued evolution of AI technologies is creating new possibilities for innovation and problem-solving across diverse fields, from healthcare and education to finance and entertainment."
         enhanced_content += additional_context
     
     return enhanced_content
@@ -160,6 +180,17 @@ def _parse_blog_entry(entry):
     summary = re.sub(r'&[a-zA-Z]+;', ' ', summary)  # Remove HTML entities
     summary = re.sub(r'\s+', ' ', summary).strip()  # Clean whitespace
     summary = re.sub(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', '', summary)  # Remove URLs
+    
+    # Try to get better content from different fields
+    if len(summary) < 150:
+        # Try to get content from other fields
+        content = getattr(entry, "content", None)
+        if content and len(content) > len(summary):
+            if isinstance(content, list):
+                content = " ".join([str(c) for c in content])
+            summary = content
+        elif hasattr(entry, "description") and len(entry.description) > len(summary):
+            summary = entry.description
     
     # Extract date
     published_date = None
