@@ -30,7 +30,7 @@ def _job(fn):
 
 def start_scheduler():
     global _scheduler
-    if _scheduler:
+    if _scheduler and _scheduler.running:
         return
     _scheduler = BackgroundScheduler(timezone="UTC")
     # Run blogs every 3 days for automatic updates
@@ -39,6 +39,7 @@ def start_scheduler():
     
     # Data backup removed - using PostgreSQL for persistence
     _scheduler.start()
+    print("Scheduler started successfully")
 
 # Admin functions for manual refresh
 async def run_blog_update():
@@ -67,7 +68,7 @@ async def run_projects_update():
 def get_scheduler_status():
     """Get the status of the scheduler"""
     global _scheduler
-    if not _scheduler:
+    if not _scheduler or not _scheduler.running:
         return {"status": "not_started", "jobs": []}
     
     jobs = []

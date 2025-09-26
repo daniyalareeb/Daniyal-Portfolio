@@ -14,19 +14,12 @@ logger = logging.getLogger(__name__)
 
 from app.core.rss_sources import SOURCES
 
-# Blog sources - AI/ML focused blogs only
+# Blog sources - AI/ML focused blogs only (removed Hacker News due to non-AI content)
 BLOG_SOURCES = [
     # Core AI/ML Research Sources
     "https://huggingface.co/blog/feed.xml",  # Hugging Face AI
     "https://bair.berkeley.edu/blog/feed.xml",  # Berkeley AI Research
     "https://blog.ml.cmu.edu/feed/",  # CMU Machine Learning
-    "https://news.ycombinator.com/rss",  # Hacker News (AI discussions)
-    
-    # AI Company Blogs (if they have working RSS)
-    # Note: Many AI company blogs don't have reliable RSS feeds
-    # "https://openai.com/blog/rss",  # OpenAI (often 403)
-    # "https://ai.googleblog.com/feeds/posts/default",  # Google AI (404)
-    # "https://deepmind.google/discover/blog/rss/",  # DeepMind (404)
     
     # AI Research & Academic Sources
     "https://distill.pub/rss.xml",  # Distill (AI research explanations)
@@ -62,6 +55,40 @@ def _heuristic_category(title: str, content: str) -> str:
     
     else:
         return "Other"
+
+def _is_ai_related(title: str, content: str) -> bool:
+    """Check if content is AI/ML related."""
+    text = f"{title} {content}".lower()
+    
+    # AI/ML keywords
+    ai_keywords = [
+        "artificial intelligence", "machine learning", "deep learning", "neural network",
+        "ai", "ml", "nlp", "computer vision", "transformer", "llm", "gpt", "bert",
+        "algorithm", "model", "training", "dataset", "prediction", "classification",
+        "reinforcement learning", "supervised", "unsupervised", "clustering",
+        "tensorflow", "pytorch", "hugging face", "openai", "anthropic", "claude",
+        "chatbot", "automation", "robotics", "autonomous", "generative ai",
+        "data science", "analytics", "big data", "mlops", "ai ethics", "bias",
+        "recommendation system", "natural language", "speech recognition",
+        "image recognition", "object detection", "semantic", "embedding"
+    ]
+    
+    # Non-AI keywords to exclude
+    non_ai_keywords = [
+        "gambling", "casino", "poker", "betting", "lottery", "sports betting",
+        "disney", "hulu", "netflix", "streaming", "movie", "tv show",
+        "roomba", "vacuum", "cleaning", "household", "appliance",
+        "seoul", "thailand", "japan", "uk labour", "tax", "government",
+        "segway", "power station", "amazon", "deal", "sale", "discount",
+        "radioshack", "ponzi", "sec", "lawsuit", "legal", "court"
+    ]
+    
+    # Check for non-AI content first
+    if any(keyword in text for keyword in non_ai_keywords):
+        return False
+    
+    # Check for AI content
+    return any(keyword in text for keyword in ai_keywords)
 
 def _enhance_blog_content(title: str, summary: str, url: str) -> str:
     """Enhance blog content to make it longer and more detailed."""
@@ -190,6 +217,10 @@ async def fetch_and_update_blogs(db: Session):
             blogs = await fetch_blogs_from_source(source_url)
             
             for blog_data in blogs:
+                # Filter out non-AI content
+                if not _is_ai_related(blog_data["title"], blog_data["content"]):
+                    continue
+                    
                 category = _heuristic_category(blog_data["title"], blog_data["content"])
                 
                 # Initialize category tracking
