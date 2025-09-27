@@ -8,7 +8,14 @@ router = APIRouter()
 
 @router.get("/projects/list", response_model=APIResponse)
 def projects_list(db: Session = Depends(get_db)):
-    items = db.query(Project).order_by(Project.display_order.asc(), Project.id.desc()).all()
+    # Try to order by display_order first, fallback to id if column doesn't exist
+    try:
+        items = db.query(Project).order_by(Project.display_order.asc(), Project.id.desc()).all()
+    except Exception as e:
+        # If display_order column doesn't exist, fallback to id ordering
+        print(f"display_order column not found, using id ordering: {e}")
+        items = db.query(Project).order_by(Project.id.desc()).all()
+    
     data = {
         "items": [
             {
