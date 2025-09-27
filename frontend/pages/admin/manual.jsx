@@ -66,63 +66,44 @@ export default function ManualAdmin() {
 
   async function fetchStats() {
     const base = process.env.NEXT_PUBLIC_API_URL || 'https://kind-perfection-production-ae48.up.railway.app';
-    console.log('DEBUG - API Base URL:', base);
-    console.log('DEBUG - Environment:', process.env.NODE_ENV);
-    console.log('DEBUG - NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
     
     try {
+      setMessage("🔄 Loading data...");
+      
       const [toolsRes, projectsRes, blogsRes] = await Promise.all([
-        fetch(`${base}/api/v1/list-tools-public`),
-        fetch(`${base}/api/v1/list-projects-public`),
+        fetch(`${base}/api/v1/tools/list`),
+        fetch(`${base}/api/v1/projects/list`),
         fetch(`${base}/api/v1/news/list`)
       ]);
-      
-      console.log('Tools response status:', toolsRes.status);
-      console.log('Projects response status:', projectsRes.status);
-      console.log('Blogs response status:', blogsRes.status);
       
       const toolsResult = await toolsRes.json();
       const projectsResult = await projectsRes.json();
       const blogsResult = await blogsRes.json();
       
-      console.log('Tools result:', toolsResult);
-      console.log('Projects result:', projectsResult);
-      console.log('Blogs result:', blogsResult);
-      
-      // Handle different data formats
-      const toolsData = toolsResult.success ? (toolsResult.data || []) : [];
-      const projectsData = projectsResult.success ? (projectsResult.data || []) : [];
-      const blogsData = blogsResult.success ? (blogsResult.data?.items || blogsResult.data || []) : [];
-      
-      console.log('DEBUG - Final data counts:', {
-        tools: toolsData.length,
-        projects: projectsData.length,
-        blogs: blogsData.length
-      });
-      
-      console.log('DEBUG - Setting stats to:', {
-        tools: toolsData.length,
-        projects: projectsData.length,
-        blogs: blogsData.length
-      });
+      // Extract data with correct structure
+      const toolsData = toolsResult.success ? (toolsResult.data?.items || []) : [];
+      const projectsData = projectsResult.success ? (projectsResult.data?.items || []) : [];
+      const blogsData = blogsResult.success ? (blogsResult.data?.items || []) : [];
       
       setTools(toolsData);
       setProjects(projectsData);
       setBlogs(blogsData);
       
-      // Set stats based on data
-      const newStats = {
+      // Set stats
+      setStats({
         tools: toolsData.length,
         projects: projectsData.length,
         blogs: blogsData.length
-      };
+      });
       
-      console.log('DEBUG - About to set stats:', newStats);
-      setStats(newStats);
-      console.log('DEBUG - Stats set successfully');
+      setMessage(`✅ Loaded ${toolsData.length} tools, ${projectsData.length} projects, ${blogsData.length} blogs`);
+      
+      // Clear message after 3 seconds
+      setTimeout(() => setMessage(""), 3000);
+      
     } catch (error) {
       console.error('Fetch error:', error);
-      setMessage(`Error fetching data: ${error.message}`);
+      setMessage(`❌ Error fetching data: ${error.message}`);
     }
   }
 
@@ -610,66 +591,158 @@ export default function ManualAdmin() {
         <div className="max-w-7xl mx-auto px-6">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-brand-300 bg-clip-text text-transparent">
-              Admin Dashboard
-            </h1>
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <div className="w-16 h-16 bg-gradient-to-br from-brand-500/20 to-purple-500/20 rounded-2xl flex items-center justify-center">
+                <svg className="w-8 h-8 text-brand-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-white to-brand-300 bg-clip-text text-transparent">
+                  Admin Dashboard
+                </h1>
+                <p className="text-lg text-slate-400">Manual Management</p>
+              </div>
+            </div>
             <p className="text-xl text-slate-300 mb-6 text-center max-w-3xl mx-auto leading-relaxed">
-              Manage your portfolio content with professional tools and intuitive interface
+              Manage your portfolio content with professional tools, drag-and-drop ordering, and intuitive interface
             </p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={fetchStats}
+                disabled={busy}
+                className="px-6 py-3 bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white rounded-xl font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-brand-500/25 flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                {busy ? 'Loading...' : 'Refresh Data'}
+              </button>
+              <button
+                onClick={() => window.location.href = '/admin'}
+                className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-all duration-300 flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Auto Refresh
+              </button>
+            </div>
           </div>
 
           {/* Stats Overview */}
           <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <div className="card p-6 text-center group hover:scale-105 transition-transform duration-300">
-              <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-brand-500/30 to-brand-600/30 rounded-xl flex items-center justify-center">
+            <div className="card p-6 text-center group hover:scale-105 transition-all duration-300 border border-white/10 hover:border-brand-500/30">
+              <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-brand-500/30 to-brand-600/30 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                 <svg className="w-6 h-6 text-brand-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </div>
-              <h3 className="text-3xl font-bold text-white mb-2">{stats.tools || 0}</h3>
-              <p className="text-slate-300">AI Tools</p>
+              <h3 className="text-3xl font-bold text-white mb-2 group-hover:text-brand-300 transition-colors duration-300">{stats.tools || 0}</h3>
+              <p className="text-slate-300 mb-2">AI Tools</p>
+              <button 
+                onClick={() => setActiveTab("list-tools")}
+                className="text-xs text-brand-400 hover:text-brand-300 transition-colors duration-200"
+              >
+                View & Reorder →
+              </button>
             </div>
             
-            <div className="card p-6 text-center group hover:scale-105 transition-transform duration-300">
-              <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-emerald-500/30 to-emerald-600/30 rounded-xl flex items-center justify-center">
+            <div className="card p-6 text-center group hover:scale-105 transition-all duration-300 border border-white/10 hover:border-emerald-500/30">
+              <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-emerald-500/30 to-emerald-600/30 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                 <svg className="w-6 h-6 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
               </div>
-              <h3 className="text-3xl font-bold text-white mb-2">{stats.projects || 0}</h3>
-              <p className="text-slate-300">Projects</p>
+              <h3 className="text-3xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors duration-300">{stats.projects || 0}</h3>
+              <p className="text-slate-300 mb-2">Projects</p>
+              <button 
+                onClick={() => setActiveTab("list-projects")}
+                className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors duration-200"
+              >
+                View & Reorder →
+              </button>
             </div>
             
-            <div className="card p-6 text-center group hover:scale-105 transition-transform duration-300">
-              <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-blue-500/30 to-blue-600/30 rounded-xl flex items-center justify-center">
+            <div className="card p-6 text-center group hover:scale-105 transition-all duration-300 border border-white/10 hover:border-blue-500/30">
+              <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-blue-500/30 to-blue-600/30 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                 <svg className="w-6 h-6 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <h3 className="text-3xl font-bold text-white mb-2">{stats.blogs || 0}</h3>
-              <p className="text-slate-300">Blog Posts</p>
+              <h3 className="text-3xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors duration-300">{stats.blogs || 0}</h3>
+              <p className="text-slate-300 mb-2">Blog Posts</p>
+              <button 
+                onClick={() => setActiveTab("list-blogs")}
+                className="text-xs text-blue-400 hover:text-blue-300 transition-colors duration-200"
+              >
+                View & Reorder →
+              </button>
             </div>
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex flex-wrap gap-2 mb-8 border-b border-white/10">
+          <div className="flex flex-wrap gap-3 mb-8 border-b border-white/10 pb-2">
             {["tools", "projects", "blogs", "list-tools", "list-projects", "list-blogs"].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-6 py-3 rounded-t-xl font-medium transition-all duration-300 ${
+                className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 flex items-center gap-2 ${
                   activeTab === tab 
-                    ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/25' 
+                    ? 'bg-gradient-to-r from-brand-500 to-brand-600 text-white shadow-lg shadow-brand-500/25' 
                     : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
                 }`}
               >
-                {tab === "tools" && "🛠️ Add Tools"}
-                {tab === "projects" && "📁 Add Projects"}
-                {tab === "blogs" && "📝 Generate Blogs"}
-                {tab === "list-tools" && "📋 List Tools"}
-                {tab === "list-projects" && "📋 List Projects"}
-                {tab === "list-blogs" && "📋 List Blogs"}
+                {tab === "tools" && (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Add Tools
+                  </>
+                )}
+                {tab === "projects" && (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Add Projects
+                  </>
+                )}
+                {tab === "blogs" && (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Generate Blogs
+                  </>
+                )}
+                {tab === "list-tools" && (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                    </svg>
+                    List Tools
+                  </>
+                )}
+                {tab === "list-projects" && (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                    </svg>
+                    List Projects
+                  </>
+                )}
+                {tab === "list-blogs" && (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                    </svg>
+                    List Blogs
+                  </>
+                )}
               </button>
             ))}
           </div>
@@ -1316,131 +1389,76 @@ export default function ManualAdmin() {
 
       {/* List Projects Tab */}
       {activeTab === "list-projects" && (
-        <div style={{background: '#2a2a2a', padding: 24, borderRadius: 12}}>
-          <h2 style={{color: '#fff', margin: 0, marginBottom: 16}}>📋 Projects List</h2>
-          <div style={{display: 'grid', gap: 12}}>
+        <div className="card p-8">
+          <h2 className="text-2xl font-bold text-white mb-8">📋 Projects List</h2>
+          <div className="space-y-4">
             <DragDropList
               items={projects}
               onReorder={reorderProjects}
-              style={{ display: 'grid', gap: '12px' }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
               renderItem={(project) => (
-                <div style={{
-                  background: '#333', 
-                  padding: 16, 
-                  borderRadius: 8,
-                  border: '1px solid #444',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px'
-                }}>
-                  <DragHandle />
-                  <div style={{flex: 1, display: 'flex', gap: 16}}>
-                    {project.image_url && (
-                      <img 
-                        src={`${process.env.NEXT_PUBLIC_API_URL}${project.image_url}`} 
-                        alt={project.name} 
-                        style={{
-                          width: '80px', 
-                          height: '60px', 
-                          objectFit: 'cover', 
-                          borderRadius: '6px',
-                          border: '1px solid #444',
-                          flexShrink: 0
-                        }}
-                      />
-                    )}
-                    <div style={{flex: 1}}>
-                      <h4 style={{color: '#fff', margin: 0, marginBottom: 4}}>{project.name}</h4>
-                      <p style={{color: '#ccc', margin: 0, marginBottom: 8}}>{project.description}</p>
-                      <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
-                        <span style={{
-                          background: '#007bff', 
-                          color: '#fff', 
-                          padding: '4px 8px', 
-                          borderRadius: 4, 
-                          fontSize: '12px'
-                        }}>
-                          {project.category}
-                        </span>
-                        {project.technologies && (
-                          <span style={{
-                            background: '#6c757d', 
-                            color: '#fff', 
-                            padding: '4px 8px', 
-                            borderRadius: 4, 
-                            fontSize: '12px'
-                          }}>
-                            {project.technologies}
+                <div className="card p-6 hover:scale-[1.02] transition-all duration-300 border border-white/10 hover:border-emerald-500/30">
+                  <div className="flex items-center gap-4">
+                    <DragHandle />
+                    <div className="flex-1 flex gap-4">
+                      {project.image_url && (
+                        <img 
+                          src={`${process.env.NEXT_PUBLIC_API_URL}${project.image_url}`} 
+                          alt={project.name} 
+                          className="w-20 h-16 object-cover rounded-lg border border-white/10 flex-shrink-0"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <h4 className="text-xl font-semibold text-white mb-2">{project.name}</h4>
+                        <p className="text-slate-300 mb-4 leading-relaxed">{project.description}</p>
+                        <div className="flex flex-wrap gap-2">
+                          <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm font-medium">
+                            {project.category}
                           </span>
-                        )}
+                          {project.technologies && (
+                            <span className="px-3 py-1 bg-slate-500/20 text-slate-300 rounded-full text-sm font-medium">
+                              {project.technologies}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div style={{display: 'flex', gap: 8}}>
-                    {project.url && (
-                      <a 
-                        href={project.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        style={{
-                          background: '#28a745', 
-                          color: '#fff', 
-                          padding: '8px 16px', 
-                          borderRadius: 4, 
-                          textDecoration: 'none',
-                          fontSize: '14px'
-                        }}
+                    <div className="flex gap-3">
+                      {project.url && (
+                        <a 
+                          href={project.url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition-colors duration-200 shadow-lg shadow-emerald-500/25"
+                        >
+                          Live
+                        </a>
+                      )}
+                      {project.github_url && (
+                        <a 
+                          href={project.github_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="px-4 py-2 bg-slate-500 hover:bg-slate-600 text-white rounded-lg font-medium transition-colors duration-200"
+                        >
+                          GitHub
+                        </a>
+                      )}
+                      <button
+                        onClick={() => startEditProject(project)}
+                        disabled={busy}
+                        className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        Live
-                      </a>
-                    )}
-                    {project.github_url && (
-                      <a 
-                        href={project.github_url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        style={{
-                          background: '#6c757d', 
-                          color: '#fff', 
-                          padding: '8px 16px', 
-                          borderRadius: 4, 
-                          textDecoration: 'none',
-                          fontSize: '14px'
-                        }}
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => deleteProject(project.id)}
+                        disabled={busy}
+                        className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        GitHub
-                      </a>
-                    )}
-                    <button
-                      onClick={() => startEditProject(project)}
-                      disabled={busy}
-                      style={{
-                        background: '#007bff', 
-                        color: '#fff', 
-                        border: 'none', 
-                        padding: '8px 16px', 
-                        borderRadius: 4,
-                        cursor: busy ? 'not-allowed' : 'pointer',
-                        fontSize: '14px'
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => deleteProject(project.id)}
-                      disabled={busy}
-                      style={{
-                        background: '#dc3545', 
-                        color: '#fff', 
-                        border: 'none', 
-                        padding: '8px 16px', 
-                        borderRadius: 4,
-                        cursor: busy ? 'not-allowed' : 'pointer',
-                        fontSize: '14px'
-                      }}
-                    >
-                      Delete
-                    </button>
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
@@ -1451,63 +1469,40 @@ export default function ManualAdmin() {
 
       {/* List Blogs Tab */}
       {activeTab === "list-blogs" && (
-        <div style={{background: '#2a2a2a', padding: 24, borderRadius: 12}}>
-          <h2 style={{color: '#fff', margin: 0, marginBottom: 16}}>📋 Blogs List</h2>
-          <div style={{display: 'grid', gap: 12}}>
+        <div className="card p-8">
+          <h2 className="text-2xl font-bold text-white mb-8">📋 Blogs List</h2>
+          <div className="space-y-4">
             <DragDropList
               items={blogs}
               onReorder={reorderBlogs}
-              style={{ display: 'grid', gap: '12px' }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
               renderItem={(blog) => (
-                <div style={{
-                  background: '#333', 
-                  padding: 16, 
-                  borderRadius: 8,
-                  border: '1px solid #444',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px'
-                }}>
-                  <DragHandle />
-                  <div style={{flex: 1}}>
-                    <h4 style={{color: '#fff', margin: 0, marginBottom: 4}}>{blog.title}</h4>
-                    <p style={{color: '#ccc', margin: 0, marginBottom: 8}}>{blog.excerpt}</p>
-                    <span style={{
-                      background: '#28a745', 
-                      color: '#fff', 
-                      padding: '4px 8px', 
-                      borderRadius: 4, 
-                      fontSize: '12px'
-                    }}>
-                      {blog.category}
-                    </span>
-                  </div>
-                  <div style={{display: 'flex', gap: 8}}>
-                    <button
-                      onClick={() => deleteBlog(blog.id)}
-                      disabled={busy}
-                      style={{
-                        background: '#dc3545', 
-                        color: '#fff', 
-                        border: 'none', 
-                        padding: '8px 16px', 
-                        borderRadius: 4,
-                        cursor: busy ? 'not-allowed' : 'pointer',
-                        fontSize: '14px'
-                      }}
-                    >
-                      Delete
-                    </button>
+                <div className="card p-6 hover:scale-[1.02] transition-all duration-300 border border-white/10 hover:border-blue-500/30">
+                  <div className="flex items-center gap-4">
+                    <DragHandle />
+                    <div className="flex-1">
+                      <h4 className="text-xl font-semibold text-white mb-2">{blog.title}</h4>
+                      <p className="text-slate-300 mb-4 leading-relaxed">{blog.excerpt}</p>
+                      <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm font-medium">
+                        {blog.category}
+                      </span>
+                    </div>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => deleteBlog(blog.id)}
+                        disabled={busy}
+                        className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
             />
           </div>
-            </div>
-          )}
         </div>
-      </div>
-    </div>
+      )}
     </>
   );
 }
