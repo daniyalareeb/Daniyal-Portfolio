@@ -511,3 +511,64 @@ def reorder_blogs(request: ReorderRequest, db: Session = Depends(get_db)):
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error reordering blogs: {str(e)}")
+
+@router.post("/migrate-database")
+def migrate_database():
+    """Run database migration to add display_order columns."""
+    try:
+        import subprocess
+        import sys
+        import os
+        
+        # Get the path to the migration script
+        script_path = os.path.join(os.path.dirname(__file__), "..", "..", "..", "add_display_order_columns.py")
+        
+        # Run the migration script
+        result = subprocess.run([sys.executable, script_path], 
+                              capture_output=True, text=True, timeout=60)
+        
+        if result.returncode == 0:
+            return {
+                "success": True, 
+                "data": {"message": "Migration completed successfully", "output": result.stdout}
+            }
+        else:
+            return {
+                "success": False, 
+                "error": f"Migration failed: {result.stderr}"
+            }
+            
+    except Exception as e:
+        return {
+            "success": False, 
+            "error": f"Migration error: {str(e)}"
+        }
+
+@router.get("/check-database-schema")
+def check_database_schema(db: Session = Depends(get_db)):
+    """Check if display_order columns exist in the database."""
+    try:
+        from sqlalchemy import text
+        
+        # Check if display_order columns exist
+        tables_to_check = ["ai_tools", "projects", "blog_posts"]
+        results = {}
+        
+        for table in tables_to_check:
+            try:
+                # Try to query display_order column
+                result = db.execute(text(f"SELECT display_order FROM {table} LIMIT 1"))
+                results[table] = "display_order column exists"
+            except Exception as e:
+                results[table] = f"display_order column missing: {str(e)}"
+        
+        return {
+            "success": True, 
+            "data": {"schema_check": results}
+        }
+        
+    except Exception as e:
+        return {
+            "success": False, 
+            "error": f"Schema check error: {str(e)}"
+        }
