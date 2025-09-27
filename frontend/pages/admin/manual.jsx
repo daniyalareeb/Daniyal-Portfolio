@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import SessionTimeout from "../../components/SessionTimeout";
 import BrowserCloseHandler from "../../components/BrowserCloseHandler";
 import DragDropList, { DragHandle } from "../../components/DragDropList";
@@ -587,12 +588,17 @@ export default function ManualAdmin() {
       {/* <SessionTimeout /> */}
       <BrowserCloseHandler />
       <div className="min-h-screen bg-hero">
-      <div className="pt-24 pb-8">
-        <div className="max-w-7xl mx-auto px-6">
+      <div className="pt-20 md:pt-24 pb-6 md:pb-8">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           {/* Header */}
-          <div className="text-center mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-8 md:mb-12"
+          >
             <div className="flex items-center justify-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-gradient-to-br from-brand-500/20 to-purple-500/20 rounded-2xl flex items-center justify-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-brand-500/20 to-brand-600/20 rounded-2xl flex items-center justify-center ring-1 ring-brand-500/30">
                 <svg className="w-8 h-8 text-brand-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -612,7 +618,7 @@ export default function ManualAdmin() {
               <button
                 onClick={fetchStats}
                 disabled={busy}
-                className="px-6 py-3 bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white rounded-xl font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-brand-500/25 flex items-center gap-2"
+                className="btn flex items-center gap-2"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -621,7 +627,7 @@ export default function ManualAdmin() {
               </button>
               <button
                 onClick={() => window.location.href = '/admin'}
-                className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-all duration-300 flex items-center gap-2"
+                className="inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-medium transition-all duration-300 ring-1 ring-white/20"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -629,12 +635,17 @@ export default function ManualAdmin() {
                 Auto Refresh
               </button>
             </div>
-          </div>
+          </motion.div>
 
           {/* Stats Overview */}
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <div className="card p-6 text-center group hover:scale-105 transition-all duration-300 border border-white/10 hover:border-brand-500/30">
-              <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-brand-500/30 to-brand-600/30 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="grid md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12"
+          >
+            <div className="card p-4 md:p-6 text-center group hover:scale-105 transition-all duration-300">
+              <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-brand-500/30 to-brand-600/30 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 ring-1 ring-brand-500/30">
                 <svg className="w-6 h-6 text-brand-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -650,8 +661,8 @@ export default function ManualAdmin() {
               </button>
             </div>
             
-            <div className="card p-6 text-center group hover:scale-105 transition-all duration-300 border border-white/10 hover:border-emerald-500/30">
-              <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-emerald-500/30 to-emerald-600/30 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <div className="card p-4 md:p-6 text-center group hover:scale-105 transition-all duration-300">
+              <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-emerald-500/30 to-emerald-600/30 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 ring-1 ring-emerald-500/30">
                 <svg className="w-6 h-6 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
@@ -666,8 +677,8 @@ export default function ManualAdmin() {
               </button>
             </div>
             
-            <div className="card p-6 text-center group hover:scale-105 transition-all duration-300 border border-white/10 hover:border-blue-500/30">
-              <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-blue-500/30 to-blue-600/30 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <div className="card p-4 md:p-6 text-center group hover:scale-105 transition-all duration-300">
+              <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-blue-500/30 to-blue-600/30 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 ring-1 ring-blue-500/30">
                 <svg className="w-6 h-6 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
@@ -681,18 +692,23 @@ export default function ManualAdmin() {
                 View & Reorder →
               </button>
             </div>
-          </div>
+          </motion.div>
 
           {/* Navigation Tabs */}
-          <div className="flex flex-wrap gap-3 mb-8 border-b border-white/10 pb-2">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="flex flex-wrap gap-2 md:gap-3 mb-6 md:mb-8 border-b border-white/10 pb-2"
+          >
             {["tools", "projects", "blogs", "list-tools", "list-projects", "list-blogs"].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 flex items-center gap-2 ${
+                className={`px-4 md:px-6 py-2 md:py-3 rounded-xl font-medium transition-all duration-300 flex items-center gap-2 ${
                   activeTab === tab 
-                    ? 'bg-gradient-to-r from-brand-500 to-brand-600 text-white shadow-lg shadow-brand-500/25' 
-                    : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
+                    ? 'bg-brand-500 text-ink shadow-lg shadow-brand-500/25' 
+                    : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white ring-1 ring-white/10'
                 }`}
               >
                 {tab === "tools" && (
@@ -745,7 +761,7 @@ export default function ManualAdmin() {
                 )}
               </button>
             ))}
-          </div>
+          </motion.div>
 
           {/* Status Message */}
           {message && (
@@ -1502,6 +1518,7 @@ export default function ManualAdmin() {
             />
           </div>
         </div>
+      </div>
       )}
     </>
   );
