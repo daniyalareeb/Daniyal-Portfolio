@@ -2,8 +2,19 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.services.tools_service import list_tools_db
+from app.models.tool import Tool
 
 router = APIRouter()
+
+@router.get("/tools/test")
+def test_tools(db: Session = Depends(get_db)):
+    """Test endpoint to check database connection and basic queries"""
+    try:
+        # Test basic query without display_order
+        count = db.query(Tool).count()
+        return {"success": True, "message": f"Database connection OK, {count} tools found"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
 
 @router.get("/tools/list")
 def tools_list(
