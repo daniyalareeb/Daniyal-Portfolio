@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 from app.database import get_db
 from app.models import Tool, Project, BlogPost, ContactSubmission
 from datetime import datetime
@@ -517,3 +518,36 @@ def reorder_blogs(request: ReorderRequest, db: Session = Depends(get_db)):
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error reordering blogs: {str(e)}")
+
+@router.post("/admin/migrate-display-order")
+def migrate_display_order(db: Session = Depends(get_db)):
+    """Add display_order columns to existing tables"""
+    try:
+        # SQL statements to add display_order columns
+        migrations = [
+            "ALTER TABLE ai_tools ADD COLUMN display_order INTEGER DEFAULT 0;",
+            "ALTER TABLE projects ADD COLUMN display_order INTEGER DEFAULT 0;", 
+            "ALTER TABLE blog_posts ADD COLUMN display_order INTEGER DEFAULT 0;"
+        ]
+        
+        results = []
+        for migration in migrations:
+            try:
+                db.execute(text(migration))
+                results.append(f"✅ {migration}")
+            except Exception as e:
+                if "already exists" in str(e) or "duplicate column" in str(e):
+                    results.append(f"⚠️  Column already exists: {migration}")
+                else:
+                    results.append(f"❌ Error: {migration} - {str(e)}")
+        
+        db.commit()
+        
+        return {
+            "success": True,
+            "message": "Migration completed",
+            "results": results
+        }
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Migration failed: {str(e)}")
