@@ -65,15 +65,18 @@ export default function ManualAdmin() {
   ];
 
   async function fetchStats() {
-    const base = process.env.NEXT_PUBLIC_API_URL || 'https://kind-perfection-production-ae48.up.railway.app';
+    const base = (typeof window !== 'undefined' && window.location.hostname === 'localhost') 
+      ? 'http://localhost:8000' 
+      : (process.env.NEXT_PUBLIC_API_URL || 'https://kind-perfection-production-ae48.up.railway.app');
     console.log('DEBUG - API Base URL:', base);
     console.log('DEBUG - Environment:', process.env.NODE_ENV);
     console.log('DEBUG - NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
+    console.log('DEBUG - Window hostname:', typeof window !== 'undefined' ? window.location.hostname : 'server-side');
     
     try {
       const [toolsRes, projectsRes, blogsRes] = await Promise.all([
-        fetch(`${base}/api/v1/list-tools-public`),
-        fetch(`${base}/api/v1/list-projects-public`),
+        fetch(`${base}/api/v1/tools/list`),
+        fetch(`${base}/api/v1/projects/list`),
         fetch(`${base}/api/v1/news/list`)
       ]);
       

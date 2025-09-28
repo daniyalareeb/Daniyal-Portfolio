@@ -162,4 +162,9 @@ def list_tools_db(db: Session, q: str = None, category: str = None, limit: int =
     if category:
         query = query.filter(Tool.category == category)
     
-    return query.order_by(Tool.last_checked.desc()).limit(limit).all()
+    # Try to order by display_order first, fallback to id if column doesn't exist
+    try:
+        return query.order_by(Tool.display_order.asc(), Tool.last_checked.desc()).limit(limit).all()
+    except Exception as e:
+        logger.warning(f"display_order column not found, falling back to id ordering: {e}")
+        return query.order_by(Tool.id.desc()).limit(limit).all()
