@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import SessionTimeout from "../../components/SessionTimeout";
 import BrowserCloseHandler from "../../components/BrowserCloseHandler";
+import DragDropList, { DragHandle } from "../../components/DragDropList";
 
 export default function ManualAdmin() {
   const [activeTab, setActiveTab] = useState("tools");
@@ -511,6 +512,111 @@ export default function ManualAdmin() {
     setBusy(false);
   }
 
+  // Drag and drop reorder functions
+  async function reorderTools(newOrder) {
+    try {
+      const base = (typeof window !== 'undefined' && window.location.hostname === 'localhost') 
+        ? 'http://localhost:8000' 
+        : (process.env.NEXT_PUBLIC_API_URL || 'https://kind-perfection-production-ae48.up.railway.app');
+      console.log("API Base URL:", base); // Debug log
+      console.log("Making request to:", `${base}/api/v1/admin/reorder-tools`); // Debug log
+      console.log("Request data:", newOrder.map((item, index) => ({
+        id: item.id,
+        order: index + 1
+      }))); // Debug log
+      
+      const response = await fetch(`${base}/api/v1/admin/reorder-tools`, {
+        method: "PUT",
+        headers: { 
+          "Content-Type": "application/json"
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          items: newOrder.map((item, index) => ({
+            id: item.id,
+            order: index + 1
+          }))
+        })
+      });
+      
+      console.log("Response status:", response.status); // Debug log
+      console.log("Response ok:", response.ok); // Debug log
+      
+      const result = await response.json();
+      console.log("Reorder response:", result); // Debug log
+      if (result.success) {
+        setMessage("✅ Tools reordered successfully!");
+        setTools(newOrder);
+      } else {
+        console.log("Error case - result:", result); // Debug log
+        setMessage(`❌ Error reordering tools: ${result.message || result.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.log("Catch error:", error); // Debug log
+      setMessage(`❌ Error reordering tools: ${error.message}`);
+    }
+  }
+
+  async function reorderProjects(newOrder) {
+    try {
+      const base = (typeof window !== 'undefined' && window.location.hostname === 'localhost') 
+        ? 'http://localhost:8000' 
+        : (process.env.NEXT_PUBLIC_API_URL || 'https://kind-perfection-production-ae48.up.railway.app');
+      const response = await fetch(`${base}/api/v1/admin/reorder-projects`, {
+        method: "PUT",
+        headers: { 
+          "Content-Type": "application/json"
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          items: newOrder.map((item, index) => ({
+            id: item.id,
+            order: index + 1
+          }))
+        })
+      });
+      const result = await response.json();
+      if (result.success) {
+        setMessage("✅ Projects reordered successfully!");
+        setProjects(newOrder);
+      } else {
+        setMessage(`❌ Error reordering projects: ${result.message || result.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      setMessage(`❌ Error reordering projects: ${error.message}`);
+    }
+  }
+
+  async function reorderBlogs(newOrder) {
+    try {
+      const base = (typeof window !== 'undefined' && window.location.hostname === 'localhost') 
+        ? 'http://localhost:8000' 
+        : (process.env.NEXT_PUBLIC_API_URL || 'https://kind-perfection-production-ae48.up.railway.app');
+      const response = await fetch(`${base}/api/v1/admin/reorder-blogs`, {
+        method: "PUT",
+        headers: { 
+          "Content-Type": "application/json"
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          items: newOrder.map((item, index) => ({
+            id: item.id,
+            order: index + 1
+          }))
+        })
+      });
+      const result = await response.json();
+      if (result.success) {
+        setMessage("✅ Blogs reordered successfully!");
+        setBlogs(newOrder);
+      } else {
+        setMessage(`❌ Error reordering blogs: ${result.message || result.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      setMessage(`❌ Error reordering blogs: ${error.message}`);
+    }
+  }
+
   useEffect(() => {
     fetchStats();
   }, []);
@@ -721,7 +827,9 @@ export default function ManualAdmin() {
                         const formData = new FormData();
                         formData.append('file', file);
                         
-                        const base = process.env.NEXT_PUBLIC_API_URL;
+                        const base = (typeof window !== 'undefined' && window.location.hostname === 'localhost') 
+        ? 'http://localhost:8000' 
+        : (process.env.NEXT_PUBLIC_API_URL || 'https://kind-perfection-production-ae48.up.railway.app');
                         const response = await fetch(`${base}/api/v1/upload-image-public`, {
                           method: 'POST',
                           body: formData
@@ -1140,35 +1248,26 @@ export default function ManualAdmin() {
         <div style={{background: '#2a2a2a', padding: 24, borderRadius: 12}}>
           <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16}}>
             <h2 style={{color: '#fff', margin: 0}}>📋 AI Tools List</h2>
-            <button
-              onClick={updateToolCategories}
-              disabled={busy}
-              style={{
-                background: '#007bff',
-                color: '#fff',
-                border: 'none',
-                padding: '8px 16px',
-                borderRadius: '6px',
-                cursor: busy ? 'not-allowed' : 'pointer',
-                opacity: busy ? 0.6 : 1,
-                fontSize: '14px'
-              }}
-            >
-              {busy ? 'Updating...' : '🔄 Update Categories'}
-            </button>
           </div>
           <div style={{display: 'grid', gap: 12}}>
-            {tools.map(t => (
-              <div key={t.id} style={{
-                background: '#333', 
-                padding: 16, 
-                borderRadius: 8,
-                border: '1px solid #444'
-              }}>
-                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <DragDropList
+              items={tools}
+              onReorder={reorderTools}
+              style={{display: 'grid', gap: 12}}
+              renderItem={(tool) => (
+                <div style={{
+                  background: '#333', 
+                  padding: 16, 
+                  borderRadius: 8,
+                  border: '1px solid #444',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12
+                }}>
+                  <DragHandle />
                   <div style={{flex: 1}}>
-                    <h4 style={{color: '#fff', margin: 0, marginBottom: 4}}>{t.name}</h4>
-                    <p style={{color: '#ccc', margin: 0, marginBottom: 8}}>{t.description}</p>
+                    <h4 style={{color: '#fff', margin: 0, marginBottom: 4}}>{tool.name}</h4>
+                    <p style={{color: '#ccc', margin: 0, marginBottom: 8}}>{tool.description}</p>
                     <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
                       <span style={{
                         background: '#007bff', 
@@ -1177,9 +1276,9 @@ export default function ManualAdmin() {
                         borderRadius: 4, 
                         fontSize: '12px'
                       }}>
-                        {t.category}
+                        {tool.category}
                       </span>
-                      {t.pricing && (
+                      {tool.pricing && (
                         <span style={{
                           background: '#28a745', 
                           color: '#fff', 
@@ -1187,14 +1286,14 @@ export default function ManualAdmin() {
                           borderRadius: 4, 
                           fontSize: '12px'
                         }}>
-                          {t.pricing}
+                          {tool.pricing}
                         </span>
                       )}
                     </div>
                   </div>
                   <div style={{display: 'flex', gap: 8}}>
                     <a 
-                      href={t.url} 
+                      href={tool.url} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       style={{
@@ -1209,7 +1308,7 @@ export default function ManualAdmin() {
                       Visit
                     </a>
                     <button
-                      onClick={() => startEditTool(t)}
+                      onClick={() => startEditTool(tool)}
                       disabled={busy}
                       style={{
                         background: '#007bff', 
@@ -1224,7 +1323,7 @@ export default function ManualAdmin() {
                       Edit
                     </button>
                     <button
-                      onClick={() => deleteTool(t.id)}
+                      onClick={() => deleteTool(tool.id)}
                       disabled={busy}
                       style={{
                         background: '#dc3545', 
@@ -1240,8 +1339,8 @@ export default function ManualAdmin() {
                     </button>
                   </div>
                 </div>
-              </div>
-            ))}
+              )}
+            />
           </div>
         </div>
       )}
@@ -1251,19 +1350,26 @@ export default function ManualAdmin() {
         <div style={{background: '#2a2a2a', padding: 24, borderRadius: 12}}>
           <h2 style={{color: '#fff', margin: 0, marginBottom: 16}}>📋 Projects List</h2>
           <div style={{display: 'grid', gap: 12}}>
-            {projects.map(p => (
-              <div key={p.id} style={{
-                background: '#333', 
-                padding: 16, 
-                borderRadius: 8,
-                border: '1px solid #444'
-              }}>
-                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <DragDropList
+              items={projects}
+              onReorder={reorderProjects}
+              style={{display: 'grid', gap: 12}}
+              renderItem={(project) => (
+                <div style={{
+                  background: '#333', 
+                  padding: 16, 
+                  borderRadius: 8,
+                  border: '1px solid #444',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12
+                }}>
+                  <DragHandle />
                   <div style={{flex: 1, display: 'flex', gap: 16}}>
-                    {p.image_url && (
+                    {project.image_url && (
                       <img 
-                        src={`${process.env.NEXT_PUBLIC_API_URL}${p.image_url}`} 
-                        alt={p.name} 
+                        src={`${process.env.NEXT_PUBLIC_API_URL}${project.image_url}`} 
+                        alt={project.name} 
                         style={{
                           width: '80px', 
                           height: '60px', 
@@ -1275,8 +1381,8 @@ export default function ManualAdmin() {
                       />
                     )}
                     <div style={{flex: 1}}>
-                      <h4 style={{color: '#fff', margin: 0, marginBottom: 4}}>{p.name}</h4>
-                      <p style={{color: '#ccc', margin: 0, marginBottom: 8}}>{p.description}</p>
+                      <h4 style={{color: '#fff', margin: 0, marginBottom: 4}}>{project.name}</h4>
+                      <p style={{color: '#ccc', margin: 0, marginBottom: 8}}>{project.description}</p>
                       <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
                         <span style={{
                           background: '#007bff', 
@@ -1285,9 +1391,9 @@ export default function ManualAdmin() {
                           borderRadius: 4, 
                           fontSize: '12px'
                         }}>
-                          {p.category}
+                          {project.category}
                         </span>
-                        {p.technologies && (
+                        {project.technologies && (
                           <span style={{
                             background: '#6c757d', 
                             color: '#fff', 
@@ -1295,16 +1401,16 @@ export default function ManualAdmin() {
                             borderRadius: 4, 
                             fontSize: '12px'
                           }}>
-                            {p.technologies}
+                            {project.technologies}
                           </span>
                         )}
                       </div>
                     </div>
                   </div>
                   <div style={{display: 'flex', gap: 8}}>
-                    {p.url && (
+                    {project.url && (
                       <a 
-                        href={p.url} 
+                        href={project.url} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         style={{
@@ -1319,9 +1425,9 @@ export default function ManualAdmin() {
                         Live
                       </a>
                     )}
-                    {p.github_url && (
+                    {project.github_url && (
                       <a 
-                        href={p.github_url} 
+                        href={project.github_url} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         style={{
@@ -1337,7 +1443,7 @@ export default function ManualAdmin() {
                       </a>
                     )}
                     <button
-                      onClick={() => startEditProject(p)}
+                      onClick={() => startEditProject(project)}
                       disabled={busy}
                       style={{
                         background: '#007bff', 
@@ -1352,7 +1458,7 @@ export default function ManualAdmin() {
                       Edit
                     </button>
                     <button
-                      onClick={() => deleteProject(p.id)}
+                      onClick={() => deleteProject(project.id)}
                       disabled={busy}
                       style={{
                         background: '#dc3545', 
@@ -1368,8 +1474,8 @@ export default function ManualAdmin() {
                     </button>
                   </div>
                 </div>
-              </div>
-            ))}
+              )}
+            />
           </div>
         </div>
       )}
@@ -1379,17 +1485,24 @@ export default function ManualAdmin() {
         <div style={{background: '#2a2a2a', padding: 24, borderRadius: 12}}>
           <h2 style={{color: '#fff', margin: 0, marginBottom: 16}}>📋 Blogs List</h2>
           <div style={{display: 'grid', gap: 12}}>
-            {blogs.map(b => (
-              <div key={b.id} style={{
-                background: '#333', 
-                padding: 16, 
-                borderRadius: 8,
-                border: '1px solid #444'
-              }}>
-                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <DragDropList
+              items={blogs}
+              onReorder={reorderBlogs}
+              style={{display: 'grid', gap: 12}}
+              renderItem={(blog) => (
+                <div style={{
+                  background: '#333', 
+                  padding: 16, 
+                  borderRadius: 8,
+                  border: '1px solid #444',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12
+                }}>
+                  <DragHandle />
                   <div style={{flex: 1}}>
-                    <h4 style={{color: '#fff', margin: 0, marginBottom: 4}}>{b.title}</h4>
-                    <p style={{color: '#ccc', margin: 0, marginBottom: 8}}>{b.excerpt}</p>
+                    <h4 style={{color: '#fff', margin: 0, marginBottom: 4}}>{blog.title}</h4>
+                    <p style={{color: '#ccc', margin: 0, marginBottom: 8}}>{blog.excerpt}</p>
                     <span style={{
                       background: '#28a745', 
                       color: '#fff', 
@@ -1397,12 +1510,12 @@ export default function ManualAdmin() {
                       borderRadius: 4, 
                       fontSize: '12px'
                     }}>
-                      {b.category}
+                      {blog.category}
                     </span>
                   </div>
                   <div style={{display: 'flex', gap: 8}}>
                     <button
-                      onClick={() => deleteBlog(b.id)}
+                      onClick={() => deleteBlog(blog.id)}
                       disabled={busy}
                       style={{
                         background: '#dc3545', 
@@ -1418,8 +1531,8 @@ export default function ManualAdmin() {
                     </button>
                   </div>
                 </div>
-              </div>
-            ))}
+              )}
+            />
           </div>
             </div>
           )}

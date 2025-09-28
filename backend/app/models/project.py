@@ -12,3 +12,4 @@ class Project(Base):
     category = Column(String(100), nullable=False, default="Web Development")
     technologies = Column(String(500), nullable=True)
     image_url = Column(String(500), nullable=True)
+    display_order = Column(Integer, default=0)             # for custom ordering

@@ -15,5 +15,6 @@ class BlogPost(Base):
     published = Column(Boolean, default=True)
     featured = Column(Boolean, default=False)
     source = Column(String(200), nullable=True)
+    display_order = Column(Integer, default=0)             # for custom ordering
     published_date = Column(DateTime, default=datetime.now)
     last_updated = Column(DateTime, default=datetime.now, onupdate=datetime.now)

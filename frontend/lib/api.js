@@ -22,7 +22,7 @@
  * Repository: https://github.com/daniyalareeb/portfolio
  */
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://kind-perfection-production-ae48.up.railway.app';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:8000' : 'https://kind-perfection-production-ae48.up.railway.app');
 
 /**
  * Centralized API client for backend communication

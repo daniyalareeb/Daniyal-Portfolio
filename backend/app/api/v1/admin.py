@@ -3,8 +3,18 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import Tool, Project, BlogPost, ContactSubmission
 from datetime import datetime
+from pydantic import BaseModel
+from typing import List
 
 router = APIRouter()
+
+# Pydantic models for reorder requests
+class ReorderItem(BaseModel):
+    id: int
+    order: int
+
+class ReorderRequest(BaseModel):
+    items: List[ReorderItem]
 
 @router.post("/populate-database")
 def populate_database(db: Session = Depends(get_db)):
@@ -443,3 +453,58 @@ async def get_scheduler_status():
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error getting scheduler status: {str(e)}")
+
+# Drag and Drop Reorder Endpoints
+@router.put("/admin/reorder-tools")
+def reorder_tools(request: ReorderRequest, db: Session = Depends(get_db)):
+    """Reorder tools based on drag and drop"""
+    try:
+        for item in request.items:
+            tool = db.query(Tool).filter(Tool.id == item.id).first()
+            if tool:
+                tool.display_order = item.order
+                db.commit()
+        
+        return {
+            "success": True,
+            "message": f"Successfully reordered {len(request.items)} tools"
+        }
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error reordering tools: {str(e)}")
+
+@router.put("/admin/reorder-projects")
+def reorder_projects(request: ReorderRequest, db: Session = Depends(get_db)):
+    """Reorder projects based on drag and drop"""
+    try:
+        for item in request.items:
+            project = db.query(Project).filter(Project.id == item.id).first()
+            if project:
+                project.display_order = item.order
+                db.commit()
+        
+        return {
+            "success": True,
+            "message": f"Successfully reordered {len(request.items)} projects"
+        }
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error reordering projects: {str(e)}")
+
+@router.put("/admin/reorder-blogs")
+def reorder_blogs(request: ReorderRequest, db: Session = Depends(get_db)):
+    """Reorder blogs based on drag and drop"""
+    try:
+        for item in request.items:
+            blog = db.query(BlogPost).filter(BlogPost.id == item.id).first()
+            if blog:
+                blog.display_order = item.order
+                db.commit()
+        
+        return {
+            "success": True,
+            "message": f"Successfully reordered {len(request.items)} blogs"
+        }
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error reordering blogs: {str(e)}")
