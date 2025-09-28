@@ -508,3 +508,32 @@ def reorder_blogs(request: ReorderRequest, db: Session = Depends(get_db)):
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error reordering blogs: {str(e)}")
+
+@router.post("/migrate-database")
+def migrate_database():
+    """Run database migration to add display_order columns"""
+    try:
+        import subprocess
+        import sys
+        import os
+        
+        # Change to backend directory
+        backend_dir = os.path.join(os.path.dirname(__file__), '..', '..', '..')
+        result = subprocess.run([
+            sys.executable, 'add_display_order_columns.py'
+        ], cwd=backend_dir, capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            return {
+                "success": True,
+                "message": "Database migration completed successfully",
+                "output": result.stdout
+            }
+        else:
+            return {
+                "success": False,
+                "message": "Database migration failed",
+                "error": result.stderr
+            }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Migration error: {str(e)}")
