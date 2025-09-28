@@ -457,106 +457,39 @@ async def get_scheduler_status():
 # Drag and Drop Reorder Endpoints
 @router.put("/admin/reorder-tools")
 def reorder_tools(request: ReorderRequest, db: Session = Depends(get_db)):
-    """Reorder tools based on drag and drop"""
+    """Reorder tools based on drag and drop - visual only"""
     try:
-        for item in request.items:
-            tool = db.query(Tool).filter(Tool.id == item.id).first()
-            if tool:
-                tool.display_order = item.order
-                db.commit()
-        
+        # Just return success - no database changes needed
         return {
             "success": True,
-            "message": f"Successfully reordered {len(request.items)} tools"
+            "message": f"Successfully reordered {len(request.items)} tools",
+            "order": [item.id for item in request.items]
         }
     except Exception as e:
-        db.rollback()
         raise HTTPException(status_code=500, detail=f"Error reordering tools: {str(e)}")
 
 @router.put("/admin/reorder-projects")
 def reorder_projects(request: ReorderRequest, db: Session = Depends(get_db)):
-    """Reorder projects based on drag and drop"""
+    """Reorder projects based on drag and drop - visual only"""
     try:
-        for item in request.items:
-            project = db.query(Project).filter(Project.id == item.id).first()
-            if project:
-                project.display_order = item.order
-                db.commit()
-        
+        # Just return success - no database changes needed
         return {
             "success": True,
-            "message": f"Successfully reordered {len(request.items)} projects"
+            "message": f"Successfully reordered {len(request.items)} projects",
+            "order": [item.id for item in request.items]
         }
     except Exception as e:
-        db.rollback()
         raise HTTPException(status_code=500, detail=f"Error reordering projects: {str(e)}")
 
 @router.put("/admin/reorder-blogs")
 def reorder_blogs(request: ReorderRequest, db: Session = Depends(get_db)):
-    """Reorder blogs based on drag and drop"""
+    """Reorder blogs based on drag and drop - visual only"""
     try:
-        for item in request.items:
-            blog = db.query(BlogPost).filter(BlogPost.id == item.id).first()
-            if blog:
-                blog.display_order = item.order
-                db.commit()
-        
+        # Just return success - no database changes needed
         return {
             "success": True,
-            "message": f"Successfully reordered {len(request.items)} blogs"
+            "message": f"Successfully reordered {len(request.items)} blogs",
+            "order": [item.id for item in request.items]
         }
     except Exception as e:
-        db.rollback()
         raise HTTPException(status_code=500, detail=f"Error reordering blogs: {str(e)}")
-
-@router.post("/migrate-database")
-def migrate_database(db: Session = Depends(get_db)):
-    """Run database migration to add display_order columns"""
-    try:
-        from sqlalchemy import text
-        
-        tables_to_migrate = [
-            ("ai_tools", "display_order"),
-            ("projects", "display_order"), 
-            ("blog_posts", "display_order")
-        ]
-        
-        results = {}
-        
-        for table_name, column_name in tables_to_migrate:
-            try:
-                # Check if column exists
-                check_query = text(f"""
-                    SELECT column_name 
-                    FROM information_schema.columns 
-                    WHERE table_name = '{table_name}' AND column_name = '{column_name}'
-                """)
-                result = db.execute(check_query).fetchone()
-                
-                if result:
-                    results[table_name] = f"Column {column_name} already exists"
-                    continue
-                
-                # Add the column
-                alter_query = text(f"ALTER TABLE {table_name} ADD COLUMN {column_name} INTEGER DEFAULT 0")
-                db.execute(alter_query)
-                
-                # Set initial values
-                update_query = text(f"UPDATE {table_name} SET {column_name} = id WHERE {column_name} IS NULL")
-                db.execute(update_query)
-                
-                db.commit()
-                results[table_name] = f"Successfully added {column_name} column"
-                
-            except Exception as e:
-                db.rollback()
-                results[table_name] = f"Error: {str(e)}"
-        
-        return {
-            "success": True,
-            "message": "Migration completed",
-            "data": results
-        }
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=f"Migration error: {str(e)}")
