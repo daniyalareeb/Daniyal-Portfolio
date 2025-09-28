@@ -92,10 +92,10 @@ export default function ManualAdmin() {
       console.log('Projects result:', projectsResult);
       console.log('Blogs result:', blogsResult);
       
-      // Handle different data formats
-      const toolsData = toolsResult.success ? (toolsResult.data || []) : [];
-      const projectsData = projectsResult.success ? (projectsResult.data || []) : [];
-      const blogsData = blogsResult.success ? (blogsResult.data?.items || blogsResult.data || []) : [];
+      // Handle different data formats - extract items from data object
+      const toolsData = toolsResult.success ? (toolsResult.data?.items || []) : [];
+      const projectsData = projectsResult.success ? (projectsResult.data?.items || []) : [];
+      const blogsData = blogsResult.success ? (blogsResult.data?.items || []) : [];
       
       console.log('DEBUG - Final data counts:', {
         tools: toolsData.length,
