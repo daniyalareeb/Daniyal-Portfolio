@@ -19,7 +19,7 @@ def projects_list(db: Session = Depends(get_db)):
                 "github_url": p.github_url,
                 "category": p.category,
                 "technologies": p.technologies,
-                "image_url": p.image_url
+                "image_url": getattr(p, 'image_url', None)
             } for p in items
         ]
     }
