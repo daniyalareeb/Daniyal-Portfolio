@@ -521,41 +521,25 @@ export default function ManualAdmin() {
       const base = (typeof window !== 'undefined' && window.location.hostname === 'localhost') 
         ? 'http://localhost:8000' 
         : (process.env.NEXT_PUBLIC_API_URL || 'https://kind-perfection-production-ae48.up.railway.app');
-      console.log("API Base URL:", base); // Debug log
-      console.log("Making request to:", `${base}/api/v1/admin/reorder-tools`); // Debug log
-      console.log("Request data:", newOrder.map((item, index) => ({
-        id: item.id,
-        order: index + 1
-      }))); // Debug log
       
       const response = await fetch(`${base}/api/v1/admin/reorder-tools`, {
         method: "PUT",
-        headers: { 
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         credentials: 'include',
         body: JSON.stringify({
-          items: newOrder.map((item, index) => ({
-            id: item.id,
-            order: index + 1
-          }))
+          items: newOrder.map((item, index) => ({ id: item.id, order: index + 1 }))
         })
       });
       
-      console.log("Response status:", response.status); // Debug log
-      console.log("Response ok:", response.ok); // Debug log
-      
       const result = await response.json();
-      console.log("Reorder response:", result); // Debug log
       if (result.success) {
-        setMessage("✅ Tools reordered successfully!");
+        setMessage("✅ Tools reordered successfully! Order saved globally for all users.");
+        // Update local state with new order
         setTools(newOrder);
       } else {
-        console.log("Error case - result:", result); // Debug log
         setMessage(`❌ Error reordering tools: ${result.message || result.error || 'Unknown error'}`);
       }
     } catch (error) {
-      console.log("Catch error:", error); // Debug log
       setMessage(`❌ Error reordering tools: ${error.message}`);
     }
   }
@@ -565,22 +549,19 @@ export default function ManualAdmin() {
       const base = (typeof window !== 'undefined' && window.location.hostname === 'localhost') 
         ? 'http://localhost:8000' 
         : (process.env.NEXT_PUBLIC_API_URL || 'https://kind-perfection-production-ae48.up.railway.app');
+      
       const response = await fetch(`${base}/api/v1/admin/reorder-projects`, {
         method: "PUT",
-        headers: { 
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         credentials: 'include',
         body: JSON.stringify({
-          items: newOrder.map((item, index) => ({
-            id: item.id,
-            order: index + 1
-          }))
+          items: newOrder.map((item, index) => ({ id: item.id, order: index + 1 }))
         })
       });
+      
       const result = await response.json();
       if (result.success) {
-        setMessage("✅ Projects reordered successfully!");
+        setMessage("✅ Projects reordered successfully! Order saved globally for all users.");
         setProjects(newOrder);
       } else {
         setMessage(`❌ Error reordering projects: ${result.message || result.error || 'Unknown error'}`);
@@ -595,22 +576,19 @@ export default function ManualAdmin() {
       const base = (typeof window !== 'undefined' && window.location.hostname === 'localhost') 
         ? 'http://localhost:8000' 
         : (process.env.NEXT_PUBLIC_API_URL || 'https://kind-perfection-production-ae48.up.railway.app');
+      
       const response = await fetch(`${base}/api/v1/admin/reorder-blogs`, {
         method: "PUT",
-        headers: { 
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         credentials: 'include',
         body: JSON.stringify({
-          items: newOrder.map((item, index) => ({
-            id: item.id,
-            order: index + 1
-          }))
+          items: newOrder.map((item, index) => ({ id: item.id, order: index + 1 }))
         })
       });
+      
       const result = await response.json();
       if (result.success) {
-        setMessage("✅ Blogs reordered successfully!");
+        setMessage("✅ Blogs reordered successfully! Order saved globally for all users.");
         setBlogs(newOrder);
       } else {
         setMessage(`❌ Error reordering blogs: ${result.message || result.error || 'Unknown error'}`);

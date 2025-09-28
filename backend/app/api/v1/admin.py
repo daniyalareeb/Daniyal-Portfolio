@@ -457,39 +457,63 @@ async def get_scheduler_status():
 # Drag and Drop Reorder Endpoints
 @router.put("/admin/reorder-tools")
 def reorder_tools(request: ReorderRequest, db: Session = Depends(get_db)):
-    """Reorder tools based on drag and drop - visual only"""
+    """Reorder tools based on drag and drop - saves to database for global ordering"""
     try:
-        # Just return success - no database changes needed
+        # Update display_order for each tool
+        for item in request.items:
+            tool = db.query(Tool).filter(Tool.id == item.id).first()
+            if tool:
+                tool.display_order = item.order
+        
+        db.commit()
+        
         return {
             "success": True,
-            "message": f"Successfully reordered {len(request.items)} tools",
+            "message": f"Successfully reordered {len(request.items)} tools globally",
             "order": [item.id for item in request.items]
         }
     except Exception as e:
+        db.rollback()
         raise HTTPException(status_code=500, detail=f"Error reordering tools: {str(e)}")
 
 @router.put("/admin/reorder-projects")
 def reorder_projects(request: ReorderRequest, db: Session = Depends(get_db)):
-    """Reorder projects based on drag and drop - visual only"""
+    """Reorder projects based on drag and drop - saves to database for global ordering"""
     try:
-        # Just return success - no database changes needed
+        # Update display_order for each project
+        for item in request.items:
+            project = db.query(Project).filter(Project.id == item.id).first()
+            if project:
+                project.display_order = item.order
+        
+        db.commit()
+        
         return {
             "success": True,
-            "message": f"Successfully reordered {len(request.items)} projects",
+            "message": f"Successfully reordered {len(request.items)} projects globally",
             "order": [item.id for item in request.items]
         }
     except Exception as e:
+        db.rollback()
         raise HTTPException(status_code=500, detail=f"Error reordering projects: {str(e)}")
 
 @router.put("/admin/reorder-blogs")
 def reorder_blogs(request: ReorderRequest, db: Session = Depends(get_db)):
-    """Reorder blogs based on drag and drop - visual only"""
+    """Reorder blogs based on drag and drop - saves to database for global ordering"""
     try:
-        # Just return success - no database changes needed
+        # Update display_order for each blog
+        for item in request.items:
+            blog = db.query(BlogPost).filter(BlogPost.id == item.id).first()
+            if blog:
+                blog.display_order = item.order
+        
+        db.commit()
+        
         return {
             "success": True,
-            "message": f"Successfully reordered {len(request.items)} blogs",
+            "message": f"Successfully reordered {len(request.items)} blogs globally",
             "order": [item.id for item in request.items]
         }
     except Exception as e:
+        db.rollback()
         raise HTTPException(status_code=500, detail=f"Error reordering blogs: {str(e)}")

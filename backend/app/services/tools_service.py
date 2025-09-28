@@ -162,5 +162,5 @@ def list_tools_db(db: Session, q: str = None, category: str = None, limit: int =
     if category:
         query = query.filter(Tool.category == category)
     
-    # Simple ordering by id - no display_order needed
-    return query.order_by(Tool.id.desc()).limit(limit).all()
+    # Order by display_order first, then by id as fallback
+    return query.order_by(Tool.display_order.asc(), Tool.id.desc()).limit(limit).all()

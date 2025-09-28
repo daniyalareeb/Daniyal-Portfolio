@@ -13,6 +13,7 @@ class Tool(Base):
     url = Column(String(500), nullable=False, unique=True)
     pricing = Column(String(50), nullable=True)
     image_url = Column(String(500), nullable=True)         # thumbnail image
+    display_order = Column(Integer, default=0)             # for global custom ordering
     source = Column(String(255), nullable=True)            # where we found it
     auto_fetched = Column(Boolean, default=False)          # was it added by the agent?
     last_checked = Column(DateTime(timezone=True), server_default=func.now())
