@@ -510,25 +510,53 @@ def reorder_blogs(request: ReorderRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Error reordering blogs: {str(e)}")
 
 @router.post("/migrate-database")
-def migrate_database():
+def migrate_database(db: Session = Depends(get_db)):
     """Run database migration to add display_order columns"""
     try:
-        import subprocess
-        import sys
-        import os
+        from sqlalchemy import text
         
-        # Change to backend directory
-        backend_dir = os.path.join(os.path.dirname(__file__), '..', '..', '..')
-        result = subprocess.run([
-            sys.executable, 'add_display_order_columns.py'
-        ], cwd=backend_dir, capture_output=True, text=True)
+        tables_to_migrate = [
+            ("ai_tools", "display_order"),
+            ("projects", "display_order"), 
+            ("blog_posts", "display_order")
+        ]
+        
+        results = {}
+        
+        for table_name, column_name in tables_to_migrate:
+            try:
+                # Check if column exists
+                check_query = text(f"""
+                    SELECT column_name 
+                    FROM information_schema.columns 
+                    WHERE table_name = '{table_name}' AND column_name = '{column_name}'
+                """)
+                result = db.execute(check_query).fetchone()
+                
+                if result:
+                    results[table_name] = f"Column {column_name} already exists"
+                    continue
+                
+                # Add the column
+                alter_query = text(f"ALTER TABLE {table_name} ADD COLUMN {column_name} INTEGER DEFAULT 0")
+                db.execute(alter_query)
+                
+                # Set initial values
+                update_query = text(f"UPDATE {table_name} SET {column_name} = id WHERE {column_name} IS NULL")
+                db.execute(update_query)
+                
+                db.commit()
+                results[table_name] = f"Successfully added {column_name} column"
+                
+            except Exception as e:
+                db.rollback()
+                results[table_name] = f"Error: {str(e)}"
         
         return {
-            "success": result.returncode == 0,
-            "message": "Migration completed" if result.returncode == 0 else "Migration failed",
-            "stdout": result.stdout,
-            "stderr": result.stderr,
-            "returncode": result.returncode
+            "success": True,
+            "message": "Migration completed",
+            "data": results
         }
     except Exception as e:
+        db.rollback()
         raise HTTPException(status_code=500, detail=f"Migration error: {str(e)}")
