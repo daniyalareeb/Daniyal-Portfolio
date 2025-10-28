@@ -177,8 +177,8 @@ async def upload_image_public(
         
         # Create uploads directory in persistent volume if it doesn't exist
         import os
-        # Use persistent volume for file storage
-        persistent_path = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', '/app/data')
+        # Use persistent volume for file storage (Heroku-friendly)
+        persistent_path = os.environ.get('VOLUME_MOUNT_PATH', './data')
         upload_dir = os.path.join(persistent_path, "uploads")
         os.makedirs(upload_dir, exist_ok=True)
         
@@ -221,8 +221,8 @@ async def upload_image(
         file_extension = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
         unique_filename = f"{uuid.uuid4()}.{file_extension}"
         
-        # Save file in persistent volume
-        persistent_path = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', '/app/data')
+        # Save file in persistent volume (Heroku-friendly)
+        persistent_path = os.environ.get('VOLUME_MOUNT_PATH', './data')
         upload_dir = os.path.join(persistent_path, "uploads")
         os.makedirs(upload_dir, exist_ok=True)
         file_path = os.path.join(upload_dir, unique_filename)

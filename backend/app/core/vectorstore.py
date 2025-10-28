@@ -11,9 +11,9 @@ from pathlib import Path
 # Configure logging
 logger = logging.getLogger(__name__)
 
-# Local ChromaDB path - use Railway volume if available, otherwise local data directory
+# Local ChromaDB path - use Heroku-friendly directory
 CHROMADB_PATH = os.path.join(
-    os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', './data'), 
+    os.environ.get('VOLUME_MOUNT_PATH', './data'), 
     'chroma'
 )
 

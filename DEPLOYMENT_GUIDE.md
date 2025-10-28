@@ -6,10 +6,7 @@ Complete deployment guide for both frontend and backend components of the DanPor
 
 - [Overview](#overview)
 - [Frontend Deployment (Vercel)](#frontend-deployment-vercel)
-- [Backend Deployment Options](#backend-deployment-options)
-  - [Railway (Recommended)](#railway-recommended)
-  - [Render](#render)
-  - [Fly.io](#flyio)
+- [Backend Deployment (Fly.io)](#backend-deployment)
 - [Environment Configuration](#environment-configuration)
 - [Database Setup](#database-setup)
 - [Domain Configuration](#domain-configuration)
@@ -20,14 +17,14 @@ Complete deployment guide for both frontend and backend components of the DanPor
 
 DanPortfolio consists of two main components:
 - **Frontend**: Next.js application (deploy to Vercel)
-- **Backend**: FastAPI application (deploy to Railway/Render/Fly.io)
+- **Backend**: FastAPI application (deploy to Heroku)
 
 ### Recommended Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │   Backend       │    │   Database      │
-│   (Vercel)      │◄──►│   (Railway)     │◄──►│   (PostgreSQL)  │
+│   (Vercel)      │◄──►│   (Heroku)      │◄──►│   (PostgreSQL)  │
 │   daniyalareeb.me│    │   API Server    │    │   Vector DB     │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
@@ -43,7 +40,7 @@ DanPortfolio consists of two main components:
 1. **Update Environment Variables**
    ```bash
    # In frontend/.env.local
-   NEXT_PUBLIC_API_URL=https://your-backend-url.railway.app
+   NEXT_PUBLIC_API_URL=https://your-app.herokuapp.com
    ```
 
 2. **Verify Build**
@@ -76,7 +73,7 @@ DanPortfolio consists of two main components:
 
 3. **Set Environment Variables**
    ```
-   NEXT_PUBLIC_API_URL = https://your-backend-url.railway.app
+   NEXT_PUBLIC_API_URL = https://your-app.herokuapp.com
    ```
 
 4. **Deploy**
@@ -101,170 +98,100 @@ DanPortfolio consists of two main components:
    Value: 76.76.19.61
    ```
 
-## 🖥️ Backend Deployment Options
+## 🖥️ Backend Deployment
 
-### Railway (Recommended)
+### Heroku
 
-Railway offers the best free tier with PostgreSQL integration.
+Heroku offers the easiest deployment experience with automatic builds and PostgreSQL integration.
 
-#### Prerequisites
-- GitHub repository
-- Railway account (free tier: $5 credit monthly)
-
-#### Step 1: Deploy Backend
-
-1. **Connect Repository**
-   - Go to [railway.app](https://railway.app)
-   - Click "New Project"
-   - Select "Deploy from GitHub repo"
-   - Choose your repository
-   - Select `backend` folder
-
-2. **Configure Service**
-   ```
-   Build Command: pip install -r requirements.txt
-   Start Command: python3 -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
-   ```
-
-3. **Add PostgreSQL Database**
-   - Click "New" → "Database" → "PostgreSQL"
-   - Railway will automatically set `DATABASE_URL`
-
-#### Step 2: Configure Environment Variables
+#### Step 1: Install Heroku CLI
 
 ```bash
-# Server Configuration
-APP_ENV=production
-APP_HOST=0.0.0.0
-APP_PORT=$PORT
+# macOS
+brew install heroku/brew/heroku
 
-# Database (automatically set by Railway)
-DATABASE_URL=postgresql://user:pass@host:port/db
-
-# AI Configuration
-OPENROUTER_API_KEY=your-openrouter-key
-OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
-OPENROUTER_MODEL=deepseek/deepseek-chat-v3-0324:free
-
-# Security (CHANGE THESE!)
-ADMIN_PASSWORD=your-secure-admin-password
-JWT_SECRET_KEY=your-super-secret-jwt-key-32-chars-min
-ADMIN_SECRET=your-admin-secret-key
-
-# Email (Optional)
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your-email@gmail.com
-SMTP_PASSWORD=your-app-password
-ADMIN_EMAIL=your-email@gmail.com
-
-# CORS
-CORS_ORIGINS=["https://daniyalareeb.me", "https://www.daniyalareeb.me"]
+# Windows: Download installer from https://devcenter.heroku.com/articles/heroku-cli
+# Linux: See https://devcenter.heroku.com/articles/heroku-cli
 ```
 
-#### Step 3: Initialize Database
+#### Step 2: Login and Create App
 
-1. **Access Railway Console**
-   - Go to your service
-   - Click "Deployments" → "View Logs"
+```bash
+# Login to Heroku
+heroku login
 
-2. **Run Database Setup**
-   ```bash
-   # In Railway console
-   python3 scripts/setup_db.py
-   ```
+# Create a new app
+heroku create your-app-name
 
-3. **Verify Deployment**
-   - Check logs for successful startup
-   - Test API endpoints
-
-### Render
-
-Alternative deployment option with good free tier.
-
-#### Step 1: Deploy Backend
-
-1. **Create Web Service**
-   - Go to [render.com](https://render.com)
-   - Click "New" → "Web Service"
-   - Connect GitHub repository
-   - Select `backend` folder
-
-2. **Configure Service**
-   ```
-   Environment: Python 3
-   Build Command: pip install -r requirements.txt
-   Start Command: uvicorn app.main:app --host 0.0.0.0 --port $PORT
-   ```
-
-3. **Add PostgreSQL Database**
-   - Create "PostgreSQL" database
-   - Copy connection string to `DATABASE_URL`
-
-#### Step 2: Environment Variables
-Same as Railway configuration above.
-
-### Fly.io
-
-For containerized deployment with global edge.
-
-#### Step 1: Create Dockerfile
-
-```dockerfile
-# backend/Dockerfile
-FROM python:3.11-slim
-
-WORKDIR /app
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    gcc \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy requirements and install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy application code
-COPY . .
-
-# Create non-root user
-RUN useradd --create-home --shell /bin/bash app
-RUN chown -R app:app /app
-USER app
-
-# Expose port
-EXPOSE 8000
-
-# Start command
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Or deploy from GitHub
+heroku create --region us
 ```
 
-#### Step 2: Deploy to Fly.io
+#### Step 3: Add PostgreSQL Database
 
-1. **Install Fly CLI**
-   ```bash
-   curl -L https://fly.io/install.sh | sh
-   ```
+```bash
+# Add PostgreSQL addon (mini tier for free)
+heroku addons:create heroku-postgresql:mini
 
-2. **Login and Initialize**
-   ```bash
-   fly auth login
-   fly launch
-   ```
+# Verify DATABASE_URL is set
+heroku config:get DATABASE_URL
+```
 
-3. **Configure Secrets**
-   ```bash
-   fly secrets set OPENROUTER_API_KEY=your-key
-   fly secrets set ADMIN_PASSWORD=your-password
-   fly secrets set JWT_SECRET_KEY=your-jwt-secret
-   fly secrets set DATABASE_URL=your-postgres-url
-   ```
+#### Step 4: Configure Environment Variables
 
-4. **Deploy**
-   ```bash
-   fly deploy
-   ```
+```bash
+# Set required configuration variables
+heroku config:set APP_ENV=production
+heroku config:set OPENROUTER_API_KEY=your-openrouter-key
+heroku config:set ADMIN_PASSWORD=your-secure-password
+heroku config:set JWT_SECRET_KEY=your-jwt-secret
+heroku config:set ADMIN_SECRET=your-admin-secret
+heroku config:set CORS_ORIGINS='["https://daniyalareeb.com","https://www.daniyalareeb.com"]'
+
+# Optional email configuration
+heroku config:set SMTP_HOST=smtp.gmail.com
+heroku config:set SMTP_PORT=587
+heroku config:set SMTP_USER=your-email@gmail.com
+heroku config:set SMTP_PASSWORD=your-app-password
+```
+
+#### Step 5: Deploy
+
+```bash
+# Initialize git if needed
+git init
+git add .
+git commit -m "Initial commit"
+
+# Add Heroku remote
+heroku git:remote -a your-app-name
+
+# Deploy
+git push heroku main
+```
+
+#### Step 6: Initialize Database
+
+```bash
+# Run database initialization
+heroku run python3 scripts/setup_db.py
+
+# Or manually run commands
+heroku run python3 -c "from app.database import engine, Base; Base.metadata.create_all(bind=engine)"
+```
+
+#### Step 7: Verify Deployment
+
+```bash
+# Check app status
+heroku ps
+
+# View logs
+heroku logs --tail
+
+# Open app
+heroku open
+```
 
 ## ⚙️ Environment Configuration
 
@@ -272,7 +199,7 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 #### Frontend (.env.local)
 ```bash
-NEXT_PUBLIC_API_URL=https://your-backend-url.railway.app
+NEXT_PUBLIC_API_URL=https://your-app.herokuapp.com
 ```
 
 #### Backend (.env)
@@ -373,14 +300,12 @@ alembic upgrade head
    ```
    Type: CNAME
    Name: api
-   Value: your-backend-url.railway.app
+   Value: your-app.herokuapp.com
    ```
 
 3. **SSL Certificates**
    - Vercel: Automatic SSL
-   - Railway: Automatic SSL
-   - Render: Automatic SSL
-   - Fly.io: Automatic SSL
+   - Heroku: Automatic SSL
 
 ## 📊 Monitoring & Maintenance
 
@@ -393,12 +318,12 @@ alembic upgrade head
 
 2. **Backend Health**
    ```bash
-   curl https://your-backend-url.railway.app/health
+   curl https://your-app.herokuapp.com/health
    ```
 
 3. **Database Health**
    ```bash
-   curl https://your-backend-url.railway.app/api/v1/scheduler/status
+   curl https://your-app.herokuapp.com/api/v1/scheduler/status
    ```
 
 ### Monitoring Tools
@@ -408,7 +333,7 @@ alembic upgrade head
    - Real-time analytics
    - Error tracking
 
-2. **Railway Metrics**
+2. **Heroku Metrics**
    - CPU/Memory usage
    - Request logs
    - Error tracking
@@ -451,7 +376,7 @@ npm run build
 **Error**: `API_URL not defined`
 ```bash
 # Solution: Set environment variable
-NEXT_PUBLIC_API_URL=https://your-backend-url.railway.app
+NEXT_PUBLIC_API_URL=https://your-app.herokuapp.com
 ```
 
 #### 2. Backend Deployment Issues
@@ -498,11 +423,11 @@ CORS_ORIGINS=["https://daniyalareeb.me", "https://www.daniyalareeb.me"]
 
 ```bash
 # Check backend logs
-railway logs
+heroku logs --tail
 
 # Test API endpoints
-curl https://your-backend-url.railway.app/health
-curl https://your-backend-url.railway.app/api/v1/tools/list
+curl https://your-app.herokuapp.com/health
+curl https://your-app.herokuapp.com/api/v1/tools/list
 
 # Check database connection
 python3 -c "
@@ -548,7 +473,7 @@ with engine.connect() as conn:
 - [ ] Verify API communication
 
 ### Backend Deployment
-- [ ] Deploy to Railway/Render/Fly.io
+- [ ] Deploy to Heroku
 - [ ] Set all environment variables
 - [ ] Initialize database
 - [ ] Test API endpoints
@@ -566,8 +491,8 @@ with engine.connect() as conn:
 
 Once deployed, your DanPortfolio will be available at:
 - **Frontend**: https://daniyalareeb.me
-- **Backend**: https://your-backend-url.railway.app
-- **API Docs**: https://your-backend-url.railway.app/docs
+- **Backend**: https://your-app.herokuapp.com
+- **API Docs**: https://your-app.herokuapp.com/docs
 
 ### Next Steps
 1. Share your portfolio with potential employers/clients

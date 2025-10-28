@@ -8,10 +8,10 @@ Set these in your Vercel project dashboard:
 
 ### Required Environment Variable
 ```bash
-NEXT_PUBLIC_API_URL=https://your-railway-app-name.railway.app
+NEXT_PUBLIC_API_URL=https://your-app.herokuapp.com
 ```
 
-*Note: Replace `your-railway-app-name` with your actual Railway app name*
+*Note: Replace `your-app` with your actual Heroku app name*
 
 ## 🚀 Vercel Deployment Steps
 
@@ -32,7 +32,7 @@ Install Command: npm install
 
 ### Step 3: Set Environment Variables
 1. Go to **Settings** → **Environment Variables**
-2. Add: `NEXT_PUBLIC_API_URL` = `https://your-railway-app-name.railway.app`
+2. Add: `NEXT_PUBLIC_API_URL` = `https://your-app.herokuapp.com`
 3. Save
 
 ### Step 4: Deploy
@@ -85,7 +85,7 @@ After deployment:
 - **Vercel**: `https://daniyalareeb.vercel.app`
 
 ### Backend Integration
-- Frontend will connect to Railway backend
+- Frontend will connect to Heroku backend
 - API calls will work seamlessly
 - 3D avatar will load properly
 - AI chat will function
@@ -93,7 +93,7 @@ After deployment:
 ## 🔒 Security Configuration
 
 ### CORS Settings
-Your Railway backend is configured with:
+Your Heroku backend is configured with:
 ```bash
 CORS_ORIGINS=["https://daniyalareeb.com", "https://www.daniyalareeb.com", "https://daniyalareeb.vercel.app"]
 ```
@@ -123,8 +123,8 @@ After deployment, test these features:
 #### 1. API Connection Issues
 ```bash
 # Check if NEXT_PUBLIC_API_URL is set correctly
-# Verify Railway backend is running
-# Test: https://your-railway-app.railway.app/health
+# Verify Heroku backend is running
+# Test: https://your-app.herokuapp.com/health
 ```
 
 #### 2. Domain Not Working
@@ -143,7 +143,7 @@ npm run build
 
 ## 📝 Next Steps
 
-1. **Deploy Backend**: Follow Railway deployment guide
+1. **Deploy Backend**: Follow Heroku deployment guide
 2. **Deploy Frontend**: Follow this Vercel guide
 3. **Configure Domain**: Set up Namecheap DNS
 4. **Test Everything**: Verify all features work
@@ -153,8 +153,8 @@ npm run build
 
 Once complete, your portfolio will be live at:
 - **Frontend**: `https://daniyalareeb.com`
-- **Backend**: `https://your-railway-app.railway.app`
-- **API Docs**: `https://your-railway-app.railway.app/docs`
+- **Backend**: `https://your-app.herokuapp.com`
+- **API Docs**: `https://your-app.herokuapp.com/docs`
 
 ---
 

@@ -1,0 +1,71 @@
+# Exclude unnecessary files from Heroku slug
+# This reduces slug size and deployment time
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+docs/
+README.md
+
+# Development files
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Local data
+data/
+uploads/
+*.db
+*.db-shm
+*.db-wal
+
+# Static files (served by Vercel)
+static/uploads/
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+.env.local
+*.env
+
+# Testing
+.pytest_cache/
+test_*.py
+
+# Misc
+.git/
+*.bak
+*.tmp
+

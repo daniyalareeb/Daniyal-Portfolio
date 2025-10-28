@@ -69,8 +69,9 @@ app.include_router(data_backup.router, prefix=settings.API_V1_STR, tags=["data-b
 # Mount static file serving for uploaded images and assets
 # This allows serving files uploaded through the admin interface
 import os
-# Use local directory for development, Railway volume for production
-static_dir = os.path.join(os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', './data'), 'uploads')
+# Use Heroku-friendly directory (ephemeral filesystem)
+# For persistent storage, consider using cloud storage (S3, Cloudinary, etc.)
+static_dir = os.path.join(os.environ.get('VOLUME_MOUNT_PATH', './data'), 'uploads')
 os.makedirs(static_dir, exist_ok=True)
 app.mount("/static/uploads", StaticFiles(directory=static_dir), name="static-uploads")
 

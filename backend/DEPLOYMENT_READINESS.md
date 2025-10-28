@@ -150,20 +150,11 @@ CORS_ORIGINS=["https://your-frontend-domain.com"]
 - **File type validation** (images only)
 
 ### 📝 Deployment Options
-1. **Railway** (Recommended for free tier)
-   - Easy PostgreSQL integration
-   - Automatic deployments
-   - $5 free credit monthly
-
-2. **Render**
-   - Free tier available
-   - Automatic SSL
-   - Easy environment variable management
-
-3. **Fly.io**
-   - Good for containerized deployments
-   - Global edge deployment
-   - Free tier available
+1. **Heroku** (Recommended)
+   - Easy deployment with Git
+   - Automatic PostgreSQL integration
+   - Free tier with dyno hours
+   - Automatic SSL certificates
 
 ---
 
@@ -217,23 +208,14 @@ python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 ## 🎯 Deployment Recommendations
 
-### For Railway Deployment
-1. **Use PostgreSQL** instead of SQLite for production
-2. **Set up environment variables** in Railway dashboard
-3. **Configure custom domain** if needed
-4. **Enable automatic deployments** from Git
-
-### For Render Deployment
-1. **Use Render's PostgreSQL** addon
-2. **Configure build command**: `pip install -r requirements.txt`
-3. **Set start command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-4. **Configure environment variables**
-
-### For Fly.io Deployment
-1. **Create Dockerfile** for containerization
-2. **Use Fly PostgreSQL** addon
-3. **Configure fly.toml** for deployment settings
-4. **Set up secrets** with `fly secrets set`
+### For Heroku Deployment
+1. **Install Heroku CLI**: `brew install heroku/brew/heroku`
+2. **Login**: `heroku login`
+3. **Create app**: `heroku create your-app-name`
+4. **Add PostgreSQL**: `heroku addons:create heroku-postgresql:mini`
+5. **Set config vars**: `heroku config:set KEY=value`
+6. **Deploy**: `git push heroku main`
+7. **Initialize database**: `heroku run python3 scripts/setup_db.py`
 
 ---
 
@@ -248,7 +230,7 @@ python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 - ✅ All dependencies resolved
 
 **Next Steps:**
-1. Choose deployment platform (Railway recommended)
+1. Choose deployment platform (Heroku recommended)
 2. Update environment variables for production
 3. Deploy and test all endpoints
 4. Configure frontend to point to new backend URL

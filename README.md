@@ -76,8 +76,8 @@ DanPortfolio is a comprehensive portfolio website that demonstrates modern web d
 
 ### DevOps
 - **Frontend Deployment**: Vercel
-- **Backend Deployment**: Railway/Render/Fly.io
-- **Environment**: Docker-ready
+- **Backend Deployment**: Heroku
+- **Environment**: Container-ready
 - **CI/CD**: Git-based deployments
 
 ## 🏗️ Architecture
@@ -140,7 +140,7 @@ DanPortfolio/
 │   ├── styles/              # Global styles
 │   └── public/              # Static assets
 │
-├── backend/                 # FastAPI backend (Railway deployment)
+├── backend/                 # FastAPI backend (Heroku deployment)
 │   ├── app/                 # Main application code
 │   │   ├── api/             # API endpoints
 │   │   │   └── v1/          # API version 1
@@ -160,7 +160,6 @@ DanPortfolio/
 │
 ├── .gitignore              # Monorepo gitignore
 ├── README.md               # This file
-├── RAILWAY_ENVIRONMENT_VARIABLES.md  # Railway deployment guide
 ├── FRONTEND_VERCEL_CONFIG.md         # Vercel deployment guide
 └── docs/                    # Additional documentation
 ```
@@ -168,7 +167,7 @@ DanPortfolio/
 ### 🚀 Deployment Configuration
 
 - **Frontend**: Deploy from `frontend/` directory to Vercel
-- **Backend**: Deploy from `backend/` directory to Railway
+- **Backend**: Deploy from `backend/` directory to Heroku
 - **Domain**: `daniyalareeb.com` (Namecheap + Vercel)
 
 ## 🚀 Getting Started
@@ -387,22 +386,23 @@ Generate AI blog post (Admin only).
 3. **Set Environment Variables**: Add `NEXT_PUBLIC_API_URL`
 4. **Deploy**: Automatic deployment on push
 
-### Backend Deployment (Railway)
+### Backend Deployment (Heroku)
 
-1. **Create Railway Account**: Sign up at railway.app
-2. **Connect Repository**: Link your GitHub repo
-3. **Configure Environment**: Set all required environment variables
-4. **Add PostgreSQL**: Use Railway's PostgreSQL addon
-5. **Deploy**: Automatic deployment on push
+1. **Install Heroku CLI**: `brew install heroku/brew/heroku` (Mac) or visit heroku.com
+2. **Login**: `heroku login`
+3. **Create App**: `heroku create your-app-name`
+4. **Add PostgreSQL**: `heroku addons:create heroku-postgresql:mini`
+5. **Set Config Vars**: `heroku config:set KEY=value`
+6. **Deploy**: `git push heroku main`
 
 ### Environment Variables for Production
 
 #### Frontend (Vercel)
 ```bash
-NEXT_PUBLIC_API_URL=https://your-backend-url.railway.app
+NEXT_PUBLIC_API_URL=https://your-app.herokuapp.com
 ```
 
-#### Backend (Railway)
+#### Backend (Heroku)
 ```bash
 APP_ENV=production
 DATABASE_URL=postgresql://user:pass@host:port/db
@@ -473,7 +473,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **OpenRouter** for AI model access
 - **Vercel** for frontend hosting
-- **Railway** for backend hosting
+- **Heroku** for backend hosting
 - **Three.js** community for 3D graphics
 - **FastAPI** team for the excellent framework
 
