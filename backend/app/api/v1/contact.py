@@ -6,7 +6,6 @@ from app.database import get_db
 from app.schemas.common import APIResponse
 from app.schemas.contact import ContactIn
 from app.models.contact import ContactSubmission
-from app.services.contact_service import send_contact_email
 
 router = APIRouter()
 
