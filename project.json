@@ -1,0 +1,11 @@
+{
+  "name": "DanPortfolio Backend",
+  "description": "FastAPI backend for portfolio",
+  "repository": "https://github.com/daniyalareeb/Daniyal-Portfolio",
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ]
+}
+

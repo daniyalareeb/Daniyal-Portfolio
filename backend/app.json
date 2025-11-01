@@ -49,11 +49,7 @@
       "size": "eco"
     }
   },
-  "addons": [
-    {
-      "plan": "heroku-postgresql:mini"
-    }
-  ],
+  "addons": [],
   "buildpacks": [
     {
       "url": "heroku/python"
