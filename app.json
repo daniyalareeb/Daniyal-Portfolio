@@ -1,0 +1,59 @@
+{
+  "name": "DanPortfolio Backend",
+  "description": "AI-powered portfolio backend with automated content generation",
+  "repository": "https://github.com/daniyalareeb/Daniyal-Portfolio",
+  "logo": "https://github.com/daniyalareeb.png",
+  "keywords": ["fastapi", "python", "ai", "portfolio", "rag"],
+  "success_url": "/health",
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "env": {
+    "APP_ENV": {
+      "description": "Application environment (production/development)",
+      "value": "production",
+      "required": true
+    },
+    "ADMIN_PASSWORD": {
+      "description": "Admin password for dashboard access",
+      "generator": "secret",
+      "required": true
+    },
+    "JWT_SECRET_KEY": {
+      "description": "Secret key for JWT token generation",
+      "generator": "secret",
+      "required": true
+    },
+    "ADMIN_SECRET": {
+      "description": "Admin secret for secure operations",
+      "generator": "secret",
+      "required": true
+    },
+    "OPENROUTER_API_KEY": {
+      "description": "OpenRouter API key for AI features",
+      "required": true
+    },
+    "OPENROUTER_BASE_URL": {
+      "description": "OpenRouter API base URL",
+      "value": "https://openrouter.ai/api/v1"
+    },
+    "OPENROUTER_MODEL": {
+      "description": "OpenRouter model to use",
+      "value": "deepseek/deepseek-chat-v3-0324:free"
+    },
+    "CORS_ORIGINS": {
+      "description": "Allowed CORS origins (JSON array)",
+      "value": "[\"https://daniyalareeb.com\", \"https://www.daniyalareeb.com\"]"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "eco"
+    }
+  },
+  "addons": []
+}
+

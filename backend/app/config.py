@@ -1,6 +1,8 @@
 from pydantic_settings import BaseSettings
-from typing import List
+from pydantic import field_validator
+from typing import List, Union
 import os
+import json
 
 class Settings(BaseSettings):
     # Server Config
@@ -37,8 +39,8 @@ class Settings(BaseSettings):
     RESEND_FROM_EMAIL: str = "noreply@yourdomain.com"
     GITHUB_USERNAME: str = "daniyalareeb"
     
-    # CORS
-    CORS_ORIGINS: List[str] = [
+    # CORS - parse from env var JSON string or use defaults
+    CORS_ORIGINS: Union[List[str], str] = [
         "http://localhost:3000",
         "https://daniyalareeb.com",
         "https://www.daniyalareeb.com",
@@ -53,6 +55,23 @@ class Settings(BaseSettings):
         "https://portfolio-frontend-6zjtin9bp-daniyalareebs-projects.vercel.app",
         "https://portfolio-frontend-ectpfvtt9-daniyalareebs-projects.vercel.app"
     ]
+    
+    @field_validator('CORS_ORIGINS', mode='before')
+    @classmethod
+    def parse_cors_origins(cls, v):
+        """Parse CORS_ORIGINS from JSON string or return as-is if list."""
+        if isinstance(v, list):
+            return v
+        if isinstance(v, str):
+            # Try JSON first
+            try:
+                parsed = json.loads(v)
+                if isinstance(parsed, list):
+                    return parsed
+            except:
+                # Fallback to comma-separated
+                return [origin.strip() for origin in v.split(',') if origin.strip()]
+        return v
     
     # API
     API_V1_STR: str = "/api/v1"

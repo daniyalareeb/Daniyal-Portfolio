@@ -10,7 +10,7 @@ import os
 
 def init_database():
     """Initialize database with sample data if empty"""
-    backend_url = os.getenv("RAILWAY_PUBLIC_DOMAIN", "https://kind-perfection-production-ae48.up.railway.app")
+    backend_url = os.getenv("BACKEND_URL", "http://localhost:8000")
     
     # Wait for backend to be ready
     max_retries = 30

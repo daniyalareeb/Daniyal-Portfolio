@@ -85,11 +85,16 @@ async def on_startup():
     from app.database import engine, Base
     from app.config import settings
     
-    print(f"Using database: {settings.DATABASE_URL}")
+    print(f"🚀 Starting DanPortfolio Backend...")
+    print(f"📊 Database URL configured: {'Yes' if settings.DATABASE_URL else 'No'}")
     
-    # Initialize database tables
-    Base.metadata.create_all(bind=engine)
-    print("Database tables initialized")
+    # Initialize database tables - don't crash if DB unavailable
+    try:
+        Base.metadata.create_all(bind=engine)
+        print("✅ Database tables initialized")
+    except Exception as e:
+        print(f"⚠️  Warning: Could not initialize database tables: {e}")
+        print("⚠️  App will continue but database features may not work")
     
     # Simple check: only populate if database is completely empty
     try:
@@ -101,22 +106,34 @@ async def on_startup():
         projects_count = db.query(Project).count()
         blogs_count = db.query(BlogPost).count()
         
-        print(f"Database status: {tools_count} tools, {projects_count} projects, {blogs_count} blogs")
+        print(f"📊 Database status: {tools_count} tools, {projects_count} projects, {blogs_count} blogs")
         
         # Only populate if completely empty (first deployment)
         if tools_count == 0 and projects_count == 0 and blogs_count == 0:
-            print("Database is empty, populating with sample data...")
-            from app.api.v1.admin import populate_database
-            result = populate_database(db)
-            print(f"Sample data populated: {result}")
+            print("📝 Database is empty, populating with sample data...")
+            try:
+                from app.api.v1.admin import populate_database
+                result = populate_database(db)
+                print(f"✅ Sample data populated: {result}")
+            except Exception as e:
+                print(f"⚠️  Could not populate sample data: {e}")
         else:
-            print("Database has existing data - PostgreSQL persistence working!")
+            print("✅ Database has existing data - PostgreSQL persistence working!")
+        db.close()
             
     except Exception as e:
-        print(f"Error during startup: {e}")
+        print(f"⚠️  Warning: Database connection issue during startup: {e}")
+        print("⚠️  App will start but database features may be limited")
+        print(f"⚠️  Error type: {type(e).__name__}")
     
     # Start the automatic blog scheduler for content updates
-    start_scheduler()
+    try:
+        start_scheduler()
+        print("✅ Scheduler started")
+    except Exception as e:
+        print(f"⚠️  Warning: Could not start scheduler: {e}")
+    
+    print("✅ Application startup complete!")
 
 @app.get("/")
 def root():
