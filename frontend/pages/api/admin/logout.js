@@ -6,8 +6,7 @@ export default async function handler(req, res) {
 
   try {
     // Forward the request to the backend logout endpoint
-    // Use server-side env var (more secure) or fallback to NEXT_PUBLIC_API_URL
-    const backendUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL;
     
     if (!backendUrl) {
       console.error('[LOGOUT] Backend URL not configured');
