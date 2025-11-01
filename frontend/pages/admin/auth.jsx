@@ -31,6 +31,7 @@ export default function AdminAuth() {
     setError('');
 
     try {
+      console.log('[AUTH] Sending login request...');
       const response = await fetch('/api/admin/auth', {
         method: 'POST',
         headers: {
@@ -40,18 +41,23 @@ export default function AdminAuth() {
         body: JSON.stringify({ password }),
       });
 
+      console.log('[AUTH] Response status:', response.status);
       const result = await response.json();
+      console.log('[AUTH] Response data:', result);
       
       if (response.ok && result.success) {
+        console.log('[AUTH] Login successful, redirecting...');
         // Redirect to admin dashboard (session cookie is now set)
         // Small delay to ensure cookie is set
         setTimeout(() => {
           window.location.href = '/admin';
         }, 100);
       } else {
-        setError('Invalid password. Please try again.');
+        console.error('[AUTH] Login failed:', result.error);
+        setError(result.error || 'Invalid password. Please try again.');
       }
     } catch (err) {
+      console.error('[AUTH] Error:', err);
       setError('Authentication failed. Please try again.');
     } finally {
       setIsLoading(false);
