@@ -12,7 +12,12 @@ export default async function handler(req, res) {
 
   try {
     // Forward the request to the backend auth endpoint
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL;
+    
+    if (!backendUrl) {
+      return res.status(500).json({ error: 'Backend URL not configured' });
+    }
+    
     const response = await fetch(`${backendUrl}/api/v1/login`, {
       method: 'POST',
       headers: {
