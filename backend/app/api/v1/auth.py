@@ -64,21 +64,10 @@ async def admin_login(request: LoginRequest, response: Response):
         - Session ID generation for tracking
     """
     # Verify password against stored credentials
-    # Debug: Check what password is being used (remove after testing)
+    # Strip whitespace to handle any accidental spaces in password
     import os
-    env_password = os.environ.get('ADMIN_PASSWORD', 'NOT_SET')
-    
-    # Strip whitespace to handle any accidental spaces
     request_pwd = request.password.strip()
     expected_pwd = (os.environ.get('ADMIN_PASSWORD') or settings.ADMIN_PASSWORD).strip()
-    
-    print(f"[DEBUG] Request password (repr): {repr(request.password)}")
-    print(f"[DEBUG] Request password (stripped): {repr(request_pwd)}")
-    print(f"[DEBUG] Expected password (repr): {repr(expected_pwd)}")
-    print(f"[DEBUG] Settings.ADMIN_PASSWORD: {repr(settings.ADMIN_PASSWORD)}")
-    print(f"[DEBUG] os.environ['ADMIN_PASSWORD']: {repr(env_password)}")
-    print(f"[DEBUG] Comparison: {repr(request_pwd)} == {repr(expected_pwd)} = {request_pwd == expected_pwd}")
-    print(f"[DEBUG] Password lengths - Request: {len(request_pwd)}, Expected: {len(expected_pwd)}")
     
     if request_pwd != expected_pwd:
         raise HTTPException(status_code=401, detail="Invalid password")
