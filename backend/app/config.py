@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
     OPENROUTER_MODEL: str = "deepseek/deepseek-chat-v3-0324:free"
     
-    # Admin Secret - MUST be changed in production
+    # Admin Secret - MUST be changed in production (reads from env vars automatically)
     ADMIN_SECRET: str = "super-secret-string-change-me"
     ADMIN_PASSWORD: str = "daniyal-admin-2024"
     JWT_SECRET_KEY: str = "your-super-secret-jwt-key-change-in-production"
