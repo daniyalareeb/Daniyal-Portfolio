@@ -12,11 +12,17 @@ export default async function handler(req, res) {
 
   try {
     // Forward the request to the backend auth endpoint
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL;
+    // Use server-side env var (more secure) or fallback to NEXT_PUBLIC_API_URL for compatibility
+    // API_URL is server-side only and not exposed to client (more secure)
+    // NEXT_PUBLIC_API_URL is exposed to client (less secure but needed for client-side code)
+    const backendUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
     
     if (!backendUrl) {
-      console.error('[AUTH] Backend URL not configured');
-      return res.status(500).json({ error: 'Backend URL not configured' });
+      console.error('[AUTH] Backend URL not configured. Set API_URL or NEXT_PUBLIC_API_URL in environment variables.');
+      return res.status(500).json({ 
+        error: 'Backend URL not configured',
+        details: 'Please set API_URL environment variable in Vercel settings'
+      });
     }
     
     console.log('[AUTH] Calling backend:', `${backendUrl}/api/v1/login`);

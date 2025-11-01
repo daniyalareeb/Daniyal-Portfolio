@@ -39,7 +39,11 @@ export default function Admin() {
   }
 
   async function fetchSchedulerStatus() {
-    const base = process.env.NEXT_PUBLIC_API_URL || 'https://daniyalportfolio-4bc9ee1ed36d.herokuapp.com';
+    const base = process.env.NEXT_PUBLIC_API_URL;
+    if (!base) {
+      console.error('NEXT_PUBLIC_API_URL not configured');
+      return;
+    }
     try {
       const response = await fetch(`${base}/api/v1/scheduler-status`);
       const result = await response.json();
@@ -56,7 +60,11 @@ export default function Admin() {
   }
 
   async function fetchAll() {
-    const base = process.env.NEXT_PUBLIC_API_URL || 'https://daniyalportfolio-4bc9ee1ed36d.herokuapp.com';
+    const base = process.env.NEXT_PUBLIC_API_URL;
+    if (!base) {
+      console.error('NEXT_PUBLIC_API_URL not configured');
+      return;
+    }
     
     const requests = [
       { url: `${base}/api/v1/tools/list`, options: {} },

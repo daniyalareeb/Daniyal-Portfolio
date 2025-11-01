@@ -1,7 +1,7 @@
 import Section from './Section'
 import useSWR from 'swr'
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+const API = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' ? window.location.origin : '')
 const fetcher = async (u) => {
   try {
     const response = await fetch(u);

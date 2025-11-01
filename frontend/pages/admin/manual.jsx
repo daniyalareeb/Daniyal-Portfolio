@@ -67,7 +67,7 @@ export default function ManualAdmin() {
   async function fetchStats() {
     const base = (typeof window !== 'undefined' && window.location.hostname === 'localhost') 
       ? 'http://localhost:8000' 
-      : (process.env.NEXT_PUBLIC_API_URL || 'https://daniyalportfolio-4bc9ee1ed36d.herokuapp.com');
+      : process.env.NEXT_PUBLIC_API_URL;
     console.log('DEBUG - API Base URL:', base);
     console.log('DEBUG - Environment:', process.env.NODE_ENV);
     console.log('DEBUG - NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
@@ -520,7 +520,7 @@ export default function ManualAdmin() {
     try {
       const base = (typeof window !== 'undefined' && window.location.hostname === 'localhost') 
         ? 'http://localhost:8000' 
-        : (process.env.NEXT_PUBLIC_API_URL || 'https://daniyalportfolio-4bc9ee1ed36d.herokuapp.com');
+        : process.env.NEXT_PUBLIC_API_URL;
       
       const response = await fetch(`${base}/api/v1/admin/reorder-tools`, {
         method: "PUT",
@@ -548,7 +548,7 @@ export default function ManualAdmin() {
     try {
       const base = (typeof window !== 'undefined' && window.location.hostname === 'localhost') 
         ? 'http://localhost:8000' 
-        : (process.env.NEXT_PUBLIC_API_URL || 'https://daniyalportfolio-4bc9ee1ed36d.herokuapp.com');
+        : process.env.NEXT_PUBLIC_API_URL;
       
       const response = await fetch(`${base}/api/v1/admin/reorder-projects`, {
         method: "PUT",
@@ -575,7 +575,7 @@ export default function ManualAdmin() {
     try {
       const base = (typeof window !== 'undefined' && window.location.hostname === 'localhost') 
         ? 'http://localhost:8000' 
-        : (process.env.NEXT_PUBLIC_API_URL || 'https://daniyalportfolio-4bc9ee1ed36d.herokuapp.com');
+        : process.env.NEXT_PUBLIC_API_URL;
       
       const response = await fetch(`${base}/api/v1/admin/reorder-blogs`, {
         method: "PUT",
@@ -810,7 +810,7 @@ export default function ManualAdmin() {
                         
                         const base = (typeof window !== 'undefined' && window.location.hostname === 'localhost') 
         ? 'http://localhost:8000' 
-        : (process.env.NEXT_PUBLIC_API_URL || 'https://daniyalportfolio-4bc9ee1ed36d.herokuapp.com');
+        : process.env.NEXT_PUBLIC_API_URL;
                         const response = await fetch(`${base}/api/v1/upload-image-public`, {
                           method: 'POST',
                           body: formData

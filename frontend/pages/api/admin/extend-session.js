@@ -6,7 +6,12 @@ export default async function handler(req, res) {
 
   try {
     // Forward the request to the backend extend-session endpoint
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    // Use server-side env var (more secure) or fallback to NEXT_PUBLIC_API_URL
+    const backendUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
+    
+    if (!backendUrl) {
+      return res.status(500).json({ error: 'Backend URL not configured' });
+    }
     const response = await fetch(`${backendUrl}/api/v1/extend-session`, {
       method: 'POST',
       headers: {
