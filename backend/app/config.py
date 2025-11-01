@@ -1,10 +1,17 @@
-from pydantic_settings import BaseSettings
-from pydantic import field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import field_validator, Field
 from typing import List, Union
 import os
 import json
 
 class Settings(BaseSettings):
+    # Configure Pydantic Settings to properly read environment variables
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,  # Environment variable names are case-sensitive
+        extra="ignore"  # Ignore extra env vars not defined in the model
+    )
     # Server Config
     APP_NAME: str = "Daniyal Portfolio Backend"
     APP_ENV: str = "development"
@@ -22,9 +29,13 @@ class Settings(BaseSettings):
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
     OPENROUTER_MODEL: str = "deepseek/deepseek-chat-v3-0324:free"
     
-    # Admin Secret - MUST be changed in production (reads from env vars automatically)
+    # Admin Secret - MUST be changed in production
+    # Pydantic BaseSettings will automatically read from environment variables
+    # Set ADMIN_SECRET in Heroku Config Vars to override
     ADMIN_SECRET: str = "super-secret-string-change-me"
+    # Set ADMIN_PASSWORD in Heroku Config Vars (e.g., "SecureAdmin2024")
     ADMIN_PASSWORD: str = "daniyal-admin-2024"
+    # Set JWT_SECRET_KEY in Heroku Config Vars to override
     JWT_SECRET_KEY: str = "your-super-secret-jwt-key-change-in-production"
     
     # Email SMTP (with defaults for deployment)
@@ -75,8 +86,5 @@ class Settings(BaseSettings):
     
     # API
     API_V1_STR: str = "/api/v1"
-    
-    class Config:
-        env_file = ".env"
 
 settings = Settings()
