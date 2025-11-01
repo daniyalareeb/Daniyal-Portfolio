@@ -84,9 +84,16 @@ async def on_startup():
     """
     from app.database import engine, Base
     from app.config import settings
+    import os
     
     print(f"🚀 Starting DanPortfolio Backend...")
     print(f"📊 Database URL configured: {'Yes' if settings.DATABASE_URL else 'No'}")
+    
+    # Debug: Check what ADMIN_PASSWORD is loaded (masked for security)
+    admin_pwd_env = os.environ.get('ADMIN_PASSWORD', 'NOT_SET_IN_ENV')
+    admin_pwd_settings = settings.ADMIN_PASSWORD
+    print(f"🔐 [DEBUG] ADMIN_PASSWORD from os.environ: {admin_pwd_env[:3]}... (length: {len(admin_pwd_env) if admin_pwd_env != 'NOT_SET_IN_ENV' else 0})")
+    print(f"🔐 [DEBUG] ADMIN_PASSWORD from settings: {admin_pwd_settings[:3]}... (length: {len(admin_pwd_settings)})")
     
     # Initialize database tables - don't crash if DB unavailable
     try:
