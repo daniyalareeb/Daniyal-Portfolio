@@ -64,9 +64,7 @@ async def admin_login(request: LoginRequest, response: Response):
         - Session ID generation for tracking
     """
     # Verify password against stored credentials
-    # Debug: Log password comparison (remove in production)
-    admin_pass = os.environ.get('ADMIN_PASSWORD', settings.ADMIN_PASSWORD)
-    if request.password != admin_pass:
+    if request.password != settings.ADMIN_PASSWORD:
         raise HTTPException(status_code=401, detail="Invalid password")
     
     # Create secure JWT session token
