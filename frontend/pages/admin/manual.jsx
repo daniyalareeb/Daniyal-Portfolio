@@ -3,6 +3,26 @@ import SessionTimeout from "../../components/SessionTimeout";
 import BrowserCloseHandler from "../../components/BrowserCloseHandler";
 import DragDropList, { DragHandle } from "../../components/DragDropList";
 
+function normalizeImageUrl(url) {
+  if (!url) return url;
+  
+  // Fix malformed URLs (https// -> https://)
+  if (url.startsWith('https//')) {
+    return url.replace('https//', 'https://');
+  }
+  if (url.startsWith('http//')) {
+    return url.replace('http//', 'http://');
+  }
+  
+  // Check if it's a full URL (starts with http:// or https://)
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  
+  // Otherwise, it's a relative path
+  return `${process.env.NEXT_PUBLIC_API_URL}${url}`;
+}
+
 export default function ManualAdmin() {
   const [activeTab, setActiveTab] = useState("tools");
   const [stats, setStats] = useState({});
@@ -834,7 +854,7 @@ export default function ManualAdmin() {
                 {toolForm.image_url && (
                   <div className="flex items-center gap-2">
                     <img 
-                      src={toolForm.image_url?.startsWith('http') ? toolForm.image_url : `${process.env.NEXT_PUBLIC_API_URL}${toolForm.image_url}`} 
+                      src={normalizeImageUrl(toolForm.image_url)} 
                       alt="Tool thumbnail" 
                       className="w-10 h-10 rounded object-cover"
                     />
@@ -1021,7 +1041,7 @@ export default function ManualAdmin() {
                 {projectForm.image_url && (
                   <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
                     <img 
-                      src={projectForm.image_url?.startsWith('http') ? projectForm.image_url : `${process.env.NEXT_PUBLIC_API_URL}${projectForm.image_url}`} 
+                      src={normalizeImageUrl(projectForm.image_url)} 
                       alt="Preview" 
                       style={{
                         width: '60px', 
@@ -1349,7 +1369,7 @@ export default function ManualAdmin() {
                   <div style={{flex: 1, display: 'flex', gap: 16}}>
                     {project.image_url && (
                       <img 
-                        src={project.image_url?.startsWith('http') ? project.image_url : `${process.env.NEXT_PUBLIC_API_URL}${project.image_url}`} 
+                        src={normalizeImageUrl(project.image_url)} 
                         alt={project.name} 
                         style={{
                           width: '80px', 
@@ -1519,7 +1539,6 @@ export default function ManualAdmin() {
           )}
         </div>
       </div>
-    </div>
     </>
   );
 }

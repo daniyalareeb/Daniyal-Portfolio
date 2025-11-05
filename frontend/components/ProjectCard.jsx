@@ -1,6 +1,27 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 
+// Add a helper function to normalize URLs
+function normalizeImageUrl(url) {
+  if (!url) return url;
+  
+  // Fix malformed URLs (https// -> https://)
+  if (url.startsWith('https//')) {
+    return url.replace('https//', 'https://');
+  }
+  if (url.startsWith('http//')) {
+    return url.replace('http//', 'http://');
+  }
+  
+  // Check if it's a full URL (starts with http:// or https://)
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  
+  // Otherwise, it's a relative path
+  return `${process.env.NEXT_PUBLIC_API_URL}${url}`;
+}
+
 export default function ProjectCard({ title, description, tags = [], demo, url, githubUrl, imageUrl }){
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
@@ -15,7 +36,7 @@ export default function ProjectCard({ title, description, tags = [], demo, url, 
           <>
             <div className="absolute inset-0 flex items-center justify-center p-4">
               <img 
-                src={imageUrl.startsWith('http') ? imageUrl : `${process.env.NEXT_PUBLIC_API_URL}${imageUrl}`} 
+                src={normalizeImageUrl(imageUrl)}
                 alt={title}
                 className={`max-w-full max-h-full object-contain transition-all duration-500 group-hover:scale-105 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                 onLoad={() => setImageLoaded(true)}

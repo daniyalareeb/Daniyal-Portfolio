@@ -80,18 +80,18 @@ class StorageService:
         
         try:
             # Upload to Supabase Storage
-            # The upload method expects file path and file content
             response = self.client.storage.from_(self.bucket).upload(
                 path=filename,
                 file=file_content,
                 file_options={
-                    "content-type": content_type,
-                    "upsert": True  # Overwrite if exists
-                }
+                    "content-type": content_type
+                },
+                upsert=True  # Move upsert outside file_options
             )
             
             # Check if upload was successful
-            if response and not isinstance(response, dict) or response.get('error'):
+            # UploadResponse objects have a .path attribute, dict errors have 'error' key
+            if isinstance(response, dict) and response.get('error'):
                 raise Exception(f"Upload failed: {response}")
             
             # Always construct the public URL manually to ensure correct format

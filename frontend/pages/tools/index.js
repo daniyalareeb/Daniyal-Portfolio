@@ -3,6 +3,27 @@ import { useState, useEffect } from 'react'
 import { ApiClient } from '../../lib/api'
 import Footer from '../../components/Footer'
 
+// Add a helper function to normalize URLs
+function normalizeImageUrl(url) {
+  if (!url) return url;
+  
+  // Fix malformed URLs (https// -> https://)
+  if (url.startsWith('https//')) {
+    return url.replace('https//', 'https://');
+  }
+  if (url.startsWith('http//')) {
+    return url.replace('http//', 'http://');
+  }
+  
+  // Check if it's a full URL (starts with http:// or https://)
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  
+  // Otherwise, it's a relative path
+  return `${process.env.NEXT_PUBLIC_API_URL}${url}`;
+}
+
 export default function ToolsPage() {
   const [tools, setTools] = useState([])
   const [loading, setLoading] = useState(true)
@@ -128,7 +149,7 @@ export default function ToolsPage() {
                 {tool.image_url && (
                   <div className="mb-4">
                     <img 
-                      src={tool.image_url?.startsWith('http') ? tool.image_url : `${process.env.NEXT_PUBLIC_API_URL}${tool.image_url}`} 
+                      src={normalizeImageUrl(tool.image_url)} 
                       alt={tool.name}
                       className="w-full h-32 object-cover rounded-lg"
                     />

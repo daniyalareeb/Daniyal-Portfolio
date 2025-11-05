@@ -641,3 +641,32 @@ async def get_manual_stats(
         }
     except Exception as e:
         return {"success": False, "error": str(e)}
+
+# Add this endpoint to fix existing URLs
+@router.post("/fix-image-urls")
+async def fix_image_urls(
+    db: Session = Depends(get_db),
+    current_admin: dict = Depends(verify_admin_session)
+):
+    """Fix malformed image URLs in database (https// -> https://)"""
+    try:
+        # Fix projects
+        projects = db.query(Project).filter(Project.image_url.contains('https//')).all()
+        fixed_count = 0
+        for project in projects:
+            if project.image_url and 'https//' in project.image_url:
+                project.image_url = project.image_url.replace('https//', 'https://')
+                fixed_count += 1
+        
+        # Fix tools
+        tools = db.query(Tool).filter(Tool.image_url.contains('https//')).all()
+        for tool in tools:
+            if tool.image_url and 'https//' in tool.image_url:
+                tool.image_url = tool.image_url.replace('https//', 'https://')
+                fixed_count += 1
+        
+        db.commit()
+        return {"success": True, "data": {"fixed_count": fixed_count, "message": f"Fixed {fixed_count} malformed URLs"}}
+    except Exception as e:
+        db.rollback()
+        return {"success": False, "error": str(e)}
