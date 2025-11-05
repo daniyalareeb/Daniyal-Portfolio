@@ -80,13 +80,14 @@ class StorageService:
         
         try:
             # Upload to Supabase Storage
+            # Note: upsert parameter not supported in this version of supabase client
+            # Since we use UUID filenames, duplicates are extremely unlikely
             response = self.client.storage.from_(self.bucket).upload(
                 path=filename,
                 file=file_content,
                 file_options={
                     "content-type": content_type
-                },
-                upsert=True  # Move upsert outside file_options
+                }
             )
             
             # Check if upload was successful
