@@ -284,6 +284,29 @@ async def update_project_public(
         if not project:
             return {"success": False, "error": "Project not found"}
         
+        # Handle image deletion if image_url is being removed or changed
+        if "image_url" in body:
+            old_image_url = project.image_url
+            new_image_url = body["image_url"]
+            
+            # If removing image (setting to empty) or changing image, delete old one from Supabase
+            if old_image_url and old_image_url != new_image_url:
+                # Check if old image was from Supabase Storage
+                if "supabase.co/storage" in old_image_url:
+                    try:
+                        from app.core.storage import get_storage_service
+                        storage_service = get_storage_service()
+                        if storage_service.is_configured():
+                            # Extract filename from URL (remove query params if any)
+                            filename = old_image_url.split("/")[-1].split("?")[0]
+                            if storage_service.delete_file(filename):
+                                print(f"✅ Deleted old image from Supabase: {filename}")
+                            else:
+                                print(f"⚠️  Failed to delete old image from Supabase: {filename}")
+                    except Exception as e:
+                        print(f"⚠️  Error deleting old image from Supabase: {e}")
+                        # Continue anyway - don't fail the update if deletion fails
+        
         # Update project fields
         if "name" in body:
             project.name = body["name"]

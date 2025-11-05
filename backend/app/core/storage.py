@@ -85,13 +85,13 @@ class StorageService:
                 path=filename,
                 file=file_content,
                 file_options={
-                    "content-type": content_type
+                    "content-type": content_type,
+                    "upsert": True  # Overwrite if exists
                 }
             )
             
             # Check if upload was successful
-            # UploadResponse has a 'path' attribute if successful
-            if not response or (hasattr(response, 'path') and not response.path):
+            if response and not isinstance(response, dict) or response.get('error'):
                 raise Exception(f"Upload failed: {response}")
             
             # Get public URL - Supabase returns full URL
@@ -102,6 +102,11 @@ class StorageService:
                 public_url = public_url_response.get('publicUrl') or public_url_response.get('url')
             else:
                 public_url = public_url_response
+            
+            # Clean up the URL - remove trailing ? or empty query params
+            if public_url and isinstance(public_url, str):
+                # Remove trailing ? or & if they're empty
+                public_url = public_url.rstrip('?').rstrip('&')
             
             # Fallback: construct URL manually if needed
             if not public_url or not public_url.startswith('http'):
