@@ -125,14 +125,25 @@ async def on_startup():
     except Exception as e:
         print(f"⚠️  Warning: Database connection issue during startup: {e}")
         print("⚠️  App will start but database features may be limited")
-        print(f"⚠️  Error type: {type(e).__name__}")
     
-    # Start the automatic blog scheduler for content updates
+    # Initialize Supabase Storage to verify configuration
+    try:
+        from app.core.storage import get_storage_service
+        storage_service = get_storage_service()  # This will trigger initialization and debug logs
+        if storage_service.is_configured():
+            print("✅ Supabase Storage ready for uploads")
+        else:
+            print("⚠️  Supabase Storage not configured - images will use local storage")
+    except Exception as e:
+        print(f"⚠️  Warning: Could not initialize storage service: {e}")
+    
+    # Start background scheduler for automated content updates
     try:
         start_scheduler()
         print("✅ Scheduler started")
     except Exception as e:
         print(f"⚠️  Warning: Could not start scheduler: {e}")
+        print("⚠️  App will continue but automated updates will not run")
     
     print("✅ Application startup complete!")
 
