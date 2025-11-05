@@ -48,6 +48,7 @@ app.add_middleware(
         "http://127.0.0.1:3001",  # Alternative localhost port
         *settings.CORS_ORIGINS     # Additional origins from config
     ],
+    allow_origin_regex=r"https://.*\.vercel\.app$",  # Allow all Vercel preview deployments
     allow_credentials=True,  # Allow cookies and authentication headers
     allow_methods=["*"],      # Allow all HTTP methods
     allow_headers=["*"],     # Allow all headers
