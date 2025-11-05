@@ -85,47 +85,31 @@ class StorageService:
                 path=filename,
                 file=file_content,
                 file_options={
-                    "content-type": content_type
+                    "content-type": content_type,
+                    "upsert": True  # Overwrite if exists
                 }
             )
             
             # Check if upload was successful
-            # UploadResponse is an object with .path attribute if successful
-            # If it's a dict with 'error', that's a failure
-            if isinstance(response, dict) and response.get('error'):
-                raise Exception(f"Upload failed: {response}")
-            elif not response or (hasattr(response, 'path') and not response.path):
+            if response and not isinstance(response, dict) or response.get('error'):
                 raise Exception(f"Upload failed: {response}")
             
-            # Get public URL - Supabase returns full URL
-            public_url_response = self.client.storage.from_(self.bucket).get_public_url(filename)
-            
-            # If get_public_url returns a dict, extract the URL
-            if isinstance(public_url_response, dict):
-                public_url = public_url_response.get('publicUrl') or public_url_response.get('url')
-            else:
-                public_url = public_url_response
-            
-            # Clean up the URL - remove trailing ? or empty query params
-            if public_url and isinstance(public_url, str):
-                public_url = public_url.rstrip('?').rstrip('&')
-                # Fix protocol if missing colon
-                if public_url.startswith('https//'):
-                    public_url = public_url.replace('https//', 'https://', 1)
-                elif public_url.startswith('http//'):
-                    public_url = public_url.replace('http//', 'http://', 1)
-            
-            # Always construct URL manually to ensure correct format
+            # Always construct the public URL manually to ensure correct format
+            # Don't rely on get_public_url() as it may return malformed URLs
             supabase_url = getattr(settings, 'SUPABASE_URL', os.environ.get('SUPABASE_URL', ''))
-            if supabase_url:
-                # Ensure supabase_url has protocol
-                if not supabase_url.startswith('http'):
-                    supabase_url = f"https://{supabase_url.lstrip('/')}"
-                # Construct the public URL manually to ensure correct format
-                public_url = f"{supabase_url}/storage/v1/object/public/{self.bucket}/{filename}"
+            if not supabase_url:
+                raise Exception("SUPABASE_URL not configured")
             
-            # Final validation - ensure URL starts with http:// or https://
-            if not public_url or not (public_url.startswith('http://') or public_url.startswith('https://')):
+            # Ensure supabase_url has proper protocol
+            supabase_url = supabase_url.strip()
+            if not supabase_url.startswith('http://') and not supabase_url.startswith('https://'):
+                supabase_url = f"https://{supabase_url.lstrip('/')}"
+            
+            # Construct the public URL manually - this ensures correct format
+            public_url = f"{supabase_url}/storage/v1/object/public/{self.bucket}/{filename}"
+            
+            # Final validation - ensure URL is properly formatted
+            if not public_url.startswith('https://'):
                 raise Exception(f"Invalid public URL format: {public_url}")
             
             print(f"✅ File uploaded to Supabase: {filename}")
