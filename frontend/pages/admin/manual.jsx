@@ -1535,9 +1535,10 @@ export default function ManualAdmin() {
               )}
             />
           </div>
-            </div>
-          )}
         </div>
+      )}
+        </div>
+      </div>
       </div>
     </>
   );
