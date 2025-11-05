@@ -90,7 +90,8 @@ class StorageService:
             )
             
             # Check if upload was successful
-            if response and not isinstance(response, dict) or response.get('error'):
+            # UploadResponse has a 'path' attribute if successful
+            if not response or (hasattr(response, 'path') and not response.path):
                 raise Exception(f"Upload failed: {response}")
             
             # Get public URL - Supabase returns full URL
@@ -105,10 +106,11 @@ class StorageService:
             # Fallback: construct URL manually if needed
             if not public_url or not public_url.startswith('http'):
                 # Construct URL from Supabase URL
-                project_ref = settings.SUPABASE_URL.replace('https://', '').replace('.supabase.co', '')
-                public_url = f"{settings.SUPABASE_URL}/storage/v1/object/public/{self.bucket}/{filename}"
+                supabase_url = getattr(settings, 'SUPABASE_URL', os.environ.get('SUPABASE_URL', ''))
+                public_url = f"{supabase_url}/storage/v1/object/public/{self.bucket}/{filename}"
             
             print(f"✅ File uploaded to Supabase: {filename}")
+            print(f"   Public URL: {public_url}")
             return public_url
             
         except Exception as e:
