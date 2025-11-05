@@ -85,8 +85,7 @@ class StorageService:
                 path=filename,
                 file=file_content,
                 file_options={
-                    "content-type": content_type,
-                    "upsert": True  # Overwrite if exists
+                    "content-type": content_type
                 }
             )
             
@@ -103,19 +102,13 @@ class StorageService:
             else:
                 public_url = public_url_response
             
-            # Clean up the URL - remove trailing ? or empty query params
-            if public_url and isinstance(public_url, str):
-                # Remove trailing ? or & if they're empty
-                public_url = public_url.rstrip('?').rstrip('&')
-            
             # Fallback: construct URL manually if needed
             if not public_url or not public_url.startswith('http'):
                 # Construct URL from Supabase URL
-                supabase_url = getattr(settings, 'SUPABASE_URL', os.environ.get('SUPABASE_URL', ''))
-                public_url = f"{supabase_url}/storage/v1/object/public/{self.bucket}/{filename}"
+                project_ref = settings.SUPABASE_URL.replace('https://', '').replace('.supabase.co', '')
+                public_url = f"{settings.SUPABASE_URL}/storage/v1/object/public/{self.bucket}/{filename}"
             
             print(f"✅ File uploaded to Supabase: {filename}")
-            print(f"   Public URL: {public_url}")
             return public_url
             
         except Exception as e:
