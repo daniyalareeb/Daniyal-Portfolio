@@ -51,7 +51,6 @@ class StorageService:
         # Only initialize if Supabase is configured
         if supabase_url and supabase_key and supabase_url != "https://your-project.supabase.co" and supabase_key != "your-supabase-anon-key":
             try:
-                # Simple initialization - newer supabase versions handle this correctly
                 self.client = create_client(supabase_url, supabase_key)
                 print(f"✅ Supabase Storage initialized (bucket: {self.bucket})")
             except Exception as e:
@@ -86,8 +85,7 @@ class StorageService:
                 path=filename,
                 file=file_content,
                 file_options={
-                    "content-type": content_type,
-                    "upsert": True  # Overwrite if exists
+                    "content-type": content_type
                 }
             )
             
