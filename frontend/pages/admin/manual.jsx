@@ -834,7 +834,7 @@ export default function ManualAdmin() {
                 {toolForm.image_url && (
                   <div className="flex items-center gap-2">
                     <img 
-                      src={`${process.env.NEXT_PUBLIC_API_URL}${toolForm.image_url}`} 
+                      src={toolForm.image_url?.startsWith('http') ? toolForm.image_url : `${process.env.NEXT_PUBLIC_API_URL}${toolForm.image_url}`} 
                       alt="Tool thumbnail" 
                       className="w-10 h-10 rounded object-cover"
                     />
@@ -1021,7 +1021,7 @@ export default function ManualAdmin() {
                 {projectForm.image_url && (
                   <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
                     <img 
-                      src={`${process.env.NEXT_PUBLIC_API_URL}${projectForm.image_url}`} 
+                      src={projectForm.image_url?.startsWith('http') ? projectForm.image_url : `${process.env.NEXT_PUBLIC_API_URL}${projectForm.image_url}`} 
                       alt="Preview" 
                       style={{
                         width: '60px', 
@@ -1349,7 +1349,7 @@ export default function ManualAdmin() {
                   <div style={{flex: 1, display: 'flex', gap: 16}}>
                     {project.image_url && (
                       <img 
-                        src={`${process.env.NEXT_PUBLIC_API_URL}${project.image_url}`} 
+                        src={project.image_url?.startsWith('http') ? project.image_url : `${process.env.NEXT_PUBLIC_API_URL}${project.image_url}`} 
                         alt={project.name} 
                         style={{
                           width: '80px', 

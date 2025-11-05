@@ -6,6 +6,7 @@ from app.database import get_db
 from app.models import Tool, Project, BlogPost
 from app.config import settings
 from app.core.security import get_security_manager
+from app.core.storage import get_storage_service
 from app.services.chat_service import ask_model
 from typing import Optional
 from datetime import datetime
@@ -164,34 +165,45 @@ async def upload_image_public(
             return {"success": False, "error": "Only image files are allowed"}
         
         # Validate file size (max 5MB)
-        file_size = 0
         content = await file.read()
         file_size = len(content)
         if file_size > 5 * 1024 * 1024:  # 5MB
             return {"success": False, "error": "File size too large. Maximum 5MB allowed"}
         
         # Generate unique filename
-        import uuid
         file_extension = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
         unique_filename = f"{uuid.uuid4()}.{file_extension}"
         
-        # Create uploads directory in persistent volume if it doesn't exist
-        import os
-        # Use persistent volume for file storage (Heroku-friendly)
+        # Try Supabase Storage first (persistent)
+        storage_service = get_storage_service()
+        if storage_service.is_configured():
+            image_url = storage_service.upload_file(
+                file_content=content,
+                filename=unique_filename,
+                content_type=file.content_type
+            )
+            
+            if image_url:
+                return {
+                    "success": True, 
+                    "message": "Image uploaded successfully to Supabase Storage",
+                    "data": {"image_url": image_url}
+                }
+        
+        # Fallback to local storage (ephemeral on Heroku)
         persistent_path = os.environ.get('VOLUME_MOUNT_PATH', './data')
         upload_dir = os.path.join(persistent_path, "uploads")
         os.makedirs(upload_dir, exist_ok=True)
         
-        # Save file
         file_path = os.path.join(upload_dir, unique_filename)
         with open(file_path, "wb") as buffer:
             buffer.write(content)
         
-        # Return the URL - use the persistent path
+        # Return local path (will be lost on dyno restart)
         image_url = f"/static/uploads/{unique_filename}"
         return {
             "success": True, 
-            "message": "Image uploaded successfully",
+            "message": "Image uploaded to local storage (will be lost on dyno restart)",
             "data": {"image_url": image_url}
         }
         
@@ -211,7 +223,6 @@ async def upload_image(
             return {"success": False, "error": "Only image files are allowed"}
         
         # Validate file size (max 5MB)
-        file_size = 0
         content = await file.read()
         file_size = len(content)
         if file_size > 5 * 1024 * 1024:  # 5MB
@@ -221,7 +232,23 @@ async def upload_image(
         file_extension = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
         unique_filename = f"{uuid.uuid4()}.{file_extension}"
         
-        # Save file in persistent volume (Heroku-friendly)
+        # Try Supabase Storage first (persistent)
+        storage_service = get_storage_service()
+        if storage_service.is_configured():
+            image_url = storage_service.upload_file(
+                file_content=content,
+                filename=unique_filename,
+                content_type=file.content_type
+            )
+            
+            if image_url:
+                return {
+                    "success": True, 
+                    "message": "Image uploaded successfully to Supabase Storage",
+                    "data": {"image_url": image_url}
+                }
+        
+        # Fallback to local storage (ephemeral on Heroku)
         persistent_path = os.environ.get('VOLUME_MOUNT_PATH', './data')
         upload_dir = os.path.join(persistent_path, "uploads")
         os.makedirs(upload_dir, exist_ok=True)
@@ -230,12 +257,12 @@ async def upload_image(
         with open(file_path, "wb") as buffer:
             buffer.write(content)
         
-        # Return the URL path
+        # Return local path (will be lost on dyno restart)
         image_url = f"/static/uploads/{unique_filename}"
         
         return {
             "success": True, 
-            "message": "Image uploaded successfully", 
+            "message": "Image uploaded to local storage (will be lost on dyno restart)",
             "data": {"image_url": image_url}
         }
     except Exception as e:

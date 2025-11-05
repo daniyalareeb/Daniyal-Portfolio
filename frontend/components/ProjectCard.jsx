@@ -15,7 +15,7 @@ export default function ProjectCard({ title, description, tags = [], demo, url, 
           <>
             <div className="absolute inset-0 flex items-center justify-center p-4">
               <img 
-                src={`${process.env.NEXT_PUBLIC_API_URL}${imageUrl}`} 
+                src={imageUrl.startsWith('http') ? imageUrl : `${process.env.NEXT_PUBLIC_API_URL}${imageUrl}`} 
                 alt={title}
                 className={`max-w-full max-h-full object-contain transition-all duration-500 group-hover:scale-105 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                 onLoad={() => setImageLoaded(true)}

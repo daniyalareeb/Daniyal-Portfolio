@@ -128,7 +128,7 @@ export default function ToolsPage() {
                 {tool.image_url && (
                   <div className="mb-4">
                     <img 
-                      src={`${process.env.NEXT_PUBLIC_API_URL}${tool.image_url}`} 
+                      src={tool.image_url?.startsWith('http') ? tool.image_url : `${process.env.NEXT_PUBLIC_API_URL}${tool.image_url}`} 
                       alt={tool.name}
                       className="w-full h-32 object-cover rounded-lg"
                     />

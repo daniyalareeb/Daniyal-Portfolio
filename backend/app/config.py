@@ -50,6 +50,11 @@ class Settings(BaseSettings):
     RESEND_FROM_EMAIL: str = "noreply@yourdomain.com"
     GITHUB_USERNAME: str = "daniyalareeb"
     
+    # Supabase Storage (for persistent image uploads)
+    SUPABASE_URL: str = "https://your-project.supabase.co"
+    SUPABASE_KEY: str = "your-supabase-anon-key"
+    SUPABASE_STORAGE_BUCKET: str = "uploads"  # Bucket name in Supabase Storage
+    
     # CORS - parse from env var JSON string or use defaults
     CORS_ORIGINS: Union[List[str], str] = [
         "http://localhost:3000",

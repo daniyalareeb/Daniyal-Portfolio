@@ -18,14 +18,12 @@ class StorageService:
     def __init__(self):
         """Initialize Supabase client if credentials are configured."""
         self.client: Optional[Client] = None
-        
-        # Safely get bucket from settings with fallback to os.environ
-        self.bucket: str = getattr(settings, 'SUPABASE_STORAGE_BUCKET', 'uploads')
+        self.bucket: str = settings.SUPABASE_STORAGE_BUCKET
         
         # Debug: Check what values are being read
-        supabase_url = getattr(settings, 'SUPABASE_URL', 'https://your-project.supabase.co')
-        supabase_key = getattr(settings, 'SUPABASE_KEY', 'your-supabase-anon-key')
-        supabase_bucket = getattr(settings, 'SUPABASE_STORAGE_BUCKET', 'uploads')
+        supabase_url = settings.SUPABASE_URL
+        supabase_key = settings.SUPABASE_KEY
+        supabase_bucket = settings.SUPABASE_STORAGE_BUCKET
         
         # Also check os.environ directly as fallback
         env_url = os.environ.get('SUPABASE_URL')
@@ -53,6 +51,7 @@ class StorageService:
         # Only initialize if Supabase is configured
         if supabase_url and supabase_key and supabase_url != "https://your-project.supabase.co" and supabase_key != "your-supabase-anon-key":
             try:
+                # Simple initialization - newer supabase versions handle this correctly
                 self.client = create_client(supabase_url, supabase_key)
                 print(f"✅ Supabase Storage initialized (bucket: {self.bucket})")
             except Exception as e:
