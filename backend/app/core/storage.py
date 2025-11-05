@@ -109,12 +109,24 @@ class StorageService:
             # Clean up the URL - remove trailing ? or empty query params
             if public_url and isinstance(public_url, str):
                 public_url = public_url.rstrip('?').rstrip('&')
+                # Fix protocol if missing colon
+                if public_url.startswith('https//'):
+                    public_url = public_url.replace('https//', 'https://', 1)
+                elif public_url.startswith('http//'):
+                    public_url = public_url.replace('http//', 'http://', 1)
             
-            # Fallback: construct URL manually if needed
-            if not public_url or not public_url.startswith('http'):
-                # Construct URL from Supabase URL
-                supabase_url = getattr(settings, 'SUPABASE_URL', os.environ.get('SUPABASE_URL', ''))
+            # Always construct URL manually to ensure correct format
+            supabase_url = getattr(settings, 'SUPABASE_URL', os.environ.get('SUPABASE_URL', ''))
+            if supabase_url:
+                # Ensure supabase_url has protocol
+                if not supabase_url.startswith('http'):
+                    supabase_url = f"https://{supabase_url.lstrip('/')}"
+                # Construct the public URL manually to ensure correct format
                 public_url = f"{supabase_url}/storage/v1/object/public/{self.bucket}/{filename}"
+            
+            # Final validation - ensure URL starts with http:// or https://
+            if not public_url or not (public_url.startswith('http://') or public_url.startswith('https://')):
+                raise Exception(f"Invalid public URL format: {public_url}")
             
             print(f"✅ File uploaded to Supabase: {filename}")
             print(f"   Public URL: {public_url}")
