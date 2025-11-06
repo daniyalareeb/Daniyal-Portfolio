@@ -404,7 +404,8 @@ export default function ManualAdmin() {
       url: tool.url,
       category: tool.category || "Chat Assistant",
       pricing: tool.pricing || "",
-      status: tool.status || "Active"
+      status: tool.status || "Active",
+      image_url: tool.image_url || ""
     });
     setActiveTab("tools");
   }
@@ -427,7 +428,8 @@ export default function ManualAdmin() {
       url: "",
       category: "AI Chat & Assistant",
       pricing: "",
-      status: "Active"
+      status: "Active",
+      image_url: ""
     });
   }
 
