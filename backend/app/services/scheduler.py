@@ -1,7 +1,7 @@
 """
 APScheduler – runs background jobs:
-- fetch blogs daily (dev: every hour)
-- sync projects daily (dev: every 2 hours)
+- fetch blogs every 3 days
+- sync projects DISABLED (was: every 2 hours) - commented out to prevent auto-adding GitHub repos
 - tools auto-update placeholder
 """
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -35,7 +35,8 @@ def start_scheduler():
     _scheduler = BackgroundScheduler(timezone="UTC")
     # Run blogs every 3 days for automatic updates
     _scheduler.add_job(_job(fetch_and_update_blogs), "interval", days=3, id="blogs")
-    _scheduler.add_job(_job(sync_projects), "interval", hours=2, id="projects")
+    # Projects sync disabled - commented out to prevent auto-adding GitHub repos (like "Daniyal-Portfolio")
+    # _scheduler.add_job(_job(sync_projects), "interval", hours=2, id="projects")
     
     # Data backup removed - using PostgreSQL for persistence
     _scheduler.start()
@@ -79,14 +80,14 @@ def get_scheduler_status():
             "name": job.name,
             "next_run_time": next_run,
             "trigger": str(job.trigger),
-            "interval": "3 days" if job.id == "blogs" else "2 hours" if job.id == "projects" else "unknown"
+            "interval": "3 days" if job.id == "blogs" else "disabled" if job.id == "projects" else "unknown"
         })
     
     return {
         "status": "running" if _scheduler.running else "stopped",
         "jobs": jobs,
         "blog_schedule": "Every 3 days",
-        "project_schedule": "Every 2 hours"
+        "project_schedule": "DISABLED (was: Every 2 hours)"
     }
 
 def reset_blog_scheduler():
