@@ -152,7 +152,7 @@ async def fetch_and_update_tools(db: Session):
         db.commit()
     return {"added": added, "timestamp": datetime.utcnow().isoformat()}
 
-def list_tools_db(db: Session, q: str = None, category: str = None, limit: int = 50):
+def list_tools_db(db: Session, q: str = None, category: str = None, limit: int = 200):
     """List tools with optional search and category filtering."""
     query = db.query(Tool)
     

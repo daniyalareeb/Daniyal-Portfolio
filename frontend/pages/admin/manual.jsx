@@ -95,7 +95,7 @@ export default function ManualAdmin() {
     
     try {
       const [toolsRes, projectsRes, blogsRes] = await Promise.all([
-        fetch(`${base}/api/v1/tools/list`),
+        fetch(`${base}/api/v1/tools/list?limit=150`),
         fetch(`${base}/api/v1/projects/list`),
         fetch(`${base}/api/v1/news/list`)
       ]);

@@ -581,7 +581,7 @@ async def list_tools(
 ):
     """List all tools."""
     try:
-        tools = db.query(Tool).order_by(Tool.id.desc()).all()
+        tools = db.query(Tool).order_by(Tool.display_order.asc(), Tool.id.desc()).all()
         return {"success": True, "data": tools}
     except Exception as e:
         return {"success": False, "error": str(e)}

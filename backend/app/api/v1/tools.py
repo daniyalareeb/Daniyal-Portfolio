@@ -9,7 +9,7 @@ router = APIRouter()
 def tools_list(
     q: str = Query(None),
     category: str = Query(None),
-    limit: int = Query(20, ge=1, le=100),
+    limit: int = Query(20, ge=1, le=200),
     db: Session = Depends(get_db),
 ):
     rows = list_tools_db(db, q, category, limit)
