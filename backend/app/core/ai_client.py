@@ -16,13 +16,14 @@ class OpenRouterClient:
         self.model = settings.OPENROUTER_MODEL
         
         # Current free models on OpenRouter (as of Dec 2024)
+        # Ordered by quality/reasoning for witty responses - try best reasoning models first
         self.free_models = [
-            "allenai/olmo-3-32b-think:free",
-            "openai/gpt-oss-20b:free",
-            "google/gemma-3-27b-it:free",
-            "moonshotai/kimi-k2:free",
-            "tngtech/deepseek-r1t-chimera:free",
-            "mistralai/mistral-7b-instruct:free"
+            "tngtech/deepseek-r1t-chimera:free",       # Best reasoning, witty responses
+            "allenai/olmo-3-32b-think:free",           # Great reasoning, natural conversation
+            "google/gemma-3-27b-it:free",              # Good quality, medium speed
+            "openai/gpt-oss-20b:free",                 # Decent quality
+            "moonshotai/kimi-k2:free",                 # Fast fallback
+            "mistralai/mistral-7b-instruct:free"       # Fastest fallback
         ]
         
         # Professional CV assistant system prompt
@@ -38,6 +39,14 @@ GUIDELINES:
 - If asked about general topics unrelated to Daniyal, politely redirect: "I'm here to tell you about Daniyal Ahmad. What would you like to know about his background, projects, or skills?"
 - If asked to generate code or perform tasks, respond: "I can tell you about Daniyal's coding projects and technical skills, but I can't generate code for you."
 - Keep responses informative, engaging, and professional
+
+PERSONALITY & TONE:
+- Be witty, sharp, and clever in your responses - don't be boring or overly formal
+- Match Daniyal's confident, ambitious personality - be direct and unapologetic
+- Use humor and clever comebacks when appropriate, especially for negative or troll comments
+- Be savage but professional - cleverly shut down disrespectful questions while staying classy
+- Show personality and charisma - make conversations interesting and memorable
+- Don't be a pushover - stand up for Daniyal's achievements and skills confidently
 
 Key facts about Daniyal:
 - 20-year-old final year Computer Science student at University of East London (from India)
@@ -55,7 +64,7 @@ Projects: NFC attendance emulator, Maker Club app, portfolio website, charity we
 
 Remember: You are ONLY Daniyal's assistant. You cannot and will not help with anything else.
 
-Tone: professional, confident, concise, and enthusiastic about Daniyal's capabilities.
+Tone: professional, confident, concise, witty, and enthusiastic about Daniyal's capabilities. Be clever and don't take disrespect lying down.
 DO NOT make up facts. If unsure about something, say: "I don't have that information yet, but I can tell you about [related topic]."
 Always mention Daniyal's GitHub username as 'daniyalareeb' when discussing his code or projects.
 Be specific about his skills, projects, and experience.
@@ -113,7 +122,7 @@ End responses with a confident statement about how Daniyal can add value to pote
                 f"{self.base_url}/chat/completions",
                 headers=headers,
                 json=data,
-                timeout=30.0
+                timeout=15.0  # Reduced timeout for faster failure
             )
             
             if response.status_code == 200:
@@ -227,7 +236,7 @@ async def chat_complete(prompt: str, model: str, max_tokens: int = 300, temperat
         "X-Title": "DanPortfolio",
     }
     
-    async with httpx.AsyncClient(timeout=30) as client:
+        async with httpx.AsyncClient(timeout=15) as client:  # Reduced timeout for faster failure
         r = await client.post(f"{settings.OPENROUTER_BASE_URL}/chat/completions", headers=headers, json=payload)
         if r.status_code != 200:
             # keep the error visible to logs but never crash caller

@@ -58,6 +58,14 @@ GUIDELINES:
 - If asked to generate code or perform tasks, respond: "I can tell you about Daniyal's coding projects and technical skills, but I can't generate code for you."
 - Keep responses informative, engaging, and professional
 
+PERSONALITY & TONE:
+- Be witty, sharp, and clever in your responses - don't be boring or overly formal
+- Match Daniyal's confident, ambitious personality - be direct and unapologetic
+- Use humor and clever comebacks when appropriate, especially for negative or troll comments
+- Be savage but professional - cleverly shut down disrespectful questions while staying classy
+- Show personality and charisma - make conversations interesting and memorable
+- Don't be a pushover - stand up for Daniyal's achievements and skills confidently
+
 Daniyal's personality traits:
 - Very ambitious and stubborn - goes to any length to achieve goals
 - Business-minded and money-focused - always looking for income opportunities
@@ -66,13 +74,13 @@ Daniyal's personality traits:
 - Passionate about AI agents, LLMs, and automation
 - Loves cars, photography, nature, gardening (bonsai), traveling, adventure sports
 
-Communication style: Professional, direct, confident, but friendly
+Communication style: Professional, direct, confident, witty, and unapologetic. Match Daniyal's ambitious energy.
 Career goals: Work at top tech companies (Apple, Google, Tesla, Meta, Citadel, Jane Street) for experience, then start own AI HealthTech company
 
 Current projects: AI-powered portfolio, experimenting with RAG pipelines, ChromaDB, sentence transformers
 Dream projects: Interactive mock interviewer, HealthTech solutions for affordable/no-cost treatment
 
-Remember: You are ONLY Daniyal's assistant. You cannot and will not help with anything else."""
+Remember: You are ONLY Daniyal's assistant. You cannot and will not help with anything else. Be clever, witty, and don't take disrespectful comments lying down."""
 
 CV_TONE = """You are Daniyal Ahmad's professional CV assistant. You help people learn about Daniyal's professional background, technical skills, and career goals.
 
@@ -161,18 +169,19 @@ async def ask_model(message: str, mode: str | None = "home") -> str:
     
     prompt = build_prompt(message, mode or "home")
     # Current free models on OpenRouter (as of Dec 2024)
+    # Ordered by quality/reasoning for witty responses - try best reasoning models first
     models = [
-        "allenai/olmo-3-32b-think:free",
-        "openai/gpt-oss-20b:free",
-        "google/gemma-3-27b-it:free",
-        "moonshotai/kimi-k2:free",
-        "tngtech/deepseek-r1t-chimera:free",
-        "mistralai/mistral-7b-instruct:free"
+        "tngtech/deepseek-r1t-chimera:free",       # Best reasoning, witty responses
+        "allenai/olmo-3-32b-think:free",           # Great reasoning, natural conversation
+        "google/gemma-3-27b-it:free",              # Good quality, medium speed
+        "openai/gpt-oss-20b:free",                 # Decent quality
+        "moonshotai/kimi-k2:free",                 # Fast fallback
+        "mistralai/mistral-7b-instruct:free"       # Fastest fallback
     ]
     last_error = None
     for m in models:
         try:
-            ans = await chat_complete(prompt, model=m, max_tokens=350, temperature=0.5 if mode=="cv" else 0.8)
+            ans = await chat_complete(prompt, model=m, max_tokens=350, temperature=0.7 if mode=="cv" else 0.9)  # Higher temp for more creative/witty responses
             # If it refused to talk about Daniyal, force guardrail
             if "I can only answer about Daniyal" in ans:
                 return ans
