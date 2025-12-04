@@ -15,14 +15,14 @@ class OpenRouterClient:
         self.base_url = settings.OPENROUTER_BASE_URL
         self.model = settings.OPENROUTER_MODEL
         
-        # Best quality FREE models only
+        # Current free models on OpenRouter (as of Dec 2024)
         self.free_models = [
-            "deepseek/deepseek-chat-v3.1:free",           # Best DeepSeek model
-            "deepseek/deepseek-r1-0528:free",             # DeepSeek R1 (high quality)
-            "google/gemini-2.5-flash-image-preview:free", # Google's best free model
-            "mistralai/mistral-small-3.2-24b-instruct-2506:free", # Mistral's latest
-            "google/gemma-2-9b-it:free",                  # Google Gemma (reliable)
-            "deepseek/deepseek-chat-v3-0324:free"          # DeepSeek older version
+            "allenai/olmo-3-32b-think:free",
+            "openai/gpt-oss-20b:free",
+            "google/gemma-3-27b-it:free",
+            "moonshotai/kimi-k2:free",
+            "tngtech/deepseek-r1t-chimera:free",
+            "mistralai/mistral-7b-instruct:free"
         ]
         
         # Professional CV assistant system prompt

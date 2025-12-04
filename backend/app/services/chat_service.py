@@ -160,14 +160,14 @@ async def ask_model(message: str, mode: str | None = "home") -> str:
         return "I can tell you about Daniyal's coding projects and technical skills, but I can't generate code for you. What would you like to know about Daniyal's background, projects, or skills?"
     
     prompt = build_prompt(message, mode or "home")
-    # Best quality FREE models only
+    # Current free models on OpenRouter (as of Dec 2024)
     models = [
-        "deepseek/deepseek-chat-v3.1:free",           # Best DeepSeek model
-        "deepseek/deepseek-r1-0528:free",             # DeepSeek R1 (high quality)
-        "google/gemini-2.5-flash-image-preview:free", # Google's best free model
-        "mistralai/mistral-small-3.2-24b-instruct-2506:free", # Mistral's latest
-        "google/gemma-2-9b-it:free",                  # Google Gemma (reliable)
-        "deepseek/deepseek-chat-v3-0324:free"          # DeepSeek older version
+        "allenai/olmo-3-32b-think:free",
+        "openai/gpt-oss-20b:free",
+        "google/gemma-3-27b-it:free",
+        "moonshotai/kimi-k2:free",
+        "tngtech/deepseek-r1t-chimera:free",
+        "mistralai/mistral-7b-instruct:free"
     ]
     last_error = None
     for m in models:

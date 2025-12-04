@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     # OpenRouter API (with default for deployment)
     OPENROUTER_API_KEY: str = "your-api-key-here"
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
-    OPENROUTER_MODEL: str = "deepseek/deepseek-chat-v3-0324:free"
+    OPENROUTER_MODEL: str = "openai/gpt-oss-20b:free"
     
     # Admin Secret - MUST be changed in production
     # Pydantic BaseSettings will automatically read from environment variables
