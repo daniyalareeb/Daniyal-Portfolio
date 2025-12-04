@@ -236,7 +236,7 @@ async def chat_complete(prompt: str, model: str, max_tokens: int = 300, temperat
         "X-Title": "DanPortfolio",
     }
     
-        async with httpx.AsyncClient(timeout=15) as client:  # Reduced timeout for faster failure
+    async with httpx.AsyncClient(timeout=15) as client:  # Reduced timeout for faster failure
         r = await client.post(f"{settings.OPENROUTER_BASE_URL}/chat/completions", headers=headers, json=payload)
         if r.status_code != 200:
             # keep the error visible to logs but never crash caller
