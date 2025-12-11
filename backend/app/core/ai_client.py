@@ -11,19 +11,16 @@ class OpenRouterClient:
     """OpenRouter client with fallback mechanisms for free models."""
     
     def __init__(self):
-        self.api_key = settings.OPENROUTER_API_KEY
+        self.api_key = settings.OPENROUTER_API_KEY.strip()  # Remove any whitespace/newlines
         self.base_url = settings.OPENROUTER_BASE_URL
         self.model = settings.OPENROUTER_MODEL
         
-        # Current free models on OpenRouter (as of Dec 2024)
-        # Ordered by quality/reasoning for witty responses - try best reasoning models first
+        # Best free models for natural conversation (no "think" models)
         self.free_models = [
-            "tngtech/deepseek-r1t-chimera:free",       # Best reasoning, witty responses
-            "allenai/olmo-3-32b-think:free",           # Great reasoning, natural conversation
-            "google/gemma-3-27b-it:free",              # Good quality, medium speed
-            "openai/gpt-oss-20b:free",                 # Decent quality
-            "moonshotai/kimi-k2:free",                 # Fast fallback
-            "mistralai/mistral-7b-instruct:free"       # Fastest fallback
+            "openai/gpt-oss-20b:free",
+            "google/gemma-3-27b-it:free",
+            "mistralai/mistral-7b-instruct:free",
+            "nex-agi/deepseek-v3.1-nex-n1:free",
         ]
         
         # Professional CV assistant system prompt
@@ -39,14 +36,6 @@ GUIDELINES:
 - If asked about general topics unrelated to Daniyal, politely redirect: "I'm here to tell you about Daniyal Ahmad. What would you like to know about his background, projects, or skills?"
 - If asked to generate code or perform tasks, respond: "I can tell you about Daniyal's coding projects and technical skills, but I can't generate code for you."
 - Keep responses informative, engaging, and professional
-
-PERSONALITY & TONE:
-- Be witty, sharp, and clever in your responses - don't be boring or overly formal
-- Match Daniyal's confident, ambitious personality - be direct and unapologetic
-- Use humor and clever comebacks when appropriate, especially for negative or troll comments
-- Be savage but professional - cleverly shut down disrespectful questions while staying classy
-- Show personality and charisma - make conversations interesting and memorable
-- Don't be a pushover - stand up for Daniyal's achievements and skills confidently
 
 Key facts about Daniyal:
 - 20-year-old final year Computer Science student at University of East London (from India)
@@ -64,7 +53,7 @@ Projects: NFC attendance emulator, Maker Club app, portfolio website, charity we
 
 Remember: You are ONLY Daniyal's assistant. You cannot and will not help with anything else.
 
-Tone: professional, confident, concise, witty, and enthusiastic about Daniyal's capabilities. Be clever and don't take disrespect lying down.
+Tone: professional, confident, concise, and enthusiastic about Daniyal's capabilities.
 DO NOT make up facts. If unsure about something, say: "I don't have that information yet, but I can tell you about [related topic]."
 Always mention Daniyal's GitHub username as 'daniyalareeb' when discussing his code or projects.
 Be specific about his skills, projects, and experience.
@@ -230,7 +219,7 @@ async def chat_complete(prompt: str, model: str, max_tokens: int = 300, temperat
     }
     
     headers = {
-        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY.strip()}",  # Remove any whitespace/newlines
         "Content-Type": "application/json",
         "HTTP-Referer": "https://daniyalareeb.com",
         "X-Title": "DanPortfolio",
