@@ -1,5 +1,6 @@
 import os, json, asyncio
 from app.core.ai_client import chat_complete
+from app.config import settings
 DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "..", "data", "cv_data.json")
 
 # Load Daniyal facts with fallback
@@ -168,83 +169,18 @@ async def ask_model(message: str, mode: str | None = "home") -> str:
         return "I can tell you about Daniyal's coding projects and technical skills, but I can't generate code for you. What would you like to know about Daniyal's background, projects, or skills?"
     
     prompt = build_prompt(message, mode or "home")
-    # Best free models for natural conversation (no "think" models that expose reasoning)
-    models = [
-        "openai/gpt-oss-20b:free",
-        "google/gemma-3-27b-it:free",
-        "mistralai/mistral-7b-instruct:free",
-        "nex-agi/deepseek-v3.1-nex-n1:free",
-    ]
-    last_error = None
-    for m in models:
-        try:
-            ans = await chat_complete(prompt, model=m, max_tokens=350, temperature=0.5 if mode=="cv" else 0.8)
-            # Skip empty responses (some models return empty strings)
-            if not ans or not ans.strip():
-                print(f"Model {m} returned empty response, trying next...")
-                continue
-            # Clean up special characters (em-dashes, en-dashes)
-            ans = ans.replace('‑', '-').replace('–', '-').replace('—', '-')
-            # If it refused to talk about Daniyal, force guardrail
-            if "I can only answer about Daniyal" in ans:
-                return ans
-            # If hallucinated another GitHub, override with correct handle when explicitly asked
-            if "github" in message.lower() and "daniyal" in message.lower():
-                ans += f"\n\nGitHub: {CV.get('personal_info', {}).get('github','daniyalareeb')}"
-            return ans.strip()
-        except Exception as e:
-            last_error = e
-            print(f"Model {m} failed: {e}")
-    
-    # All models failed - return a clear error message with fallback info
-    error_msg = "⚠️ **AI Service Temporarily Unavailable**\n\n"
-    
-    if "rate limit" in str(last_error).lower() or "429" in str(last_error):
-        error_msg += "The AI service is currently experiencing high demand (rate limited). Please try again in a few minutes.\n\n"
-    elif "insufficient credits" in str(last_error).lower() or "402" in str(last_error):
-        error_msg += "The AI service credits have been exhausted. Please contact the administrator.\n\n"
-    elif "model not found" in str(last_error).lower() or "404" in str(last_error):
-        error_msg += "The AI model is temporarily unavailable. Please try again later.\n\n"
-    else:
-        error_msg += "The AI service is experiencing technical difficulties. Please try again later.\n\n"
-    
-    error_msg += "**Here's what I can tell you about Daniyal:**\n"
-    
-    if mode == "cv":
-        return error_msg + "Daniyal is a skilled backend developer with expertise in FastAPI, AI/ML, and modern web development. You can check out his work at https://github.com/daniyalareeb."
-    else:
-        # Provide specific information about Daniyal's projects when AI is unavailable
-        if "project" in message.lower():
-            return error_msg + """Daniyal has worked on several impressive projects:
-
-1. **NFC Attendance Emulator** - A Flutter-based app that clones university ID cards (Mifare Classic 1K) to enable phone-based attendance tapping.
-
-2. **Maker Club App** - A comprehensive Flutter app with Firebase backend and OpenRouter API integration. Features include member communication, project collaboration, CDT coin leaderboard system, news section, branded AI assistant using DeepSeek model, and DSA buddy with daily challenges.
-
-3. **Portfolio Website** - This AI-powered portfolio with Next.js frontend and FastAPI backend. Features OpenRouter DeepSeek API integration, ChromaDB for CV data, automated blog generation, AI tool management system, and SMTP email integration.
-
-4. **Charity Website** - Built responsive charity website using HTML, CSS, and JavaScript to improve client outreach and user engagement.
-
-5. **Football Scoreboard** - Real-time football scoreboard application with React.js frontend, Node.js backend, and MongoDB database.
-
-6. **AI Mock Interviewer** - Interactive AI-powered mock interviewer system to help users prepare for technical interviews (in development).
-
-All projects showcase Daniyal's backend expertise, AI integration skills, and ability to build full-stack applications."""
-        elif "skill" in message.lower():
-            return error_msg + """Daniyal's technical skills include:
-
-**Backend Development**: Python, FastAPI, SQL, MongoDB, ChromaDB, Docker, Linux, Git
-
-**AI/ML Technologies**: LLMs, RAG systems, fine-tuning, vector databases, sentence transformers, OpenRouter API
-
-**Frontend Development**: Flutter, React.js, Next.js, HTML, CSS, JavaScript
-
-**Learning Approach**: Uses AI as teacher, asks questions until understanding, does test tasks
-
-**Personality Traits**: Very ambitious and stubborn, business-minded, analytical problem-solver, hands-on learner"""
-        elif "github" in message.lower() or "linkedin" in message.lower():
-            return error_msg + "Daniyal's GitHub username is daniyalareeb. You can find his projects at https://github.com/daniyalareeb. His LinkedIn profile is at https://linkedin.com/in/daniyalareeb."
-        elif "hey" in message.lower() or "hello" in message.lower() or "hi" in message.lower():
-            return error_msg + "Hi! I'm Daniyal Ahmad's AI assistant. I'm currently experiencing some technical difficulties, but I can tell you about Daniyal! He's a 20-year-old final year Computer Science student at University of East London, passionate about AI/ML and backend development. Ask me about his projects, skills, or career goals!"
-        else:
-            return error_msg + "I'm having trouble connecting to my AI services right now. However, I can tell you about Daniyal! He's a skilled backend developer with expertise in Python, FastAPI, AI/ML technologies, and modern web development. Ask me about his projects, skills, or career goals!"
+    model = settings.OPENROUTER_MODEL
+    try:
+        ans = await chat_complete(prompt, model=model, max_tokens=350, temperature=0.5 if mode=="cv" else 0.8)
+        if not ans or not ans.strip():
+            return "I'm experiencing technical difficulties at the moment. Please try again in a few minutes."
+        # Clean up special characters (em-dashes, en-dashes)
+        ans = ans.replace('‑', '-').replace('–', '-').replace('—', '-')
+        if "I can only answer about Daniyal" in ans:
+            return ans
+        if "github" in message.lower() and "daniyal" in message.lower():
+            ans += f"\n\nGitHub: {CV.get('personal_info', {}).get('github','daniyalareeb')}"
+        return ans.strip()
+    except Exception as e:
+        print(f"Model {model} failed: {e}")
+        return "I'm experiencing technical difficulties at the moment. Please try again in a few minutes."

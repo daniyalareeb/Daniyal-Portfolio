@@ -15,13 +15,7 @@ class OpenRouterClient:
         self.base_url = settings.OPENROUTER_BASE_URL
         self.model = settings.OPENROUTER_MODEL
         
-        # Best free models for natural conversation (no "think" models)
-        self.free_models = [
-            "openai/gpt-oss-20b:free",
-            "google/gemma-3-27b-it:free",
-            "mistralai/mistral-7b-instruct:free",
-            "nex-agi/deepseek-v3.1-nex-n1:free",
-        ]
+        self.free_models = []
         
         # Professional CV assistant system prompt
         self.CV_SYSTEM_PROMPT = """You are Daniyal Ahmad's professional AI assistant. 
@@ -68,23 +62,10 @@ End responses with a confident statement about how Daniyal can add value to pote
         elif is_cv_query:
             messages.insert(0, {"role": "system", "content": self.CV_SYSTEM_PROMPT})
         
-        # Try the primary model first
         try:
             return await self._make_request(messages, self.model)
         except Exception as e:
-            print(f"Primary model failed: {e}")
-            
-            # Try fallback models
-            for fallback_model in self.free_models:
-                if fallback_model != self.model:
-                    try:
-                        print(f"Trying fallback model: {fallback_model}")
-                        return await self._make_request(messages, fallback_model)
-                    except Exception as fallback_error:
-                        print(f"Fallback model {fallback_model} failed: {fallback_error}")
-                        continue
-            
-            # If all models fail, return a professional fallback response
+            print(f"Model {self.model} failed: {e}")
             if is_cv_query:
                 return self._get_cv_fallback_response(messages)
             else:
