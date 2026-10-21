@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "eslint": "^9",
-    "eslint-config-next": "15.4.6",
-    "next": "15.4.6",
+    "eslint-config-next": "^15.5.28",
+    "next": "^15.5.28",
     "p5": "^2.3.4",
     "p5.brush": "^2.2.3",
     "react": "19.1.0",
