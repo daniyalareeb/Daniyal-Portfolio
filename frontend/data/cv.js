@@ -51,13 +51,25 @@ export const projects = [
     id: 'berelentless', name: 'BeRelentless', kind: 'Real-time AI voice interviews', when: '2026 · Cartesia grant', url: 'https://berelentless.dev',
     color: '#F08A3C',
     repo: 'https://github.com/daniyalareeb/tally',
-    summary: 'Graduates get binned by CV filters before a human hears them. BeRelentless started as interview prep that turns preparation into hiring: a live voice interview with a real-time avatar that asks follow-ups like a real engineer, then a RAG layer ranks candidates for each startup. Today it’s Tally, a free Claude Code plugin that sits in your coding sessions, turns how you actually build into a verified profile, and lets founders hire the best builders.',
+    summary: 'Graduates get binned by CV filters before a human hears them. BeRelentless started as interview prep that turns preparation into hiring: a live voice interview with a real-time avatar that asks follow-ups like a real engineer, then a RAG layer ranks candidates for each startup. Today it’s Tally, a free Claude Code plugin that sits in your coding sessions, turns how you actually build into a verified profile, and lets founders hire the best builders. Next chapter: FairShot, below.',
     metrics: [['<800ms', 'voice response time'], ['3 months', 'tuning it to feel human'], ['25', 'users'], ['free', 'Claude Code plugin']],
     pipeline: ['LiveKit', 'Whisper STT', 'GPT-4o interviewer', 'Cartesia TTS', 'Keyframe avatar', 'Qdrant + BGE-M3'],
     demo: {
       cta: 'Take a 3-question mock interview', start: 'Start the interview.', placeholder: 'your answer…', voice: true,
       note: 'Text version on a small model. The real one is live voice with a Keyframe Labs avatar.',
       prompt: 'You are the BeRelentless AI interviewer for a junior software engineering role. First ask, in one sentence, which role or stack they are targeting. Then ask 3 questions in total, one at a time; after each answer ask one short follow-up that probes their reasoning, like a sharp but kind senior engineer. Keep every turn under 45 words, in natural spoken style. After the third question is answered, give a skill score out of 10, one strength and one thing to improve, then stop.',
+    },
+  },
+  {
+    id: 'fairshot', name: 'FairShot', kind: 'Agentic job board', when: '2026 · in build',
+    color: '#F2C94C',
+    summary: 'The next step for BeRelentless. Graduates send hundreds of blind applications and hear nothing back. FairShot pulls fresh jobs from public feeds, reads each one once for what it actually requires, and tiers it against your CV as Strong, Worth it or Reach using rules you can check, not a fuzzy score. An agent then tailors your CV (every bullet traced to your real CV, anything untraceable dropped), finds who to contact, and a Chrome extension fills in the form. You always press send.',
+    metrics: [['7 days', 'max job age in the feed'], ['3 tiers', 'no fake percentages'], ['280+', 'automated tests'], ['0', 'applications sent without you']],
+    pipeline: ['Public job feeds', 'Python worker · LLM extraction', 'pgvector + SQL filters', 'Rule-based tiers', 'Traced CV tailoring', 'Chrome autofill'],
+    demo: {
+      cta: 'Check your real odds on a job', start: 'Hi', placeholder: 'your skills, then paste a job post',
+      note: 'One job at a time on a small model. The real one reads every new job every 6 hours.',
+      prompt: 'You are FairShot, an honest job-matching agent. First ask, in one line, for their skills, years of experience and target role (a pasted CV summary is fine). Then ask them to paste a job post. Read it, list its must-haves and nice-to-haves, and mark each must-have as met or missing based on what they told you; count the same skill under another name (Postgres = SQL, TypeScript = JavaScript). Give one tier: Strong if every must-have is met, Worth it if exactly one is short, Reach if two or more are short or a required degree or seniority level is missing. Never give a percentage or a score. Then one honest sentence on why, and the one CV line they should lead with for this job, built only from what they told you. Plain lines, under 140 words.',
     },
   },
   {
@@ -85,11 +97,36 @@ export const projects = [
     },
   },
   {
+    id: 'phathom', name: 'Phathom', kind: 'AI that answers your WhatsApp calls', when: '2026 · open source',
+    color: '#5FD1B5',
+    repo: 'https://github.com/daniyalareeb/phathom',
+    summary: 'WhatsApp calls have no voicemail and no notes. Phathom is a Chrome extension plus a local Python server that joins WhatsApp Web calls. It either takes notes quietly, or picks up as your assistant using today’s brief (“if Ahmed asks about the report, it goes out tonight”) and talks back in English or Urdu. Every call is recorded, transcribed and summarised, so later you can just ask “what did Ahmed want?”.',
+    metrics: [['EN + UR', 'spoken replies'], ['2 modes', 'silent notes or answer for me'], ['local-first', 'own server + embedded DB'], ['£0', 'free-tier Groq']],
+    pipeline: ['Chrome extension', 'WebRTC audio tap', 'Whisper on Groq', 'gpt-oss live replies', 'edge-tts EN/UR', 'SurrealDB call memory'],
+    demo: {
+      cta: 'Call Daniyal and let Phathom pick up', start: 'Ring ring', placeholder: 'say who you are and why you’re calling', voice: true,
+      note: 'Text version with an example brief. The real one speaks inside the WhatsApp call.',
+      prompt: 'You are Phathom, the AI assistant answering a WhatsApp call for Daniyal, who cannot pick up right now. Open with one short spoken line: say you are his assistant and ask who is calling and what it is about. Example brief for today: he is heads-down building until 6pm; Thursday afternoon is free for a meeting; never share his location or personal details. Keep every turn under 35 words, warm and natural. If the caller writes in Urdu, reply in Urdu. Take a message, read it back in one line, and say goodbye. Then, on a new line starting "Note for Daniyal:", write a two-line call summary: who called, what they want, and any follow-up.',
+    },
+  },
+  {
     id: 'castly', name: 'Castly', kind: 'Two-sided casting marketplace', when: '2025 · client project', url: 'https://castly.co.uk',
     color: '#D9479F',
     summary: 'A casting agency running on spreadsheets. I rebuilt it as a two-sided marketplace and automated applications, the casting-director database and opportunity scraping. Tried AI voice booking calls, then switched them off when they cost more than they earned.',
     metrics: [['460+', 'verified performers'], ['−40%', 'manual work'], ['2×', 'bookings']],
     pipeline: ['Applications', 'Director DB', 'Scrapers', 'Bookings'],
+  },
+  {
+    id: 'pixelinventory', name: 'Pixel Inventory', kind: 'Android gear-tracking app', when: '2026 · client project',
+    color: '#FF8A65',
+    summary: 'A photography studio needs to know where every camera, lens and light is: which room, rack and shelf, or which renter has it. I built them a native Android app for staff. Scan a QR label to find or move any item, print labels in batches, check gear out to renters and back in with its condition, and get reminders for overdue returns. Owner and staff roles are enforced in the database, backups are automated, and it all runs on free tiers.',
+    metrics: [['4 levels', 'studio → room → rack → shelf'], ['QR', 'scan to find or move'], ['10', 'build phases, e2e tested'], ['£0', 'monthly running cost']],
+    pipeline: ['React + Capacitor', 'ML Kit QR scanning', 'Label printing', 'Rentals + returns', 'Supabase + RLS', 'GitHub Actions backups'],
+    demo: {
+      cta: 'Walk through a check-out', start: 'Hi', placeholder: 'e.g. where is the Canon 24-70?',
+      note: 'The app has no chatbot. This plays its screens as text, on a made-up catalogue.',
+      prompt: 'You play the screens of Pixel Inventory, an Android app photography-studio staff use to track gear, as short plain-text steps. Say once that the catalogue is made up. Greet them in one line and offer three things: find an item, check gear out to a renter, or check it back in. Invent a small believable catalogue on the fly (cameras, lenses, lights, stands). Finding an item: show its location as Studio > Room > Rack > Shelf, or which renter has it and when it is due. Check-out: ask for the renter and the return date, then show the confirmation as the app would. Check-in: ask for the condition, then say which shelf to put it on. Keep each turn under 50 words.',
+    },
   },
   {
     id: 'nexus', name: 'Nexus GTM', kind: 'AI outbound engine', when: '2026',
@@ -111,13 +148,23 @@ export const education = {
 }
 
 export const skills = {
-  'AI & Agents': ['Multi-agent orchestration', 'Tool calling (MCP)', 'Memory layers', 'RAG', 'BGE-M3', 'Qdrant', 'ChromaDB', 'Pydantic', 'Prompt caching', 'OpenAI', 'OpenRouter'],
-  'Real-time voice': ['LiveKit', 'Whisper', 'Cartesia', 'ElevenLabs'],
+  'AI & Agents': ['Multi-agent orchestration', 'Tool calling (MCP)', 'Memory layers', 'RAG', 'BGE-M3', 'Qdrant', 'ChromaDB', 'Pydantic', 'Prompt caching', 'OpenAI', 'OpenRouter', 'Groq'],
+  'Real-time voice': ['LiveKit', 'WebRTC', 'Whisper', 'Cartesia', 'ElevenLabs', 'edge-tts'],
   'Languages': ['Python', 'TypeScript', 'JavaScript', 'SQL', 'Java'],
-  'Backend & web': ['FastAPI', 'asyncio', 'REST', 'Next.js', 'React', 'Node.js'],
-  'Data': ['PostgreSQL', 'Supabase', 'PocketBase', 'Redis'],
-  'Ops': ['Docker', 'GitHub Actions', 'DigitalOcean', 'Vercel', 'Cloudflare', 'Linux', 'Sentry', 'PostHog', 'OpenTelemetry', 'Grafana'],
+  'Backend & web': ['FastAPI', 'asyncio', 'REST', 'Next.js', 'React', 'Node.js', 'Chrome extensions', 'Capacitor (Android)'],
+  'Data': ['PostgreSQL', 'pgvector', 'Supabase', 'PocketBase', 'SurrealDB', 'Redis'],
+  'Ops': ['Docker', 'GitHub Actions', 'Railway', 'DigitalOcean', 'Vercel', 'Cloudflare', 'Linux', 'Sentry', 'PostHog', 'OpenTelemetry', 'Grafana'],
 }
+
+// How I work with coding agents. Each line must stay true of the repos above.
+export const workflow = [
+  'claude code is my pair · every repo has a CLAUDE.md with its rules: plan first, list the files before touching more than 3, done means tests pass',
+  'skills + hooks: a knowledge graph of the codebase rebuilds after every edit, so the agent checks callers and blast radius before changing code',
+  'smallest complete change: no speculative abstractions · every deliberate corner cut is a `shortcut:` comment, listed later as debt',
+  'secure by default: row-level security on every table · PII redacted before any LLM call · secrets never enter the agent’s context · tests never touch prod',
+  'shipped with checks: 280+ tests on FairShot, Playwright e2e + CI on Pixel Inventory, a written security review before launch',
+  'measured: Tally scores my own agent sessions against my real commits',
+]
 
 export const cvText = [
   `${profile.name}, ${profile.role}, ${profile.location}. Email ${profile.email}. LinkedIn ${profile.linkedin}. GitHub ${profile.github}.`,
@@ -125,6 +172,7 @@ export const cvText = [
   ...experience.map(e => `${e.company} | ${e.role} | ${e.when}${e.url ? ` | ${e.url}` : ''}\n- ${e.points.join('\n- ')}`),
   'PROJECTS',
   ...projects.map(p => `${p.name} (${p.kind}, ${p.when}): ${p.summary} ${p.metrics.map(([v, k]) => `${v} ${k}`).join(', ')}. Stack: ${p.pipeline.join(', ')}.`),
+  `HOW I BUILD\n- ${workflow.join('\n- ')}`,
   `EDUCATION\n${education.school}, ${education.degree}, ${education.when}. ${education.grades.map(([k, v]) => `${k} ${v}%`).join(', ')}.`,
   `SKILLS\n${Object.entries(skills).map(([k, v]) => `${k}: ${v.join(', ')}`).join('\n')}`,
 ].join('\n\n')

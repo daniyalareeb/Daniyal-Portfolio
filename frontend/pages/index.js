@@ -7,7 +7,7 @@ import AskByte from '../components/AskByte'
 import Topbar from '../components/Topbar'
 import PixelSky from '../components/PixelSky'
 import Sprite from '../components/Sprite'
-import { profile, experience, projects, education, skills } from '../data/cv'
+import { profile, experience, projects, education, skills, workflow } from '../data/cv'
 
 const Painter = dynamic(() => import('../components/Painter'), { ssr: false })
 
@@ -135,6 +135,10 @@ export default function Home() {
         <section id="projects" className="wrap">
           <h2 className="display section-title reveal">Projects<span className="hand">most code is private, so each one has a live sandbox. try them.</span></h2>
           {projects.map((p, i) => <ProjectStory key={p.id} project={p} index={i} />)}
+          <section className="readout note reveal" aria-label="How I build">
+            <p className="mono"><b>$</b> cat how-i-build</p>
+            {workflow.map(w => <p key={w} className="mono">↳ {w}</p>)}
+          </section>
         </section>
 
         <section id="ask" className="wrap ask-wrap">
